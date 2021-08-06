@@ -12,34 +12,36 @@ generator client {
 
 model User {
   @@map(name: "users")
-  id       Int      @default(autoincrement()) @id
-  uuid     String   @default(uuid()) @unique
-  email    String   @unique
-  name     String?
-  password String
-  role     UserRole @default(USER)
-  posts    Post[]
-  comments Comment[]
+  id        Int      @default(autoincrement()) @id
+  email     String   @unique
+  username  String   @unique
+  password  String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]   @relation("WrittenPosts")
+  likes     Post[]   @relation("LikedPosts")
+  comments  Comment[]
 }
 
 model Post {
   @@map(name: "posts")
   id        Int      @default(autoincrement()) @id
-  uuid      String   @default(uuid()) @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   body      String?
   published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation("WrittenPosts", fields: [authorId], references: [id])
   authorId  Int
   comments  Comment[]
+  likedBy   User[]   @relation("LikedPosts", references: [id])
+  likeCount Int      @default(0)
 }
 
 model Comment {
   @@map(name: "comments")
   id        Int      @default(autoincrement()) @id
-  uuid      String   @default(uuid()) @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   text      String   @db.VarChar(255)

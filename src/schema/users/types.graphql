@@ -1,11 +1,12 @@
 type User {
   id: ID!
-  uuid: String!
-  name: String!
+  username: String!
   email: String!
   password: String!
+  token: String!
   role: UserRole!
   posts: [Post!]!
+  likes: [Post!]!
   comments: [Comment!]!
 }
 
@@ -14,20 +15,22 @@ type Query {
 }
 
 type Mutation {
-  createUser(data: CreateUserInput!): User!
+  registerUser(input: RegisterUserInput!): User!
+  loginUser(username: String!, password: String!): User!
   deleteUser(id: ID!): User!
-  updateUser(id: ID!, data: UpdateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
 }
 
-input CreateUserInput {
-  name: String!,
-  email: String!,
-  password: String!,
+input RegisterUserInput {
+  username: String!
+  email: String!
+  password: String!
+  confirmPassword: String!
   role: UserRole
 }
 
 input UpdateUserInput {
-  name: String,
+  username: String,
   email: String,
   password: String,
   role: UserRole

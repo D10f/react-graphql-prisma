@@ -1,4 +1,4 @@
 module.exports = {
-  typeDefs: require('../../helpers/importSchema')('src/schema/users/typeDefs.graphql'),
+  typeDefs: require('../../helpers/importSchema')('src/schema/users/types.graphql'),
   resolvers: require('./resolvers')
 };

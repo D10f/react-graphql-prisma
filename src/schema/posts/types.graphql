@@ -3,6 +3,8 @@ type Post {
   title: String!
   body: String!
   published: Boolean!
+  likeCount: Int!
+  likedBy: [User!]!
   author: User!
   comments: [Comment!]!
 }
@@ -12,13 +14,19 @@ type Query {
 }
 
 type Mutation {
-  createPost(data: CreatePostInput!): Post!
+  createPost(input: CreatePostInput!): Post!
   deletePost(id: ID!): Post!
-  updatePost(id: ID!, data: UpdatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
+  likeOrUnlikePost(postId: ID!, userId: ID!): Post!
 }
 
 type Subscription {
   post: PostSubscriptionPayload!
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  data: Post!
 }
 
 input CreatePostInput {
@@ -39,9 +47,4 @@ enum MutationType {
   CREATED
   UPDATED
   DELETED
-}
-
-type PostSubscriptionPayload {
-  mutation: MutationType!
-  data: Post!
 }

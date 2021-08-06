@@ -10,9 +10,9 @@ type Query {
 }
 
 type Mutation {
-  createComment(data: CreateCommentInput): Comment!
+  createComment(input: CreateCommentInput): Comment!
   deleteComment(id: ID!): Comment!
-  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+  updateComment(id: ID!, input: UpdateCommentInput!): Comment!
 }
 
 type Subscription {
