@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
-const { UserInputError } = require('apollo-server');
+const { ValidationError } = require('apollo-server');
 
 const ajv = new Ajv({
   $data: true,
@@ -14,8 +14,8 @@ function validate(jsonSchema) {
   return function(input) {
     const isValid = jsonSchema(input);
     if (isValid) return true;
-    const errors = jsonSchema.errors[0].message;
-    throw new UserInputError(errors);
+    const error = jsonSchema.errors[0].message;
+    throw new ValidationError(error);
   };
 }
 

@@ -17,7 +17,7 @@ module.exports = {
   },
   Mutation: {
     async createPost(parent, { input }, { models }, info) {
-      return await models.post.createPost(input);
+      return await models.post.createPost({ ...input, authorId: Number(input.authorId) });
     },
     async updatePost(parent, { id, input }, { models }, info) {
       return await models.post.updatePost(Number(id), input);

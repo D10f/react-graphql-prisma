@@ -1,3 +1,4 @@
+const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-server');
 const validators = require('../validators');
 
 class Post {
@@ -58,7 +59,7 @@ class Post {
 
   async likeOrUnlikePost (postId, userId) {
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You are not authorized');
     }
 
     const likesArray = await this.db.post.findUnique({
@@ -81,33 +82,49 @@ class Post {
 
   async createPost(input) {
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You must be logged in to perform this action.');
+    }
+
+    if (this.user.id !== input.authorId && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
     validators.validateCreatePostInput(input);
 
-    const userExists = await this.db.user.findUnique({ where: { id: Number(input.authorId) }});
-    if (!userExists) {
-      throw new Error('No user found with that id.');
+    const postAuthor = this.user.id === input.authorId
+      ? this.user
+      : await this.db.user.findUnique({ where: { id: input.authorId }});
+
+    if (!postAuthor) {
+      throw new UserInputError('No user found with that id.');
     }
-    return await this.db.post.create({ data: { ...input, authorId: Number(input.authorId) }});
+
+    return await this.db.post.create({ data: { ...input, authorId: postAuthor.id } });
   };
 
   async updatePost(postId, input) {
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    validators.validateUpdatePostInput(input);
+    if (input.authorId && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
+    }
 
-    const post = await this.db.post.findUnique({ where: { id: postId }});
-
-    if (!post) {
-      throw new Error('No post found for that id.');
+    if (input['authorId'] && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
     if (input['authorId']) {
       input.authorId = Number(input.authorId);
+    }
+
+    validators.validateUpdatePostInput(input);
+
+    const post = await this.findById(postId);
+
+    if (!post) {
+      throw new UserInputError('No post found for that id.');
     }
 
     return await this.db.post.update({
@@ -118,7 +135,7 @@ class Post {
 
   async deletePost(postId) {
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
     const post = await this.db.post.findUnique({
@@ -127,7 +144,7 @@ class Post {
     });
 
     if (!post) {
-      throw new Error('No post found with that id.');
+      throw new UserInputError('No post found with that id.');
     }
 
     const commentIds = post.comments.map(comment => comment.id);

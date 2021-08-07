@@ -1,11 +1,15 @@
 const { AuthenticationError } = require('apollo-server');
+const jwt = require('jsonwebtoken');
 
-module.exports = req => {
+module.exports = async (req, conn) => {
   try {
-    const token = req.header['Authorization'] && req.header('Authorization').replace('Bearer ', '');
+    // NOTE: Apollo Server converts headers to lowercase - "Authorization" becomes "authorization"
+    const token = req.headers['authorization'] && req.header('authorization').replace('Bearer ', '');
+
     req.user = token
-      ? jwt.verify(token, process.env.JWT_SECRET).id
+      ? await conn.user.findUnique({ where: { id: jwt.verify(token, process.env.JWT_SECRET).id }})
       : null
+
   } catch (err) {
     throw new AuthenticationError(err.message);
   }

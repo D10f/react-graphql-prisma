@@ -1,3 +1,5 @@
+const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-server');
+const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const validators = require('../validators');
 
@@ -33,17 +35,17 @@ class User {
     return result.likes;
   }
 
-  async registerUser({ username, email, password, role }) {
-    validators.validateRegisterUserInput({ username, email, password, role });
+  async registerUser({ username, email, password, confirmPassword, role }) {
+    validators.validateRegisterUserInput({ username, email, password, confirmPassword, role });
 
     const user = await this.db.user.findUnique({ where: { email }});
 
     if (user && user.email === email) {
-      throw new Error('Email is already in use.');
+      throw new AuthenticationError('Email is already in use.');
     }
 
     if (user && user.username === username) {
-      throw new Error('Username is already in use.');
+      throw new AuthenticationError('Username is already in use.');
     }
 
     const newUser = await this.db.user.create({
@@ -67,13 +69,13 @@ class User {
     const user = await this.db.user.findUnique({ where: { username }});
 
     if (!user) {
-      throw new Error('Invalid username and/or password.');
+      throw new AuthenticationError('Invalid username and/or password.');
     }
 
     const passwordMatch = await argon2.verify(user.password, password);
 
     if (!passwordMatch) {
-      throw new Error('Invalid username and/or password.');
+      throw new AuthenticationError('Invalid username and/or password.');
     }
 
     const token = generateToken(user.id);
@@ -85,21 +87,35 @@ class User {
   };
 
   async updateUser(id, input) {
+    // Must be logged-in in order to perform this action
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You must be logged in to perform this action.');
+    }
+
+    // Must be same user or an admin in order to perform this action
+    if (this.user.id !== id && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
+    }
+
+    // Only an admin can update a user's role
+    if (input.role && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
     validators.validateUpdateUserInput(input);
 
-    const user = await this.db.user.findUnique({ where: { id } });
+    // If updating another user's profile (only as an admin) check if that user exists first.
+    const userExists = this.user.id === id
+      ? this.user
+      : await this.db.findById(id);
 
-    if (!user) {
-      throw new Error('No user found with that id.');
+    if (!userExists) {
+      throw new UserInputError('No user found with that id.');
     }
 
     // If password is provided, hash it before update
     if (input.password) {
-      input.password = await argon2.hash(input.password)
+      input.password = await argon2.hash(input.password);
     }
 
     return await this.db.user.update({
@@ -110,16 +126,21 @@ class User {
 
   async deleteUser(id) {
     if (!this.user) {
-      throw new Error('You are not authorized');
+      throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
+    if (this.user.id !== id && this.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You are not authorized to perform this action.');
+    }
+
+    // Retrieve user data, including all posts and comments
     const user = await this.db.user.findUnique({
       where: { id },
       include: { posts: true, comments: true }
     });
 
     if (!user) {
-      throw new Error('No user found with that id.');
+      throw new UserInputError('No user found with that id.');
     }
 
     // Get all Ids of posts and comments by that user
