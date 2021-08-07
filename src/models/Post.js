@@ -18,7 +18,7 @@ class Post {
   async findPosts(query = '') {
     return query
       ? await this.db.post.findMany({ where: { title: query }})
-      : await this.db.post.findMany()
+      : await this.db.post.findMany();
   }
 
   async getLikedBy(id) {
@@ -107,15 +107,12 @@ class Post {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    if (input.authorId && this.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
-    if (input['authorId'] && this.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
     if (input['authorId']) {
+      // Must be an admin to be able to change the author of a post
+      if (this.user.role !== 'ADMIN') {
+        throw new ForbiddenError('You are not authorized to perform this action.');
+      }
+
       input.authorId = Number(input.authorId);
     }
 

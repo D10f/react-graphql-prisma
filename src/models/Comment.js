@@ -39,25 +39,26 @@ class Comment {
     authorId = Number(authorId);
     postId = Number(postId);
 
-    // const author = await this.db.user.findUnique({ where: { id: authorId }});
-    //
-    // if (!author) {
-    //   throw new UserInputError('No user found with that id.');
-    // }
+    // Update comment count on the post and create the comment.
+    try {
+      const update = await this.db.post.update({
+        where: { id: postId },
+        data: {
+          commentCount: { increment: 1 },
+          comments: {
+            create: {
+              text,
+              authorId
+            }
+          }
+        }
+      });
 
-    const post = await this.db.post.findUnique({ where: { id: postId }});
+      return { text, authorId, postId };
 
-    if (!post) {
+    } catch (e) {
       throw new UserInputError('No post found with that id');
     }
-
-    return await this.db.comment.create({
-      data: {
-        text,
-        authorId,
-        postId
-      }
-    });
   };
 
   async updateComment(id, input) {
@@ -94,11 +95,28 @@ class Comment {
       throw new UserInputError('Cannot find any comments with that id.');
     }
 
-    if (this.user.id !== comment.id && this.user.role !== 'ADMIN') {
+    if (this.user.id !== comment.authorId && this.user.role !== 'ADMIN') {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
-    return await this.db.comment.delete({ where: { id }});
+    try {
+      // Update comment count in the post and delete comment
+      await this.db.post.update({
+        where: { id: comment.postId },
+        data: {
+          commentCount: { decrement: 1 },
+          comments: {
+            delete: {
+              id
+            }
+          }
+        }
+      });
+
+      return comment;
+    } catch (e) {
+      throw new UserInputError('Cannot find any posts with that id.');
+    }
   };
 }
 

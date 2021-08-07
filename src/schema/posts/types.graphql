@@ -3,10 +3,13 @@ type Post {
   title: String!
   body: String!
   published: Boolean!
+  createdAt: String!
+  updatedAt: String!
   likeCount: Int!
   likedBy: [User!]!
   author: User!
   comments: [Comment!]!
+  commentCount: Int!
 }
 
 type Query {
