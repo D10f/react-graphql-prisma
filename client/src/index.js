@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { ApolloProvider, client } from './services/api';
+import { ApolloProvider, client } from '@services/api';
 
+import './styles.css';
 import App from './App';
 
 render(
