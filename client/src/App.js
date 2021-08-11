@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import amber from '@material-ui/core/colors/amber';
 
-import { UsersPage, RegisterPage } from '@pages';
+import { UsersPage, RegisterPage, LoginPage } from '@pages';
 import { Layout } from '@components';
 
 const theme = createTheme({
@@ -26,6 +26,7 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={UsersPage} />
             <Route path="/register" component={RegisterPage} />
+            <Route path="/login" component={LoginPage} />
           </Switch>
         </Layout>
       </Router>

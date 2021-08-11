@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
-const { ValidationError } = require('apollo-server');
+const { UserInputError, ValidationError } = require('apollo-server');
 
 const ajv = new Ajv({
   $data: true,
@@ -10,12 +10,20 @@ const ajv = new Ajv({
 require("ajv-errors")(ajv);
 require("ajv-formats")(ajv);
 
+function addCustomErrors(errors) {
+  return errors.map(error => ({
+    field: error.instancePath.replace('/', ''),
+    message: error.message
+  }));
+}
+
 function validate(jsonSchema) {
   return function(input) {
     const isValid = jsonSchema(input);
     if (isValid) return true;
-    const error = jsonSchema.errors[0].message;
-    throw new ValidationError(error);
+    throw new UserInputError('Something went wrong', {
+      errors: addCustomErrors(jsonSchema.errors)
+    });
   };
 }
 
