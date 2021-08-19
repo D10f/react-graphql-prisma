@@ -20,7 +20,7 @@ type Mutation {
   createPost(input: CreatePostInput!): Post!
   deletePost(id: ID!): Post!
   updatePost(id: ID!, input: UpdatePostInput!): Post!
-  likeOrUnlikePost(postId: ID!, userId: ID!): Post!
+  likeOrUnlikePost(postId: ID!): Post!
 }
 
 type Subscription {
@@ -36,14 +36,12 @@ input CreatePostInput {
   title: String!
   body: String!
   published: Boolean
-  authorId: ID!
 }
 
 input UpdatePostInput {
   title: String
   body: String
   published: Boolean,
-  authorId: String
 }
 
 enum MutationType {

@@ -1,32 +1,18 @@
 import { useState } from 'react';
+import { useQuery, useMutation } from "@apollo/client";
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
 
-import {
-  useQuery,
-  useMutation,
-  gql
-} from "@apollo/client";
+import { REGISTER_UESR } from '@services/users';
 
 const useStyles = makeStyles(theme => ({
   field: {
     marginBottom: theme.spacing(3)
   }
 }));
-
-const REGISTER_USER = gql`
-  mutation registerUser($input: RegisterUserInput) {
-    registerUser(input: $input) {
-      id,
-      username,
-      email,
-      password
-    }
-  }
-`;
 
 const RegisterForm = () => {
 
@@ -39,9 +25,12 @@ const RegisterForm = () => {
 
   const [ registerUser, { loading, error, data }] = useMutation(REGISTER_USER);
 
-  if (loading) return <p>'Loading...'</p>;
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   if (error) {
-    return <p>{error.message}</p>
+    return <p>{error.message}</p>;
   }
 
   const handleSubmit = async e => {
@@ -78,8 +67,6 @@ const RegisterForm = () => {
         }
       }
     });
-
-    console.log(res);
   };
 
   return (

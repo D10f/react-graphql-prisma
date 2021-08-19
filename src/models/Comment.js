@@ -2,21 +2,38 @@ const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-
 const validators = require('../validators');
 
 class Comment {
-  constructor(req, prisma) {
-    this.user = req.user;
+  constructor(prisma) {
     this.db = prisma;
   }
 
   async findById(id) {
-    return await this.db.comment.findUnique({ where: { id }});
+    const comment = await this.db.comment.findUnique({ where: { id }});
+
+    if (!comment) {
+      throw new UserInputError('No comment found with that id.');
+    }
+
+    return comment;
   }
 
   async findByPostId(id) {
-    return await this.db.comment.findMany({ where: { postId: id }});
+    const comment = await this.db.comment.findMany({ where: { postId: id }});
+
+    if (!comment) {
+      throw new UserInputError('No comment found with that id.');
+    }
+
+    return comment;
   }
 
   async findByAuthorId(id) {
-    return await this.db.comment.findMany({ where: { authorId: id }});
+    const comment = await this.db.comment.findMany({ where: { authorId: id }});
+
+    if (!comment) {
+      throw new UserInputError('No comment found with that id.');
+    }
+
+    return comment;
   }
 
   async findComments(query = '') {
@@ -25,98 +42,44 @@ class Comment {
       : await this.db.comment.findMany()
   }
 
-  async createComment({ text, authorId, postId }) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
+  async create({ text, postId, authorId }) {
 
-    if (this.user.id !== Number(authorId)) {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
-    validators.validateCreateCommentInput({ text, authorId, postId });
-
-    authorId = Number(authorId);
-    postId = Number(postId);
-
-    // Update comment count on the post and create the comment.
-    try {
-      const update = await this.db.post.update({
-        where: { id: postId },
+    const [ comment ] = await this.db.$transaction([
+      this.db.comment.create({
         data: {
-          commentCount: { increment: 1 },
-          comments: {
-            create: {
-              text,
-              authorId
-            }
-          }
+          text,
+          postId,
+          authorId,
         }
-      });
+      }),
+      this.db.post.update({
+        where: { id: postId },
+        data: { commentCount: { increment: 1 }}
+      })
+    ]);
 
-      return { text, authorId, postId };
-
-    } catch (e) {
-      throw new UserInputError('No post found with that id');
-    }
+    return comment;
   };
 
-  async updateComment(id, input) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
-    if (this.user.id !== Number(input.authorId) && this.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
-    validators.validateUpdateCommentInput(input);
-
-    const comment = await this.findById(id);
-
-    if (!comment) {
-      throw new UserInputError('Cannot find any comments with that id.');
-    }
-
+  async update(id, input) {
     return await this.db.comment.update({
       where: { id },
       data: input
     });
   };
 
-  async deleteComment(id) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
+  async delete(id) {
+    const comment = await this.findById(id);
 
-    const comment = await this.db.comment.findUnique({ where: { id }});
-
-    if (!comment) {
-      throw new UserInputError('Cannot find any comments with that id.');
-    }
-
-    if (this.user.id !== comment.authorId && this.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
-    try {
-      // Update comment count in the post and delete comment
-      await this.db.post.update({
+    await this.db.$transaction([
+      this.db.post.update({
         where: { id: comment.postId },
-        data: {
-          commentCount: { decrement: 1 },
-          comments: {
-            delete: {
-              id
-            }
-          }
-        }
-      });
+        data: { commentCount: { decrement: 1 }}
+      }),
+      this.db.comment.delete({ where: { id }}),
+    ]);
 
-      return comment;
-    } catch (e) {
-      throw new UserInputError('Cannot find any posts with that id.');
-    }
+    return comment;
   };
 }
 

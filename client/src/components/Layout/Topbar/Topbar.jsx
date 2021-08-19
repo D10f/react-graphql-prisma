@@ -27,18 +27,19 @@ const Sidebar = () => {
   const location = useLocation();
   const classes = useStyles();
 
-  const getTitleText = () => ROUTE_TITLES[location.pathname];
-
   return (
     <AppBar elevation={0} className={classes.appbar}>
       <Toolbar>
+
         <Typography className={classes.grow}>
-          {getTitleText()}
+          {ROUTE_TITLES[location.pathname]}
         </Typography>
+
         <Typography>
           Mario
         </Typography>
         <Avatar src={mario} className={classes.avatar} />
+
       </Toolbar>
     </AppBar>
   );

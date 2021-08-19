@@ -1,23 +1,20 @@
 const { ApolloServer } = require('apollo-server');
 const { ApolloServerPluginLandingPageGraphQLPlayground } = require("apollo-server-core");
-const { PrismaClient } = require('@prisma/client');
 
 require('dotenv').config();
 
 const { typeDefs, resolvers } = require('./schema');
-const generateModels = require('./models');
-const authenticate = require('./helpers/authenticate');
-
-const prisma = new PrismaClient();
+const services = require('./services');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
-    await authenticate(req, prisma);
-    return {
-      models: generateModels(req, prisma)
-    }
+    const userToken = req.get('authorization') && req.get('authorization').replace('Bearer ', '');
+    const token = userToken && services.auth.verifyToken(userToken);
+    const user = token && await services.user.findById(token.id);
+
+    return { user, services };
   },
   plugins: [
     ApolloServerPluginLandingPageGraphQLPlayground

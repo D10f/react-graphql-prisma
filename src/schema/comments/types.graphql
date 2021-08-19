@@ -21,12 +21,12 @@ type Subscription {
 
 input CreateCommentInput {
   text: String!
-  authorId: String!
   postId: String!
 }
 
 input UpdateCommentInput {
-  text: String
+  text: String!
+  authorId: String
 }
 
 enum MutationType {

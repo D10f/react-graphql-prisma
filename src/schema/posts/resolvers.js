@@ -1,32 +1,33 @@
 module.exports = {
   Query: {
-    async posts(parent, { query }, { models }, info) {
-      return await models.post.findPosts(query);
+    async posts(parent, { query }, { user, services }, info) {
+      return await services.post.findPosts(query);
     },
   },
   Post: {
-    async author({ authorId }, args, { models }, info) {
-      return await models.user.findById(authorId);
+    async author({ authorId }, args, { user, services }, info) {
+      return await services.user.findById(authorId);
     },
-    async comments({ id }, args, { models }, info) {
-      return await models.comment.findByPostId(id);
+    async comments({ id }, args, { user, services }, info) {
+      return await services.comment.findByPostId(id);
     },
-    async likedBy({ id }, args, { models }, info) {
-      return await models.post.getLikedBy(id);
+    async likedBy({ id }, args, { user, services }, info) {
+      return await services.post.findLikedBy(id);
     }
   },
   Mutation: {
-    async createPost(parent, { input }, { models }, info) {
-      return await models.post.createPost({ ...input, authorId: Number(input.authorId) });
+    async createPost(parent, { input }, { user, services }, info) {
+      // return await services.post.create({ ...input, authorId: Number(input.authorId) }, user);
+      return await services.post.create(input, user);
     },
-    async updatePost(parent, { id, input }, { models }, info) {
-      return await models.post.updatePost(Number(id), input);
+    async updatePost(parent, { id, input }, { user, services }, info) {
+      return await services.post.update(Number(id), input, user);
     },
-    async deletePost(parent, { id }, { models }, info) {
-      return await models.post.deletePost(Number(id));
+    async deletePost(parent, { id }, { user, services }, info) {
+      return await services.post.delete(Number(id), user);
     },
-    async likeOrUnlikePost(parent, { postId, userId }, { models }, info) {
-      return await models.post.likeOrUnlikePost(Number(postId), Number(userId));
+    async likeOrUnlikePost(parent, { postId }, { user, services }, info) {
+      return await services.post.toggleLikeStatus(Number(postId), user);
     },
   }
 };

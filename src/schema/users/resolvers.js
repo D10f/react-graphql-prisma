@@ -1,32 +1,32 @@
 module.exports = {
   Query: {
-    async users(parent, { query }, { models }, info) {
-      return await models.user.findUsers(query);
+    async users(parent, { query }, { user, services }, info) {
+      return await services.user.findUsers(query);
     },
   },
   User: {
-    async posts({ id }, args, { models }, info) {
-      return await models.post.findByAuthorId(id);
+    async posts({ id }, args, { user, services }, info) {
+      return await services.post.findByAuthorId(id);
     },
-    async comments({ id }, args, { models }, info) {
-      return await models.comment.findByAuthorId(id);
+    async comments({ id }, args, { user, services }, info) {
+      return await services.comment.findByAuthorId(id);
     },
-    async likes({ id }, args, { models }, info) {
-      return await models.user.getLikedPosts(id);
+    async likes({ id }, args, { user, services }, info) {
+      return await services.user.getUserLikes(id);
     }
   },
   Mutation: {
-    async registerUser(parent, { input }, { models }, info) {
-      return await models.user.registerUser(input);
+    async registerUser(parent, { input }, { user, services }, info) {
+      return await services.user.signup(input);
     },
-    async loginUser(parent, { username, password }, { models }, info) {
-      return await models.user.loginUser(username, password);
+    async loginUser(parent, { username, password }, { user, services }, info) {
+      return await services.user.login(username, password);
     },
-    async updateUser(parent, { id, input }, { models }, info) {
-      return await models.user.updateUser(Number(id), input);
+    async updateUser(parent, { input }, { user, services }, info) {
+      return await services.user.update(input, user);
     },
-    async deleteUser(parent, { id }, { models }, info) {
-      return await models.user.deleteUser(Number(id));
+    async deleteUser(parent, { id }, { user, services }, info) {
+      return await services.user.delete(id);
     },
   }
 };

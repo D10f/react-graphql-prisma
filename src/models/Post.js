@@ -1,9 +1,7 @@
 const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-server');
-const validators = require('../validators');
 
 class Post {
-  constructor(req, prisma) {
-    this.user = req.user;
+  constructor(prisma) {
     this.db = prisma;
   }
 
@@ -15,13 +13,13 @@ class Post {
     return await this.db.post.findMany({ where: { authorId: id }});
   }
 
-  async findPosts(query = '') {
+  async find(query = '') {
     return query
       ? await this.db.post.findMany({ where: { title: query }})
       : await this.db.post.findMany();
   }
 
-  async getLikedBy(id) {
+  async findLikedBy(id) {
     const result = await this.db.post.findUnique({
       where: { id },
       select: { likedBy: true }
@@ -57,11 +55,7 @@ class Post {
     });
   };
 
-  async likeOrUnlikePost (postId, userId) {
-    if (!this.user) {
-      throw new AuthenticationError('You are not authorized');
-    }
-
+  async toggleLikeStatus(postId, userId) {
     const likesArray = await this.db.post.findUnique({
       where: { id: postId },
       select: {
@@ -80,49 +74,18 @@ class Post {
       : await this.likePost(postId, userId);
   };
 
-  async createPost(input) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
-    if (this.user.id !== input.authorId && this.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
-
-    validators.validateCreatePostInput(input);
-
-    const postAuthor = this.user.id === input.authorId
-      ? this.user
-      : await this.db.user.findUnique({ where: { id: input.authorId }});
-
-    if (!postAuthor) {
-      throw new UserInputError('No user found with that id.');
-    }
-
-    return await this.db.post.create({ data: { ...input, authorId: postAuthor.id } });
+  async create(input) {
+    return await this.db.post.create({
+      data: input
+    });
   };
 
-  async updatePost(postId, input) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
-    if (input['authorId']) {
-      // Must be an admin to be able to change the author of a post
-      if (this.user.role !== 'ADMIN') {
-        throw new ForbiddenError('You are not authorized to perform this action.');
-      }
-
-      input.authorId = Number(input.authorId);
-    }
-
-    validators.validateUpdatePostInput(input);
-
-    const post = await this.findById(postId);
-
-    if (!post) {
-      throw new UserInputError('No post found for that id.');
-    }
+  async update(postId, input) {
+    // const post = await this.findById(postId);
+    //
+    // if (!post) {
+    //   throw new UserInputError('No post found for that id.');
+    // }
 
     return await this.db.post.update({
       where: { id: postId },
@@ -130,19 +93,11 @@ class Post {
     });
   };
 
-  async deletePost(postId) {
-    if (!this.user) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
+  async delete(postId) {
     const post = await this.db.post.findUnique({
       where: { id: postId },
       include: { comments: true }
     });
-
-    if (!post) {
-      throw new UserInputError('No post found with that id.');
-    }
 
     const commentIds = post.comments.map(comment => comment.id);
 
