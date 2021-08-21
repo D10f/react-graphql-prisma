@@ -21,13 +21,14 @@ module.exports = {
   },
 
   isAuthenticated(user) {
-    if (this.error) {
-      throw new AuthenticationError(errorMsg);
-    }
     return !!user;
   },
 
   isAuthorized(user, ownerId, permissions) {
+    if (!this.isAuthenticated(user)) {
+      throw new AuthenticationError('You must be logged in to perform this action.');
+    }
+
     return permissions.some(authFn => authFn(user, ownerId));
   },
 
@@ -35,9 +36,9 @@ module.exports = {
     return user.role === 'ADMIN';
   },
 
-  isSameUser(user, ownerId) {
-    return user.id === ownerId;
-  },
+  // isSameUser(user, ownerId) {
+  //   return user.id === ownerId;
+  // },
 
   isAuthor(user, authorId) {
     return user.id === authorId;

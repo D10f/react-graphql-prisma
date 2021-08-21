@@ -2,14 +2,14 @@ const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const argon2 = require('argon2');
 
 const validators = require('../validators');
-const { User, Post } = require('../models');
+const { UserModel } = require('../models');
 const AuthService = require('./AuthService');
 
 module.exports = {
   async signup(input) {
     validators.validateRegisterUserInput(input);
 
-    const user = await User.findByEmail(input.email);
+    const user = await UserModel.findByEmail(input.email);
 
     if (user && user.email === input.email) {
       throw new AuthenticationError('Email is already in use.');
@@ -19,20 +19,20 @@ module.exports = {
       throw new AuthenticationError('Username is already in use.');
     }
 
-    const newUser = await User.create({
+    const newUser = await UserModel.create({
       username: input.username,
       email: input.email,
       password: await argon2.hash(input.password),
       role: input.role,
     });
 
-    newUser.token = AuthService.generateToken(newUser.id);
+    newUserModel.token = AuthService.generateToken(newUserModel.id);
 
     return newUser;
   },
 
   async login(username, password) {
-    const user = await User.findOne(username);
+    const user = await UserModel.findOne(username);
 
     if (!user) {
       throw new AuthenticationError('Invalid username and/or password.');
@@ -71,7 +71,7 @@ module.exports = {
       input.password = await argon2.hash(input.password);
     }
 
-    const updatedUser = await User.update(userId, input);
+    const updatedUser = await UserModel.update(userId, input);
 
     return updatedUser;
   },
@@ -86,28 +86,28 @@ module.exports = {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
-    const deletedUser = await User.delete(userId);
+    const deletedUser = await UserModel.delete(userId);
 
     return deletedUser;
   },
 
   async findById(id) {
-    return await User.findById(id);
+    return await UserModel.findById(id);
   },
 
   async findUsers(query) {
-    return await User.findMany(query);
+    return await UserModel.findMany(query);
   },
 
   async getUserLikes(user) {
-    return await User.getLikedPosts(user);
+    return await UserModel.getLikedPosts(user);
   },
 
   async getUserPosts(user) {
-    return await Post.findByAuthorId(user.id);
+    return await UserModel.getUserPosts(user.id);
   },
 
   async getUserComments(userId) {
-    return await Comments.findByAuthorId(id);
+    return await UserModel.getUserComments(id);
   },
 };

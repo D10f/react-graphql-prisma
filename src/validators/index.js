@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
-const { UserInputError, ValidationError } = require('apollo-server');
+const { UserInputError } = require('apollo-server');
 
 const ajv = new Ajv({
   $data: true,
