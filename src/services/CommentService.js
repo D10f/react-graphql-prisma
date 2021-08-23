@@ -1,10 +1,10 @@
 const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const validators = require('../validators');
 
-const { CommentModel } = require('../models');
+// const { CommentModel } = require('../models');
 const AuthService = require('./AuthService');
 
-module.exports = {
+module.exports = ({ CommentModel }) => ({
 
   async findByAuthorId(authorId) {
     return await CommentModel.findByAuthorId(authorId);
@@ -65,4 +65,4 @@ module.exports = {
 
     return await CommentModel.delete(commentId);
   },
-};
+});

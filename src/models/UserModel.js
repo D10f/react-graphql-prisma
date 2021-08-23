@@ -21,16 +21,16 @@ module.exports = prisma => ({
   },
 
   async getUserPosts(userId) {
-    return await this.findById(userId).posts();
+    return await prisma.user.findUnique({ where: { id: userId }}).posts();
   },
 
   async getUserComments(userId) {
-    return await this.findById(userId).comments();
+    return await prisma.user.findUnique({ where: { id: userId }}).comments();
   },
 
-  async getLikedPosts(id) {
+  async getLikedPosts(userId) {
     const result = await prisma.user.findUnique({
-      where: { id },
+      where: { id: userId },
       select: { likes: true }
     });
     return result.likes;

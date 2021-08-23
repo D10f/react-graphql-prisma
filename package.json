@@ -17,6 +17,7 @@
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.0",
     "apollo-server": "^3.1.1",
+    "apollo-server-express": "^3.1.2",
     "argon2": "^0.28.2",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.1",
@@ -24,6 +25,7 @@
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
+    "apollo-server-integration-testing": "^3.0.0",
     "jest": "^27.0.6",
     "jest-mock-extended": "^2.0.2-beta2",
     "nodemon": "^2.0.12",

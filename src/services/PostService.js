@@ -1,10 +1,10 @@
 const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const validators = require('../validators');
 
-const { PostModel } = require('../models');
+// const { PostModel } = require('../models');
 const AuthService = require('./AuthService');
 
-module.exports = {
+module.exports = ({ PostModel }) => ({
 
   async findPosts(query) {
     return await PostModel.find(query);
@@ -46,7 +46,7 @@ module.exports = {
     //   throw new AuthenticationError('You must be logged in to perform this action.');
     // }
 
-    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -60,7 +60,7 @@ module.exports = {
 
     // const post = await PostModel.findById(postId);
 
-    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -72,10 +72,10 @@ module.exports = {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isSameUser, AuthService.isAdmin ])) {
-      throw new ForbiddenError('You are not authorized to perform this action.');
-    }
+    // if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
+    //   throw new ForbiddenError('You are not authorized to perform this action.');
+    // }
 
     return await PostModel.toggleLikeStatus(postId, reqUser.id);
   },
-};
+});

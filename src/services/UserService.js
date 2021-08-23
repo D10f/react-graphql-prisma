@@ -2,10 +2,10 @@ const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const argon2 = require('argon2');
 
 const validators = require('../validators');
-const { UserModel } = require('../models');
+// const { UserModel } = require('../models');
 const AuthService = require('./AuthService');
 
-module.exports = {
+module.exports = ({ UserModel }) => ({
   async signup(input) {
     validators.validateRegisterUserInput(input);
 
@@ -26,7 +26,7 @@ module.exports = {
       role: input.role,
     });
 
-    newUserModel.token = AuthService.generateToken(newUserModel.id);
+    newUser.token = AuthService.generateToken(newUser.id);
 
     return newUser;
   },
@@ -103,11 +103,11 @@ module.exports = {
     return await UserModel.getLikedPosts(user);
   },
 
-  async getUserPosts(user) {
-    return await UserModel.getUserPosts(user.id);
+  async getUserPosts(userId) {
+    return await UserModel.getUserPosts(userId);
   },
 
   async getUserComments(userId) {
     return await UserModel.getUserComments(id);
   },
-};
+});

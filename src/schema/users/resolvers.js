@@ -6,7 +6,8 @@ module.exports = {
   },
   User: {
     async posts({ id }, args, { user, services }, info) {
-      return await services.post.findByAuthorId(id);
+      // return await services.post.findByAuthorId(id);
+      return await services.user.getUserPosts(id);
     },
     async comments({ id }, args, { user, services }, info) {
       return await services.comment.findByAuthorId(id);
