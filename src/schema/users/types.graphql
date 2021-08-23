@@ -18,7 +18,7 @@ type Mutation {
   registerUser(input: RegisterUserInput!): User!
   loginUser(username: String!, password: String!): User!
   deleteUser(id: ID!): User!
-  updateUser(id: ID!, input: UpdateUserInput!): User!
+  updateUser(targetUserId: ID!, input: UpdateUserInput!): User!
 }
 
 input RegisterUserInput {

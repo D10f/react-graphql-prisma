@@ -57,7 +57,7 @@ module.exports = ({ UserModel }) => ({
     }
 
     // Must be same user or an admin in order to perform this action
-    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 

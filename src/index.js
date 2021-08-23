@@ -9,6 +9,7 @@ const prisma = new PrismaClient(/* { log: ['query'] } */);
 // (acting as the data layer). This creates an chain of dependency that spreads to the services,
 // and then the main server startup function, which uses services on every incoming request to
 // determine the GraphQL context.
+// prisma -> models -> services -> server
 const models = require('./models')(prisma);
 const services = require('./services')(models);
 
