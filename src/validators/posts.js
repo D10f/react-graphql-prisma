@@ -26,7 +26,7 @@ module.exports.validateUpdatePostInput = ajv.compile({
   },
   errorMessage: {
     properties: {
-      title: "You must provide a title with 100 characters maximum length.",
+      title: "Title must be a string between 1 and 100 characters long.",
       body: "Body of the post must be a string",
       published: "Published status must be a boolean.",
     },

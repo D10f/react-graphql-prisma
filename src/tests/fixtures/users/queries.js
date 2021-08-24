@@ -1,8 +1,9 @@
 const { gql } = require('apollo-server');
 
-const GET_ALL_USERS = gql`
-  query {
-    users {
+    
+const GET_USERS = gql`
+  query getUsers($query: String) {
+    users(query: $query) {
       id
       username
       email
@@ -11,7 +12,7 @@ const GET_ALL_USERS = gql`
   }
 `;
 
-const GET_ALL_POSTS = gql`
+const GET_POSTS = gql`
   query {
     users {
       posts {
@@ -24,6 +25,6 @@ const GET_ALL_POSTS = gql`
 `;
 
 module.exports = {
-  GET_ALL_USERS,
-  GET_ALL_POSTS
+  GET_USERS,
+  GET_POSTS
 };

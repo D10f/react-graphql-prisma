@@ -27,7 +27,7 @@ module.exports = {
       return await services.user.update(Number(targetUserId), input, user);
     },
     async deleteUser(parent, { id }, { user, services }, info) {
-      return await services.user.delete(id);
+      return await services.user.delete(Number(id), user);
     },
   }
 };

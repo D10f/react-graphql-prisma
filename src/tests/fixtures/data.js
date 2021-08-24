@@ -4,21 +4,21 @@ const users = [
     username: "Abigail",
     email: "abigail@example.com",
     password: "abigailInWonderland",
-    role: "USER"
+    role: "USER",
   },
   {
     id: 2,
     username: "Barret",
     email: "barret@example.com",
-    password: "barretInWonderland",
-    role: "ADMIN"
+    password: "$argon2i$v=19$m=4096,t=3,p=1$rxNMsDbdx4bl0LEE7YFefw$cynBsQ/rxVpFcPWDpea2ld1THwRVxk6MIafjE8xrzk0",
+    role: "ADMIN",
   },
   {
     id: 3,
     username: "Cinderella",
     email: "cinderella@example.com",
     password: "$argon2i$v=19$m=4096,t=3,p=1$FE/cIBvOr5I+wwCCdrDWMw$yCAC1A7DMNB7KOEXhJN8yQQQC9aGPsaHOAQJkmg846M",
-    role: "USER"
+    role: "USER",
   },
 ];
 
@@ -74,5 +74,10 @@ const comments = [
 module.exports = {
   users,
   posts,
-  comments
+  comments,
+  tokens: {
+    token0: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjI5ODMzMTY3fQ.1Wv-juWE79RCFmpBuTazQQunoSEyF3KMaxB9naO-a7I',
+    token1: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjI5ODMzMTcxfQ.Gdslr_nUDQuOPQWsYYNXywnTENMKypa_hBOjnXXBMCw',
+    token2: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjI5ODMzMTczfQ.qwygbXwlNli7KctDl1c75HpNFYWwc6MqS4nAelOA7Ww',
+  }
 };

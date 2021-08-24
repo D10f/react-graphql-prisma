@@ -78,11 +78,8 @@ module.exports = ({ UserModel }) => ({
 
   async delete(userId, reqUser) {
 
-    if (!AuthService.isAuthenticated(reqUser)) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
-    if (!AuthService.isAdmin(reqUser)) {
+    // Must be same user or an admin in order to perform this action
+    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 

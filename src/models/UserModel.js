@@ -63,13 +63,29 @@ module.exports = prisma => ({
       throw new UserInputError('No user found with that id.');
     }
 
+    // Deleting a user triggers a cascade effect:
+
     // Get all Ids of posts and comments by that user
     const postsByUser = user.posts.map(post => post.id);
     const commentsByUser = user.comments.map(comment => comment.id);
 
+    // Get all Ids of nested comments included in posts about to be deleted
+    const otherNestedComments = await prisma.post.findMany({
+      where: { id: { in: postsByUser }},
+      include: { comments: true }
+    });
+
+    const otherCommentsToBeDeleted = [];
+
+    for (const post of otherNestedComments) {
+      for (const comment of post.comments) {
+        otherCommentsToBeDeleted.push(comment.id);
+      }
+    }
+
     // Delete comments, posts and user in a single transaction due to closely coupled data
     await prisma.$transaction([
-      prisma.comment.deleteMany({ where: { id: { in: commentsByUser } }}),
+      prisma.comment.deleteMany({ where: { id: { in: [ ...commentsByUser, ...otherCommentsToBeDeleted] } }}),
       prisma.post.deleteMany({ where: { id: { in: postsByUser } }}),
       prisma.user.delete({ where: { id }})
     ]);

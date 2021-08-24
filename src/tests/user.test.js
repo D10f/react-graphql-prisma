@@ -1,7 +1,6 @@
-const argon2 = require('argon2');
 const { queries, mutations } = require('./fixtures/users');
 const { setupServer, setupDatabase, teardownDatabase } = require('./fixtures/server');
-const { users } = require('./fixtures/data');
+const { users, tokens } = require('./fixtures/data');
 
 let query, mutate, setOptions;
 
@@ -12,11 +11,17 @@ beforeAll(async () => {
   setOptions = server.setOptions;
 });
 
-beforeEach(async () => await setupDatabase());
-afterEach(async () => {
-  await teardownDatabase()
-  setOptions({ request: {} });
+beforeEach(async () => {
+  await setupDatabase();
+  setOptions({
+    request: {
+      headers: {
+        authorization: `Bearer ${tokens.token2}`,
+      }
+    }
+  });
 });
+afterEach(async () => await teardownDatabase());
 
 test('Should signup a new user', async () => {
 
@@ -97,13 +102,14 @@ test('Should login using an existing user\'s credentials', async () => {
 
 test('Should NOT login using a invalid credentials', async () => {
 
-  const { username, password } = users[1];
-
   const result = await mutate(mutations.LOGIN_USER, {
-    variables: { username, password }
+    variables: {
+      username: users[0].username,
+      password: users[0].password,
+    }
   });
 
-  // This is an argon2 error because the user[1] password is not hashed in the mock database
+  // This is an argon2 error because the user[0] password is not hashed in the mock database
   expect(result.errors[0].message).toBe('pchstr must contain a $ as first char');
 
   const result2 = await mutate(mutations.LOGIN_USER, {
@@ -126,27 +132,12 @@ test('Should NOT login using a invalid credentials', async () => {
 
 test('Should update an existing user\s data', async () => {
 
-  const loginData = await mutate(mutations.LOGIN_USER, {
-    variables: {
-      username: users[2].username,
-      password: 'cinderellaInWonderland'
-    }
-  });
-
-  setOptions({
-    request: {
-      headers: {
-        authorization: `Bearer ${loginData.data.loginUser.token}`,
-      }
-    }
-  });
-
   const updates = {
     password: 'myNewPassword'
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: loginData.data.loginUser.id, input: updates }
+    variables: { targetUserId: users[2].id, input: updates }
   });
 
   expect(result.data.updateUser.password.startsWith('$argon')).toBe(true);
@@ -154,12 +145,8 @@ test('Should update an existing user\s data', async () => {
 
 test('Should NOT update due to unauthenticated/unauthorized user', async () => {
 
-  const loginData = await mutate(mutations.LOGIN_USER, {
-    variables: {
-      username: users[2].username,
-      password: 'cinderellaInWonderland'
-    }
-  });
+  // Without being authenticated
+  setOptions({ request: {} });
 
   let updates = {
     password: 'myNewPassword',
@@ -167,44 +154,37 @@ test('Should NOT update due to unauthenticated/unauthorized user', async () => {
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: loginData.data.loginUser.id, input: updates }
+    variables: { targetUserId: users[0].id, input: updates }
   });
 
-  /* Trying to update user without logging in return an authentication error */
+  /* Trying to update user without logging in, returns an authentication error */
   expect(result.errors[0].message).toBe('You must be logged in to perform this action.');
 
+  // Logged in as a non-admin user
   setOptions({
     request: {
       headers: {
-        authorization: `Bearer ${loginData.data.loginUser.token}`,
+        authorization: `Bearer ${tokens.token2}`,
       }
     }
   });
 
-  /* Trying to update another user's profile without being admin return a forbidden error */
+  /* Trying to update another user's profile without being admin, returns a forbidden error */
   const result2 = await mutate(mutations.UPDATE_USER, {
     variables: { targetUserId: users[0].id, input: updates }
   });
 
-  expect(result2.errors[0].message).toBe('You are not authorized to perform this action.');
-
   /* Trying to update a user's own role needs admin permissions, returns a forbidden error */
   const result3 = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: loginData.data.loginUser.id, input: updates }
+    variables: { targetUserId: users[2].id, input: updates }
   });
 
+  expect(result2.errors[0].message).toBe('You are not authorized to perform this action.');
   expect(result3.errors[0].message).toBe('You are not authorized to perform this action.');
 });
 
 
 test('Should NOT update due to invalid format', async () => {
-
-  const loginData = await mutate(mutations.LOGIN_USER, {
-    variables: {
-      username: users[2].username,
-      password: 'cinderellaInWonderland'
-    }
-  });
 
   const updates = {
     username: 'a',
@@ -213,11 +193,75 @@ test('Should NOT update due to invalid format', async () => {
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: loginData.data.loginUser.id, input: updates }
+    // variables: { targetUserId: loginData.data.loginUser.id, input: updates }
+    variables: { targetUserId: users[2].id, input: updates }
   });
 
   expect(result.errors[0].extensions.errors).toHaveLength(3);
   expect(result.errors[0].extensions.errors[0].message).toBe('You must provide a username at least 2 characters long.');
   expect(result.errors[0].extensions.errors[1].message).toBe('You must provide a valid email address.');
   expect(result.errors[0].extensions.errors[2].message).toBe('Passwords must be at least 8 characters long.');
+});
+
+
+test('Should delete logged in user', async () => {
+
+  const result = await mutate(mutations.DELETE_USER, {
+    // variables: { id: loginData.data.loginUser.id }
+    variables: { id: users[2].id }
+  });
+
+  // Cast id into string which is what's returned from the server
+  expect(result.data.deleteUser).toEqual({
+    id: `${users[2].id}`,
+    username: users[2].username,
+    email: users[2].email,
+  });
+
+  // Querying the databse for that user should now return an empty array
+  const result2 = await query(queries.GET_USERS, {
+    variables: { query: users[2].username }
+  });
+
+  expect(result2.data.users).toHaveLength(0);
+});
+
+test('Should delete another user while logged in as admin', async () => {
+
+  setOptions({
+    request: {
+      headers: {
+        authorization: `Bearer ${tokens.token1}`,
+      }
+    }
+  });
+
+  const result = await mutate(mutations.DELETE_USER, {
+    variables: { id: users[0].id }
+  });
+
+  // Cast id into string which is what's returned from the server
+  expect(result.data.deleteUser).toEqual({
+    id: `${users[0].id}`,
+    username: users[0].username,
+    email: users[0].email,
+  });
+
+  // Querying the databse for that user should now return an empty array
+  const result2 = await query(queries.GET_USERS, {
+    variables: { query: users[0].username }
+  });
+
+  expect(result2.data.users).toHaveLength(0);
+});
+
+
+test('Should NOT delete another user if not logged in as admin', async () => {
+
+  const result = await mutate(mutations.DELETE_USER, {
+    variables: { id: users[0].id }
+  });
+
+  // Cast id into string which is what's returned from the server
+  expect(result.errors[0].message).toBe('You are not authorized to perform this action.');
 });

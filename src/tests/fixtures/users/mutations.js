@@ -36,8 +36,19 @@ const UPDATE_USER = gql`
   }
 `;
 
+const DELETE_USER = gql`
+  mutation deleteUser($id: ID!) {
+    deleteUser(id: $id) {
+      id
+      username
+      email
+    }
+  }
+`;
+
 module.exports = {
   LOGIN_USER,
   REGISTER_USER,
-  UPDATE_USER
+  UPDATE_USER,
+  DELETE_USER
 };
