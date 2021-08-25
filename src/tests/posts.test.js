@@ -21,6 +21,7 @@ beforeEach(async () => {
     }
   });
 });
+
 afterEach(async () => await teardownDatabase());
 
 test('Should create a new post', async () => {

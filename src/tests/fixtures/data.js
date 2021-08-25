@@ -45,30 +45,35 @@ const posts = [
 
 const comments = [
   {
+    id: 1,
     text: "Congratulations!",
     postId: posts[0].id,
     authorId: users[1].id
   },
   {
+    id: 2,
     text: "It will become easier once you get the hang of it. Have you considered using Docker?",
     postId: posts[1].id,
-    authorId: users[0].id
-  },
-  {
-    text: "Yes, but it's really not that easy since there are so many things to keep up with!",
-    postId: posts[1].id,
-    authorId: users[1].id
-  },
-  {
-    text: "Amazing! I was there three years ago and I had the time of my life",
-    postId: posts[2].id,
-    authorId: users[1].id
-  },
-  {
-    text: "Hey! Do you have any recommendations about what to do there?",
-    postId: posts[2].id,
     authorId: users[2].id
   },
+  {
+    id: 3,
+    text: "Yes, but it's really not that easy since there are so many things to keep up with!",
+    postId: posts[2].id,
+    authorId: users[0].id
+  },
+  // {
+  //   id: 4,
+  //   text: "Amazing! I was there three years ago and I had the time of my life",
+  //   postId: posts[2].id,
+  //   authorId: users[1].id
+  // },
+  // {
+  //   id: 5,
+  //   text: "Hey! Do you have any recommendations about what to do there?",
+  //   postId: posts[2].id,
+  //   authorId: users[2].id
+  // },
 ];
 
 module.exports = {
