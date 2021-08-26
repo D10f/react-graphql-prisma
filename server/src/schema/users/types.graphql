@@ -1,12 +1,28 @@
 type User {
   id: ID!
+
+  "The username for this account"
   username: String!
+
+  "A unique email used for recovery passwords and notifications"
   email: String!
+
+  "Password of at least 8 characters in length"
   password: String!
+
+  "JSON Web Token for authentication"
   token: String
+
+  "User role within the application"
   role: UserRole!
+
+  "The posts created by the user"
   posts: [Post!]!
+
+  "The posts the user has given a like"
   likes: [Post!]!
+
+  "The comments created by the user"
   comments: [Comment!]!
 }
 
@@ -36,6 +52,7 @@ input UpdateUserInput {
   role: UserRole
 }
 
+"Possible roles available for a user"
 enum UserRole {
   USER
   ADMIN

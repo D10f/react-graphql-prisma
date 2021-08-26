@@ -21,7 +21,7 @@ function validate(jsonSchema) {
   return function(input) {
     const isValid = jsonSchema(input);
     if (isValid) return true;
-    throw new UserInputError('Something went wrong', {
+    throw new UserInputError('User Input Validation Error', {
       errors: addCustomErrors(jsonSchema.errors)
     });
   };

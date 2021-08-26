@@ -1,6 +1,6 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { ApolloServerPluginLandingPageGraphQLPlayground } = require("apollo-server-core");
+// const { ApolloServerPluginLandingPageGraphQLPlayground } = require("apollo-server-core");
 
 const { typeDefs, resolvers } = require('./schema');
 // const services = require('./services');
@@ -19,7 +19,7 @@ async function createApolloServer(services){
       return { user, services };
     },
     plugins: [
-      ApolloServerPluginLandingPageGraphQLPlayground
+      // ApolloServerPluginLandingPageGraphQLPlayground
     ]
   });
 

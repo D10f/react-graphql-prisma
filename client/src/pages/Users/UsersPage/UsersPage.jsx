@@ -1,5 +1,11 @@
 import UserList from '../UserList/UserList';
 
+/* testing */
+import { useApolloClient } from "@apollo/client";
+import { REGISTER_USER } from '@services/users/mutations';
+import { LOGGED_IN_USER } from '@services/users/queries';
+/* testing */
+
 const users = [
   {
     username: 'Brad',
@@ -52,6 +58,11 @@ const users = [
 ];
 
 const UsersPage = () => {
+
+  const client = useApolloClient();
+  const res = client.readQuery({ query: LOGGED_IN_USER });
+  console.log(res);
+
   return (
     <UserList users={users} />
   );

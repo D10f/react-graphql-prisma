@@ -16,7 +16,8 @@ const UserList = ({ users }) => {
           <Masonry
             breakpointCols={breakpoints}
             className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column">
+            columnClassName="my-masonry-grid_column"
+          >
             {users.map(user => (
               <div key={Math.random()}>
                 <UserCard user={user} />
