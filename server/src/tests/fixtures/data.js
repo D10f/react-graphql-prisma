@@ -62,18 +62,6 @@ const comments = [
     postId: posts[2].id,
     authorId: users[0].id
   },
-  // {
-  //   id: 4,
-  //   text: "Amazing! I was there three years ago and I had the time of my life",
-  //   postId: posts[2].id,
-  //   authorId: users[1].id
-  // },
-  // {
-  //   id: 5,
-  //   text: "Hey! Do you have any recommendations about what to do there?",
-  //   postId: posts[2].id,
-  //   authorId: users[2].id
-  // },
 ];
 
 module.exports = {

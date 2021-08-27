@@ -1,7 +1,19 @@
 module.exports = {
   Query: {
+    // DEPRECATED: Returns an array of 10 posts
     async posts(parent, { query }, { user, services }, info) {
-      return await services.post.findPosts(query);
+      return await services.post.findPosts(10);
+    },
+    async getPostDetails(parent, { id }, { user, services }, info) {
+      return await services.post.findById(Number(id));
+    },
+    // Returns an array of posts meant to be used in the public landing page feed
+    async postsForPublicFeed(parent, { limit, skip }, { user, services}) {
+      return await services.post.findPosts(limit, skip);
+    },
+    // Returns an array of filtered posts that an authenticated user has given a like
+    async postsForFavoriteFeed(parent, { limit, skip }, { user, services }) {
+      return await services.user.getLikedPosts(user, limit, skip);
     },
   },
   Post: {

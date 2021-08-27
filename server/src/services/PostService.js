@@ -1,13 +1,12 @@
 const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const validators = require('../validators');
 
-// const { PostModel } = require('../models');
 const AuthService = require('./AuthService');
 
 module.exports = ({ PostModel }) => ({
 
-  async findPosts(query) {
-    return await PostModel.find(query);
+  async findPosts(limit = 10, skip = 0) {
+    return await PostModel.find(limit, skip);
   },
 
   async findById(postId) {

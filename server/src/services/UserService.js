@@ -96,8 +96,13 @@ module.exports = ({ UserModel }) => ({
     return await UserModel.findMany(query);
   },
 
-  async getUserLikes(user) {
-    return await UserModel.getLikedPosts(user);
+  async getLikedPosts(userId, reqUser, limit = 10, skip = 0) {
+
+    if (!AuthService.isAuthenticated(reqUser)) {
+      throw new AuthenticationError('You must be logged in to perform this action.');
+    }
+
+    return await UserModel.getLikedPosts(userId, limit, skip);
   },
 
   async getUserPosts(userId) {

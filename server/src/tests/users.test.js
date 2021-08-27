@@ -138,7 +138,7 @@ test('Should update an existing user\s data', async () => {
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: users[2].id, input: updates }
+    variables: { id: users[2].id, input: updates }
   });
 
   expect(result.data.updateUser.password.startsWith('$argon')).toBe(true);
@@ -155,7 +155,7 @@ test('Should NOT update due to unauthenticated/unauthorized user', async () => {
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: users[0].id, input: updates }
+    variables: { id: users[0].id, input: updates }
   });
 
   /* Trying to update user without logging in, returns an authentication error */
@@ -172,12 +172,12 @@ test('Should NOT update due to unauthenticated/unauthorized user', async () => {
 
   /* Trying to update another user's profile without being admin, returns a forbidden error */
   const result2 = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: users[0].id, input: updates }
+    variables: { id: users[0].id, input: updates }
   });
 
   /* Trying to update a user's own role needs admin permissions, returns a forbidden error */
   const result3 = await mutate(mutations.UPDATE_USER, {
-    variables: { targetUserId: users[2].id, input: updates }
+    variables: { id: users[2].id, input: updates }
   });
 
   expect(result2.errors[0].message).toBe('You are not authorized to perform this action.');
@@ -194,8 +194,8 @@ test('Should NOT update due to invalid format', async () => {
   };
 
   const result = await mutate(mutations.UPDATE_USER, {
-    // variables: { targetUserId: loginData.data.loginUser.id, input: updates }
-    variables: { targetUserId: users[2].id, input: updates }
+    // variables: { id: loginData.data.loginUser.id, input: updates }
+    variables: { id: users[2].id, input: updates }
   });
 
   expect(result.errors[0].extensions.errors).toHaveLength(3);

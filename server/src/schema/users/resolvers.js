@@ -3,17 +3,20 @@ module.exports = {
     async users(parent, { query }, { user, services }, info) {
       return await services.user.findUsers(query);
     },
+    // Retrieves a single profile by user id
+    async getUserProfile(parent, { id }, { user, services }) {
+      return await services.user.findById(id);
+    }
   },
   User: {
     async posts({ id }, args, { user, services }, info) {
-      // return await services.post.findByAuthorId(id);
       return await services.user.getUserPosts(id);
     },
     async comments({ id }, args, { user, services }, info) {
       return await services.comment.findByAuthorId(id);
     },
     async likes({ id }, args, { user, services }, info) {
-      return await services.user.getUserLikes(id);
+      return await services.user.getLikedPosts(Number(id), user);
     }
   },
   Mutation: {
@@ -23,8 +26,8 @@ module.exports = {
     async loginUser(parent, { username, password }, { user, services }, info) {
       return await services.user.login(username, password);
     },
-    async updateUser(parent, { targetUserId, input }, { user, services }, info) {
-      return await services.user.update(Number(targetUserId), input, user);
+    async updateUser(parent, { id, input }, { user, services }, info) {
+      return await services.user.update(Number(id), input, user);
     },
     async deleteUser(parent, { id }, { user, services }, info) {
       return await services.user.delete(Number(id), user);

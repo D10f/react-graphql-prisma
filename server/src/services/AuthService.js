@@ -36,9 +36,10 @@ module.exports = {
     return user.role === 'ADMIN';
   },
 
-  // isSameUser(user, ownerId) {
-  //   return user.id === ownerId;
-  // },
+  // Created separately for better readability on the Services layer
+  isSameUser(user, userId) {
+    return this.isAuthor(user, userId);
+  },
 
   isAuthor(user, authorId) {
     return user.id === authorId;

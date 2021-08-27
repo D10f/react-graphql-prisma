@@ -1,3 +1,16 @@
+type Query {
+  posts(query: String): [Post!]!
+
+  "Retrieves posts to be displayed in the public feed"
+  postsForPublicFeed(limit: Int, skip: Int): [Post!]!
+
+  "Retrieves posts that an authenticated user has previously liked"
+  postsForFavoriteFeed(limit: Int, skip: Int): [Post!]!
+
+  "Retrieves a post details"
+  getPostDetails(id: ID!): Post!
+}
+
 type Post {
   id: ID!
   title: String!
@@ -10,10 +23,6 @@ type Post {
   author: User!
   comments: [Comment!]!
   commentCount: Int!
-}
-
-type Query {
-  posts(query: String): [Post!]!
 }
 
 type Mutation {

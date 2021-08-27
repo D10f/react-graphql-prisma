@@ -25,8 +25,8 @@ const REGISTER_USER = gql`
 `;
 
 const UPDATE_USER = gql`
-  mutation updateUser($targetUserId: ID!, $input: UpdateUserInput!) {
-    updateUser(targetUserId: $targetUserId, input: $input) {
+  mutation updateUser($id: ID!, $input: UpdateUserInput!) {
+    updateUser(id: $id, input: $input) {
       id
       username
       email

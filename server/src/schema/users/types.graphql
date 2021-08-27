@@ -1,3 +1,17 @@
+type Query {
+  users(query: String): [User!]!
+
+  "Retrieves a single user profile by id"
+  getUserProfile(id: ID!): User!
+}
+
+type Mutation {
+  registerUser(input: RegisterUserInput!): User!
+  loginUser(username: String!, password: String!): User!
+  deleteUser(id: ID!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+}
+
 type User {
   id: ID!
 
@@ -10,31 +24,38 @@ type User {
   "Password of at least 8 characters in length"
   password: String!
 
-  "JSON Web Token for authentication"
+  "JSON Web Token for authentication during registration and login"
   token: String
 
-  "User role within the application"
+  "The user's diving certification level as defined by PADI"
+  certification: Certification!
+
+  "The role in the application to determine the access to administrative tasks"
   role: UserRole!
 
-  "The posts created by the user"
+  "Posts created by the user"
   posts: [Post!]!
 
-  "The posts the user has given a like"
+  "Posts the user has given a like"
   likes: [Post!]!
 
-  "The comments created by the user"
+  "Comments created by the user"
   comments: [Comment!]!
 }
 
-type Query {
-  users(query: String): [User!]!
-}
+"TODO: Update mutation responses with a more descriptive type"
+type RegisterUserResponse {
+  "Similar to a HTTP status code, represents the status of the mutation"
+  code: Int!
 
-type Mutation {
-  registerUser(input: RegisterUserInput!): User!
-  loginUser(username: String!, password: String!): User!
-  deleteUser(id: ID!): User!
-  updateUser(targetUserId: ID!, input: UpdateUserInput!): User!
+  "Indicates whether the mutation succeeded or not"
+  success: Boolean!
+
+  "Descriptive message meant to be displayed to user"
+  message: String!
+
+  "The user object of the mutation"
+  user: User
 }
 
 input RegisterUserInput {
@@ -56,4 +77,12 @@ input UpdateUserInput {
 enum UserRole {
   USER
   ADMIN
+}
+
+"Diving certifications assignable to a user"
+enum Certification {
+  OPEN_WATER
+  ADVANCED
+  RESCUE
+  DIVEMASTER
 }

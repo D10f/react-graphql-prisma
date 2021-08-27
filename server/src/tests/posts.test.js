@@ -171,12 +171,10 @@ test('Should delete an existing post', async () => {
     published: posts[2].published,
   });
 
-  const result2 = await query(queries.GET_POSTS, {
-    variables: { query: posts[2].title }
-  });
+  const result2 = await query(queries.GET_POSTS);
 
-  /* Assert that post cannot be found */
-  expect(result2.data.posts).toHaveLength(0);
+  /* Assert that only 2 posts are left */
+  expect(result2.data.posts).toHaveLength(2);
 });
 
 test('Should successfully like and dislike a post', async () => {

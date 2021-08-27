@@ -28,12 +28,13 @@ module.exports = prisma => ({
     return await prisma.user.findUnique({ where: { id: userId }}).comments();
   },
 
-  async getLikedPosts(userId) {
+  async getLikedPosts(userId, limit, skip) {
     const result = await prisma.user.findUnique({
       where: { id: userId },
       select: { likes: true }
     });
-    return result.likes;
+    // return result.likes;
+    return result.likes.slice(skip, limit);
   },
 
   async create(data) {
@@ -52,18 +53,19 @@ module.exports = prisma => ({
     }
   },
 
+  // Deletes the user and triggers a cascade to also delete all associated posts and comments.
   async delete(id) {
-    // Retrieve user data, including all posts and comments
     const user = await prisma.user.findUnique({
       where: { id },
-      include: { posts: true, comments: true }
+      include: {
+        posts: true,
+        comments: true
+      }
     });
 
     if (!user) {
       throw new UserInputError('No user found with that id.');
     }
-
-    // Deleting a user triggers a cascade effect:
 
     // Get all Ids of posts and comments by that user
     const postsByUser = user.posts.map(post => post.id);

@@ -1,7 +1,1 @@
-{
-  "watchPathIgnorePatterns": [
-    "src/node_modules",
-    "prisma",
-    "client"
-  ]
-}
+{}

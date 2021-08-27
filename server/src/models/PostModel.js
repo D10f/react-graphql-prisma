@@ -1,19 +1,20 @@
 const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-server');
 
 module.exports = prisma => ({
-  
+
+  async find(limit, skip) {
+    return await prisma.post.findMany({
+      take: limit,
+      skip
+    });
+  },
+
   async findById(id) {
     return await prisma.post.findUnique({ where: { id }});
   },
 
   async findByAuthorId(id) {
     return await prisma.post.findMany({ where: { authorId: id }});
-  },
-
-  async find(query = '') {
-    return query
-      ? await prisma.post.findMany({ where: { title: query }})
-      : await prisma.post.findMany();
   },
 
   async findLikedBy(id) {
