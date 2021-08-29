@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useMutation } from "@apollo/client";
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
@@ -24,19 +23,6 @@ const RegisterForm = () => {
   const [ password, setPassword ] = useState({ value: 'password123', error: false });
   const [ confirmPassword, setConfirmPassword ] = useState({ value: 'password123', error: false });
 
-  const [ registerUser, { client, loading } ] = useMutation(REGISTER_USER, {
-    update(cache, { data }) {
-      client.writeQuery({
-        query: LOGGED_IN_USER,
-        data: {
-          user: data.registerUser
-        }
-      });
-
-      console.log(cache.data.data);
-    }
-  });
-
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -44,45 +30,15 @@ const RegisterForm = () => {
 
     if (!username.value) errors.push(setUsername);
     if (!email.value) errors.push(setEmail);
-    if (password.value !== confirmPassword.value) {
-      errors.push(setPassword, setConfirmPassword);
-    } else {
-      if (!password.value) errors.push(setPassword);
-      if (!confirmPassword.value) errors.push(setConfirmPassword);
-    }
+    if (!password.value) errors.push(setPassword);
+    if (!confirmPassword.value) errors.push(setConfirmPassword);
 
     if (errors.length) {
-      // Each error a call to setState for the respective fields that failed validation
       return errors.forEach(error => error(previous => ({ ...previous, error: true })));
     };
 
-    const res = await registerUser({
-      variables: {
-        input: {
-          username: username.value,
-          email: email.value,
-          password: password.value,
-          confirmPassword: confirmPassword.value
-        }
-      }
-    });
+    // TODO: Send registerUser mutation
   };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  // if (error) {
-  //   // If is not a validation error simply return the error
-  //   if (error.message !== 'User Input Validation Error') {
-  //     return <p>{error.message}</p>;
-  //   }
-  //
-  //   // Else provide some feedback as to what user did wrong
-  //   return error.graphQLErrors[0].extensions.errors.map(({ field, message }) => {
-  //     return <p>{message}</p>;;
-  //   });
-  // }
 
   return (
     <Container>

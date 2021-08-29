@@ -1,5 +1,4 @@
-import UsersPage from './Users/UsersPage/UsersPage';
+import PublicFeed from './Feeds/PublicFeed';
 import RegisterPage from './Register/RegisterPage/RegisterPage';
-import LoginPage from './Login/LoginPage/LoginPage';
 
-export { UsersPage, LoginPage, RegisterPage };
+export { RegisterPage, PublicFeed };

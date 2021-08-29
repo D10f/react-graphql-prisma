@@ -1,10 +1,17 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { ApolloProvider } from '@apollo/client';
-import client from '@services/api';
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import App from './App';
 
 import './styles.css';
-import App from './App';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:5000/graphql',
+  cache: new InMemoryCache(),
+  headers: {
+    authorization: `${Math.random()}`
+  }
+});
 
 render(
   <React.StrictMode>

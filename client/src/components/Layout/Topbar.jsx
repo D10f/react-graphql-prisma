@@ -5,10 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 
-import mario from '@assets/mario-av.png';
-
 import { DRAWER_WIDTH } from '@constants';
 import { ROUTE_TITLES } from '@enums';
+
+import mario from '@assets/mario-av.png';
 
 const useStyles = makeStyles({
   appbar: {

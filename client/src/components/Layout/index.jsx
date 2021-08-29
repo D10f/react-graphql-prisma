@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
-import Sidebar from '../Sidebar/Sidebar';
-import Topbar from '../Topbar/Topbar';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 
 const useStyles = makeStyles(theme => ({
   root: {

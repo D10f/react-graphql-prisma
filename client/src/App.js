@@ -1,11 +1,10 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@material-ui/core';
+import { PublicFeed, RegisterPage } from '@pages';
+import Layout from '@components/Layout';
 
+import { createTheme, ThemeProvider } from '@material-ui/core';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import amber from '@material-ui/core/colors/amber';
-
-import { UsersPage, RegisterPage, LoginPage } from '@pages';
-import { Layout } from '@components';
 
 const theme = createTheme({
   palette: {
@@ -24,9 +23,8 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
-            <Route exact path="/" component={UsersPage} />
+            <Route exact path="/" component={PublicFeed} />
             <Route path="/register" component={RegisterPage} />
-            <Route path="/login" component={LoginPage} />
           </Switch>
         </Layout>
       </Router>

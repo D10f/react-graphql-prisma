@@ -7,37 +7,19 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
 
-import pink from '@material-ui/core/colors/pink';
-import amber from '@material-ui/core/colors/amber';
-import green from '@material-ui/core/colors/green';
-import blue from '@material-ui/core/colors/blue';
-
+import padiColorMapper from '@utils/padiColorMapper';
 import { PADI_CERTS } from '@enums';
-
-const colorInterpolation = ({ certification }) => {
-  switch (certification) {
-    case PADI_CERTS.OPEN_WATER:
-      return blue[500];
-    case PADI_CERTS.ADVANCED:
-      return pink[500];
-    case PADI_CERTS.RESCUE:
-      return green[500];
-    case PADI_CERTS.DIVEMASTER:
-      return amber[500];
-    default:
-      return amber[500];
-  }
-}
 
 const useStyles = makeStyles({
   avatar: {
-    backgroundColor: colorInterpolation
+    backgroundColor: padiColorMapper
   }
 });
 
-const UserCard = ({ user: { username, handle, certification, quote } }) => {
+const CardItem = ({ id, title, body, commentCount, likeCount, author }) => {
 
-  const classes = useStyles({ certification });
+  const { username } = author;
+  const classes = useStyles({ certification: PADI_CERTS.OPEN_WATER });
 
   return (
     <Card>
@@ -52,8 +34,8 @@ const UserCard = ({ user: { username, handle, certification, quote } }) => {
             <DeleteOutlined/>
           </IconButton>
         }
-        title={username}
-        subheader={handle}
+        title={title}
+        subheader={username}
       />
 
       <CardContent>
@@ -62,11 +44,11 @@ const UserCard = ({ user: { username, handle, certification, quote } }) => {
           component="p"
           color="textSecondary"
         >
-          {quote}
+          {body}
         </Typography>
       </CardContent>
     </Card>
   );
 };
 
-export default UserCard;
+export default CardItem;
