@@ -7,7 +7,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 export const DRAWER_WIDTH  = 250;
 export const WEBAPP_NAME   = 'Dive Mapper';
 
-export const PER_PAGE = 20;
+export const PER_PAGE = 10;
 
 export const SIDEBAR_ITEMS = [
   {

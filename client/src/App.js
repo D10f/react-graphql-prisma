@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { PublicFeed, RegisterPage } from '@pages';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from '@components/Routing/Routes';
 import Layout from '@components/Layout';
 
 import { createTheme, ThemeProvider } from '@material-ui/core';
@@ -22,10 +22,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <Router>
         <Layout>
-          <Switch>
-            <Route exact path="/" component={PublicFeed} />
-            <Route path="/register" component={RegisterPage} />
-          </Switch>
+          <Routes />
         </Layout>
       </Router>
     </ThemeProvider>

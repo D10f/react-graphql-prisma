@@ -14,35 +14,48 @@ const useStyles = makeStyles({
   }
 });
 
+/**
+ * Uses IntersectionObserver API to trigger a callback function when a DOM element moves into view
+ * Credit: https://www.youtube.com/watch?v=GVDiw3lAyp0
+ */
 const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
 
   const { centerContent } = useStyles();
 
+  // 1. useRef returns an object whose in-memory reference will stay constant throughout re-renders
   const fetchNextRef = useRef(fetchNext);
-  const [ targetElement, setTargetElement ] = useState(null);
 
+  // 2. overwrite fetchNextRef.current to the function received to fetch new data, since it
+  // changes on every re-render.
   useEffect(() => {
     fetchNextRef.current = fetchNext;
   }, [ fetchNext ]);
 
-  useEffect(() => {
-    const currentEl = targetElement;
-
-    if (currentEl) {
-      observer.current.observe(currentEl);
-    }
-    return () => {
-      if (currentEl) {
-        observer.current.unobserve(currentEl);
-      }
-    };
-  }, [ targetElement ]);
-
+  // 3. The intersection observer uses the initial reference and invoke's the current propery, that
+  // has just been updated to the latest fn reference
   const observer = useRef(new IntersectionObserver(([ entry ]) => {
     if (entry.isIntersecting) {
       fetchNextRef.current();
     }
   }, { threshold: 0.5 }));
+
+  // 4. Same logic as above (keep references up to date) but with a DOM element.
+  const [ targetElement, setTargetElement ] = useState(null);
+
+  useEffect(() => {
+    const currentElement = targetElement;
+    const currentObserver = observer.current;
+
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    }
+
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement);
+      }
+    };
+  }, [ targetElement ]);
 
   return (
     <>
@@ -56,5 +69,4 @@ const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
   );
 };
 
-// {items.map(item => <CardItem key={item.id} {...item} />)}
 export default InfiniteScroll;

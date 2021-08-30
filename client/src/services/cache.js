@@ -15,3 +15,5 @@ const cache = new InMemoryCache({
 });
 
 export const publicFeedVar = makeVar([]);
+export const favoriteFeedVar = makeVar([]);
+export const authenticationVar = makeVar(null);

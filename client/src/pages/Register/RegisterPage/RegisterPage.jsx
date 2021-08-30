@@ -1,9 +1,9 @@
-import RegisterForm from '../RegisterForm/RegisterForm';
+import RegisterForm2 from '../RegisterForm/RegisterForm2';
 
 const RegisterPage = () => {
   return (
     <div>
-      <RegisterForm />
+      <RegisterForm2 />
     </div>
   );
 };

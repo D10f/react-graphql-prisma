@@ -9,11 +9,6 @@ const breakpoints = {
 };
 
 const Grid = ({ items }) => {
-
-  // if (!items.length) {
-  //   return <p>There are no posts yet.</p>
-  // }
-
   return (
     <Container>
       <Masonry

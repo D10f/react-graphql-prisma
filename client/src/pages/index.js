@@ -1,4 +1,4 @@
-import PublicFeed from './Feeds/PublicFeed';
+import Feed from './Feeds/Feed';
 import RegisterPage from './Register/RegisterPage/RegisterPage';
 
-export { RegisterPage, PublicFeed };
+export { RegisterPage, Feed };
