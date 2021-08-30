@@ -1,4 +1,6 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
+import client from '@services/apollo/client';
 import Routes from '@components/Routing/Routes';
 import Layout from '@components/Layout';
 
@@ -19,13 +21,15 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Layout>
-          <Routes />
-        </Layout>
-      </Router>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Layout>
+            <Routes />
+          </Layout>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 };
 

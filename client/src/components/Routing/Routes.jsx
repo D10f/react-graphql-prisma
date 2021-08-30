@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import { Feed, RegisterPage } from '@pages';
 import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS } from '@services/posts/queries';
-import { publicFeedVar, favoriteFeedVar } from '@services/cache';
+import { publicFeedVar, favoriteFeedVar } from '@services/apollo/cache';
 
 /**
  * Returns a component passing different prop values, based on the router's pathname
@@ -17,7 +17,7 @@ const mapLocationToProps = ({ location }, Component) => {
   }
 };
 
-const Routes = (props) => (
+const Routes = () => (
   <Switch>
     <Route
       exact

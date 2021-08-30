@@ -9,6 +9,9 @@ export const GET_PUBLIC_POSTS = gql`
       createdAt
       commentCount
       likeCount
+      likedBy {
+        id
+      }
       author {
         id
         username

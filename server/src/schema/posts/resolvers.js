@@ -13,7 +13,7 @@ module.exports = {
     },
     // Returns an array of filtered posts that an authenticated user has given a like
     async postsForFavoriteFeed(parent, { limit, skip }, { user, services }) {
-      return await services.user.getLikedPosts(user, limit, skip);
+      return await services.user.getLikedPosts(limit, skip, user);
     },
   },
   Post: {

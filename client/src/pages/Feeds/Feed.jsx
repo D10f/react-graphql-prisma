@@ -5,7 +5,6 @@ import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import Grid from '@components/Grid';
 import InfiniteScroll from '@components/InfiniteScroll';
 
-import { publicFeedVar } from '@services/cache';
 import { PER_PAGE } from '@constants';
 
 /**

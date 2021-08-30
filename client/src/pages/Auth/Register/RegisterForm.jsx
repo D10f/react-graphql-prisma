@@ -6,9 +6,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import SendIcon from '@material-ui/icons/Send';
-
-import { REGISTER_USER } from '@services/users/mutations';
-import { LOGGED_IN_USER } from '@services/users/queries';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   field: {
@@ -20,28 +18,29 @@ const validators = {
   username: {
     required: true,
     minLength: 2,
-    maxLength: 32
+    maxLength: 64
   },
   email: {
     required: true,
     pattern: /\w{2,}@\w+\.\w{2,3}(\.\w{2,3})?$/,
-    maxLength: 30
+    maxLength: 64
   },
   password: {
     required: true,
-    minLength: 8
+    minLength: 10,
+    maxLength: 100
   },
   confirmPassword: {
     required: true,
-    minLength: 8
+    minLength: 10,
+    maxLength: 100
   }
 };
 
-const RegisterForm = () => {
+const RegisterForm = ({ onSubmit, loading }) => {
 
   const classes = useStyles();
-  const { register,  formState: { errors }, control, handleSubmit } = useForm();
-  const onSubmit = data => console.log(data);
+  const { register, control, handleSubmit, formState: { errors } } = useForm();
 
   return (
     <Container>
@@ -49,7 +48,7 @@ const RegisterForm = () => {
         <Controller
           name="username"
           control={control}
-          defaultValue=""
+          defaultValue="jon"
           rules={validators.username}
           render={({ field }) => (
             <TextField
@@ -67,7 +66,7 @@ const RegisterForm = () => {
         <Controller
           name="email"
           control={control}
-          defaultValue=""
+          defaultValue="snow@snow.com"
           rules={validators.email}
           render={({ field }) => (
             <TextField
@@ -85,7 +84,7 @@ const RegisterForm = () => {
         <Controller
           name="password"
           control={control}
-          defaultValue=""
+          defaultValue="1234567897"
           rules={validators.password}
           render={({ field }) => (
             <TextField
@@ -104,7 +103,7 @@ const RegisterForm = () => {
         <Controller
           name="confirmPassword"
           control={control}
-          defaultValue=""
+          defaultValue="1234567897"
           rules={validators.password}
           render={({ field }) => (
             <TextField
@@ -126,7 +125,7 @@ const RegisterForm = () => {
           color="primary"
           size="large"
           disableElevation
-          endIcon={<SendIcon/>}
+          endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<SendIcon />}
         >
           SignUp
         </Button>

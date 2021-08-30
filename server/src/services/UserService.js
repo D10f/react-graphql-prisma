@@ -1,4 +1,4 @@
-const { AuthenticationError, ForbiddenError } = require('apollo-server');
+const { AuthenticationError, UserInputError, ForbiddenError } = require('apollo-server');
 const argon2 = require('argon2');
 
 const validators = require('../validators');
@@ -9,14 +9,16 @@ module.exports = ({ UserModel }) => ({
   async signup(input) {
     validators.validateRegisterUserInput(input);
 
-    const user = await UserModel.findByEmail(input.email);
+    const user =
+      await UserModel.findByEmail(input.email) ||
+      await UserModel.findOne(input.username);
 
-    if (user && user.email === input.email) {
-      throw new AuthenticationError('Email is already in use.');
+    if (user && user.email.toLowerCase() === input.email.toLowerCase()) {
+      throw new UserInputError('Email is already in use.');
     }
 
-    if (user && user.username === input.username) {
-      throw new AuthenticationError('Username is already in use.');
+    if (user && user.username.toLowerCase() === input.username.toLowerCase()) {
+      throw new UserInputError('Username is already in use.');
     }
 
     const newUser = await UserModel.create({
@@ -27,6 +29,7 @@ module.exports = ({ UserModel }) => ({
     });
 
     newUser.token = AuthService.generateToken(newUser.id);
+    // TODO: SEND HTTP-ONLY COOKIE AND WIRE REFRESH TOKEN RESOLVER/ENDPOINT
 
     return newUser;
   },
@@ -96,13 +99,13 @@ module.exports = ({ UserModel }) => ({
     return await UserModel.findMany(query);
   },
 
-  async getLikedPosts(userId, reqUser, limit = 10, skip = 0) {
+  async getLikedPosts(limit = 10, skip = 0, reqUser) {
 
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    return await UserModel.getLikedPosts(userId, limit, skip);
+    return await UserModel.getLikedPosts(reqUser.id, limit, skip);
   },
 
   async getUserPosts(userId) {
