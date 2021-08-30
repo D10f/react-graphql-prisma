@@ -31,7 +31,10 @@ const Routes = (props) => (
       render={props => mapLocationToProps(props, Feed) }
     />
 
-    <Route path='/register' component={RegisterPage} />
+    <Route
+      path='/register'
+      component={RegisterPage}
+    />
   </Switch>
 );
 
