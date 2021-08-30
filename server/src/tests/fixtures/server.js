@@ -12,6 +12,7 @@ const services = require('../../services')(models);
 
 // Mock data to populate the database before each test
 const { users, posts, comments } = require('./data');
+// const seedData = require('./data2');
 
 const setupServer = async () => {
   const apolloServer = await createApolloServer(services);
@@ -20,7 +21,7 @@ const setupServer = async () => {
 
 const setupDatabase = async () => {
   await prisma.$connect();
-
+  // await seedData(prisma);
   await prisma.$transaction([
     prisma.user.create({
       data: {

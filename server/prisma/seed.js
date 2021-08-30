@@ -4,6 +4,8 @@ const argon2 = require('argon2');
 
 const prisma = new PrismaClient();
 
+const TOTAL_SEED_USERS = 6;
+
 async function main() {
 
   // Fresh start
@@ -22,7 +24,7 @@ async function main() {
   const userIds = [];
   const postIds = [];
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < TOTAL_SEED_USERS; i++) {
     const userId = faker.unique(faker.datatype.number);
     const postId1 = faker.unique(faker.datatype.number);
     const postId2 = faker.unique(faker.datatype.number);
@@ -40,6 +42,7 @@ async function main() {
         email: faker.internet.exampleEmail(),
         password: await argon2.hash(faker.internet.password()),
         role: faker.random.arrayElement(['USER', 'ADMIN']),
+        certification: faker.random.arrayElement([ 'OPEN_WATER', 'ADVANCED', 'RESCUE', 'DIVEMASTER' ]),
         posts: {
           create: [
             {
@@ -73,7 +76,7 @@ async function main() {
   }
 
   // Now create 2 comments per user on a random post
-  for (let i = 0 ; i < userIds.length; i++) {
+  for (let i = 0 ; i < TOTAL_SEED_USERS; i++) {
 
     // The posts where the new comments will be added, increase their commentCount
     const postId1 = faker.random.arrayElement(postIds);

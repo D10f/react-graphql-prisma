@@ -12,16 +12,17 @@ generator client {
 
 model User {
   @@map(name: "users")
-  id        Int      @default(autoincrement()) @id
-  email     String   @unique
-  username  String   @unique
-  password  String
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]   @relation("WrittenPosts")
-  likes     Post[]   @relation("LikedPosts")
-  comments  Comment[]
+  id            Int           @default(autoincrement()) @id
+  email         String        @unique
+  username      String        @unique
+  password      String
+  role          UserRole      @default(USER)
+  certification Certification @default(OPEN_WATER)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  posts         Post[]        @relation("WrittenPosts")
+  likes         Post[]        @relation("LikedPosts")
+  comments      Comment[]
 }
 
 model Post {
@@ -55,4 +56,11 @@ model Comment {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum Certification {
+  OPEN_WATER
+  ADVANCED
+  RESCUE
+  DIVEMASTER
 }
