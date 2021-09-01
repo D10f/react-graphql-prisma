@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => {
   // console.log(theme)
   return {
     avatar: {
-      backgroundColor: padiColorMapper
+      background: padiColorMapper,
+      boxShadow: theme.shadows[1]
     },
     counter: {
       fontSize: '0.8rem',
@@ -62,8 +63,8 @@ const CardItem = ({
   giveALike
 }) => {
 
-  const { id: authorId, username } = author;
-  const classes = useStyles({ certification: PADI_CERTS.OPEN_WATER });
+  const { id: authorId, username, certification } = author;
+  const classes = useStyles({ certification: PADI_CERTS[certification] });
   const likesThisPost = likedBy.some(user => user.id === loggedInAs);
 
   return (

@@ -14,6 +14,7 @@ export const GET_PUBLIC_POSTS = gql`
       author {
         id
         username
+        certification
       }
     }
   }
@@ -33,6 +34,7 @@ export const GET_FAVORITE_POSTS = gql`
       author {
         id
         username
+        certification
       }
     }
   }
@@ -52,6 +54,7 @@ export const GET_AUTHOR_POSTS = gql`
       author {
         id
         username
+        certification
       }
     }
   }
@@ -60,6 +63,7 @@ export const GET_AUTHOR_POSTS = gql`
 export const GET_POST_DETAILS = gql`
   query getPostDetails($id: ID!) {
     getPostDetails(id: $id) {
+      title
       body
       comments {
         id

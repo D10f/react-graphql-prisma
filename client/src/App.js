@@ -11,7 +11,7 @@ import amber from '@material-ui/core/colors/amber';
 const theme = createTheme({
   palette: {
     primary: {
-      main: lightBlue[600]
+      main: lightBlue[600],
     },
     secondary: {
       main: amber[600]

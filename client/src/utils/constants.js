@@ -63,9 +63,11 @@ export const SIDEBAR_ITEMS = [
   },
 ];
 
+/* TOOLTIPS */
+
 export const IMG_UPLOAD_TOOLTIP = 'Allowed image files of up to 1MB and 1200x800 pixels';
 export const PUBLISH_POST_TOOLTIP = 'Public posts are visible to everyone';
-export const ALLOW_COMMENTS_TOOLTIP = "Disble if you don't want to have comments for this post";
+export const ALLOW_COMMENTS_TOOLTIP = "Disable if you don't want to have comments for this post";
 export const LIKE_POST_TOOLTIP = 'Give this post a like!';
 export const UNLIKE_POST_TOOLTIP = 'Unlike this post';
 export const FIRST_COMMENT_POST_TOOLTIP = 'Be the first to leave a comment!';

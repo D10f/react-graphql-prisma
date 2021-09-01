@@ -155,7 +155,7 @@ const PostForm = ({ onSubmit, loading, post }) => {
         <Controller
           name="allowComments"
           control={control}
-          defaultValue={post?.published || true}
+          defaultValue={post?.allowComments || true}
           render={({ field }) => (
             <Tooltip arrow title={ALLOW_COMMENTS_TOOLTIP}>
               <FormControlLabel

@@ -6,6 +6,7 @@ export const REGISTER_USER = gql`
       id
       username
       token
+      certification
     }
   }
 `;
@@ -16,6 +17,7 @@ export const LOGIN_USER = gql`
       id
       username
       token
+      certification
     }
   }
 `;

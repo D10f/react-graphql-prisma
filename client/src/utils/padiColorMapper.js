@@ -1,7 +1,7 @@
 
 import { PADI_CERTS, PADI_COLORS } from '@enums';
 
-export default ({ certification }) => {
+const padiColorMapper = ({ certification }) => {
   switch (certification) {
     case PADI_CERTS.OPEN_WATER:
       return PADI_COLORS.OPEN_WATER
@@ -19,3 +19,5 @@ export default ({ certification }) => {
       return PADI_COLORS.DIVEMASTER
   }
 };
+
+export default padiColorMapper;

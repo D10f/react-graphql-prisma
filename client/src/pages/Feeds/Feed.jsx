@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useQuery, useLazyQuery, useReactiveVar } from '@apollo/client';
 
 import Grid from '@components/Grid';
@@ -17,24 +16,28 @@ const Feed = ({ cache, query }) => {
 
   const postsInCache = useReactiveVar(cache);
 
-  const [ currentPage, setCurrentPage ] = useState(0);
-
   // The name of the query value, varies depending on the query string used to fetch data
   const queryName = query.definitions[0].name.value;
 
-  // const { data, loading, error, fetchMore, client } = useQuery(query, {
-  const [ startQuery, { data, loading, error, client }] = useLazyQuery(query, {
-    variables: { limit: PER_PAGE, skip: 0 },
-    fetchPolicy: 'network-only',
-    // fetchPolicy: 'cache-first',
-    onCompleted: (responseData) => cache([
-      ...postsInCache,
-      ...responseData[queryName]
-    ])
+  // const { data, loading, error, fetchMore } = useQuery(query, {
+  const [ startQuery, { data, loading, error }] = useLazyQuery(query, {
+    onCompleted: (responseData) => {
+
+      const newUniqueValues = responseData[queryName].filter(post => {
+        return !postsInCache.some(cachedPost => cachedPost.id === post.id);
+      });
+
+      cache([
+        ...postsInCache,
+        ...newUniqueValues
+      ]);
+    }
   });
 
   // Make initial server request
-  useEffect(startQuery, []);
+  useEffect(() => {
+    startQuery({ variables: { limit: PER_PAGE, skip: postsInCache.length }, fetchPolicy: 'network-only' });
+  }, []);
 
   // fetchNext: Increasing currentPage triggers a re-render, changes the variables of the query
   // nextItems: Incoming items from the latest query
@@ -42,13 +45,16 @@ const Feed = ({ cache, query }) => {
   return (
     <InfiniteScroll
       nextItems={data && data[queryName]}
-      fetchNext={() => startQuery({ variables: { skip: postsInCache.length } })}
+      fetchNext={() => {
+        startQuery({ variables: { limit: PER_PAGE, skip: postsInCache.length }});
+      }}
       loading={loading}
       error={error}
     >
-      <Grid items={postsInCache} />
+      <Grid items={cache()} />
     </InfiniteScroll>
   );
 };
+// <Grid items={postsInCache} />
 
 export default Feed;

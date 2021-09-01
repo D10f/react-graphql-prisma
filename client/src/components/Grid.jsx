@@ -2,13 +2,11 @@ import { useState, useCallback } from 'react';
 import { useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
-// import Snackbar from '@material-ui/core/Snackbar';
-// import Alert from '@material-ui/lab/Alert';
 import Toast from '@components/Toast';
 import CardItem from '@components/CardItem';
 import Masonry from 'react-masonry-css';
 
-import { authenticationVar, favoriteFeedVar, publicFeedVar } from '@services/apollo/cache';
+import { authenticationVar, authorFeedVar, favoriteFeedVar, publicFeedVar } from '@services/apollo/cache';
 import { LIKE_POST } from '@services/posts/mutations';
 
 const breakpoints = {
@@ -20,6 +18,7 @@ const breakpoints = {
 const useStyles = makeStyles(theme => ({
   fullHeight: {
     minHeight: (items) => items ? '100vh' : '0vh'
+    // minHeight: '100vh'
   }
 }));
 
@@ -37,6 +36,10 @@ const Grid = ({ items }) => {
       }));
 
       favoriteFeedVar(favoriteFeedVar().map(post => {
+        return post.id === id ? { ...post, likeCount, likedBy } : post;
+      }));
+
+      authorFeedVar(authorFeedVar().map(post => {
         return post.id === id ? { ...post, likeCount, likedBy } : post;
       }));
     },
@@ -75,17 +78,5 @@ const Grid = ({ items }) => {
     </Container>
   );
 };
-// {errorMsg && (
-//   <Snackbar
-//   open={!!errorMsg}
-//   autoHideDuration={6000}
-//   onClose={() => setError('')}
-//   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-//   >
-//   <Alert severity="error">
-//   {errorMsg}
-//   </Alert>
-//   </Snackbar>
-// )}
 
 export default Grid;

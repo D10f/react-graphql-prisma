@@ -6,6 +6,7 @@ import { authenticationVar } from '@services/apollo/cache';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -13,9 +14,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import * as constants from '@constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   drawer: {
-    width: constants.DRAWER_WIDTH
+    width: constants.DRAWER_WIDTH,
+    // [theme.breakpoints.down('sm')]: {
+    //   width: 0
+    // }
   },
   drawerPaper: {
     width: constants.DRAWER_WIDTH
@@ -26,7 +30,7 @@ const useStyles = makeStyles({
   title: {
     padding: 20
   }
-});
+}));
 
 const Sidebar = () => {
 
@@ -53,6 +57,8 @@ const Sidebar = () => {
         >
           {constants.WEBAPP_NAME}
         </Typography>
+
+        <Divider/>
 
         <List>
           {constants.SIDEBAR_ITEMS.map(item => {

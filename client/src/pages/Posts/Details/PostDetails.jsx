@@ -13,18 +13,18 @@ const PostDetails = ({ match }) => {
   });
 
   return (
-    <QueryResult data={data} error={error} loading={loading} >
-      <Container>
+    <QueryResult error={error} loading={loading} >
+      <Container maxWidth="md">
         <Typography
-          variant="h2"
+          variant="h3"
           component="h2"
         >
-          <p>Hello</p>
+          <p>{data?.getPostDetails.title}</p>
         </Typography>
 
         <Typography
         >
-          <p>Natus voluptatem sed sit temporibus aliquam itaque et doloribus et. Necessitatibus est eum voluptatem autem facilis ut.</p>
+          <p>{data?.getPostDetails.body}</p>
         </Typography>
       </Container>
     </QueryResult>
