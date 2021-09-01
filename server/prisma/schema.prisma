@@ -27,18 +27,20 @@ model User {
 
 model Post {
   @@map(name: "posts")
-  id           Int       @default(autoincrement()) @id
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  title        String    @db.VarChar(255)
-  body         String    @db.Text
-  published    Boolean   @default(false)
-  author       User      @relation("WrittenPosts", fields: [authorId], references: [id])
-  authorId     Int
-  likedBy      User[]    @relation("LikedPosts", references: [id])
-  likeCount    Int       @default(0)
-  comments     Comment[]
-  commentCount Int       @default(0)
+  id            Int       @default(autoincrement()) @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  title         String    @db.VarChar(255)
+  body          String    @db.Text
+  excerpt       String    @db.VarChar(255)
+  published     Boolean   @default(true)
+  allowComments Boolean   @default(true)
+  author        User      @relation("WrittenPosts", fields: [authorId], references: [id])
+  authorId      Int
+  likedBy       User[]    @relation("LikedPosts", references: [id])
+  likeCount     Int       @default(0)
+  comments      Comment[]
+  commentCount  Int       @default(0)
 }
 
 model Comment {

@@ -4,6 +4,7 @@ module.exports = prisma => ({
 
   async find(limit, skip) {
     return await prisma.post.findMany({
+      where: { published: true },
       take: limit,
       skip
     });

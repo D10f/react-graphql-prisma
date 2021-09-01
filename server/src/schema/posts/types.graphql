@@ -7,6 +7,9 @@ type Query {
   "Retrieves posts that an authenticated user has previously liked"
   postsForFavoriteFeed(limit: Int, skip: Int): [Post!]!
 
+  "Retrieves posts authored by an authenticated user"
+  postsForDashboardFeed(limit: Int, skip: Int): [Post!]!
+
   "Retrieves a post details"
   getPostDetails(id: ID!): Post!
 }
@@ -15,6 +18,7 @@ type Post {
   id: ID!
   title: String!
   body: String!
+  excerpt: String
   published: Boolean!
   createdAt: String!
   updatedAt: String!
@@ -45,12 +49,14 @@ input CreatePostInput {
   title: String!
   body: String!
   published: Boolean
+  excerpt: String
 }
 
 input UpdatePostInput {
   title: String
   body: String
-  published: Boolean,
+  published: Boolean
+  excerpt: String
 }
 
 enum MutationType {

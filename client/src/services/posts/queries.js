@@ -5,8 +5,7 @@ export const GET_PUBLIC_POSTS = gql`
     postsForPublicFeed(limit: $limit, skip: $skip) {
       id
       title
-      body
-      createdAt
+      excerpt
       commentCount
       likeCount
       likedBy {
@@ -25,13 +24,45 @@ export const GET_FAVORITE_POSTS = gql`
     postsForFavoriteFeed(limit: $limit, skip: $skip) {
       id
       title
-      body
-      createdAt
+      excerpt
       commentCount
       likeCount
+      likedBy {
+        id
+      }
       author {
         id
         username
+      }
+    }
+  }
+`;
+
+export const GET_AUTHOR_POSTS = gql`
+  query postsForDashboardFeed($limit: Int, $skip: Int) {
+    postsForDashboardFeed(limit: $limit, skip: $skip) {
+      id
+      title
+      excerpt
+      commentCount
+      likeCount
+      likedBy {
+        id
+      }
+      author {
+        id
+        username
+      }
+    }
+  }
+`;
+
+export const GET_POST_DETAILS = gql`
+  query getPostDetails($id: ID!) {
+    getPostDetails(id: $id) {
+      body
+      comments {
+        id
       }
     }
   }

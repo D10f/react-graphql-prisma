@@ -6,9 +6,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
     {...rest}
     render={props => {
       if (authenticationVar()) {
-        return Component ? <Component {...props} /> : rest.render(props)
+        return Component
+          ? <Component {...props} />
+          : rest.render(props)
       }
-      return <Redirect to="/" />
+      return <Redirect to="/login" />
     }}
   />
 );

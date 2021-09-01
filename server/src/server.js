@@ -7,6 +7,11 @@ const { typeDefs, resolvers } = require('./schema');
 
 const app = express();
 
+/* !!!!! REMOVE AFTER TESTING !!!!!*/
+const delay = (timeInMs) => new Promise(resolve => {
+  setTimeout(resolve, timeInMs);
+});
+
 async function createApolloServer(services){
   const apolloServer = new ApolloServer({
     typeDefs,
@@ -16,6 +21,7 @@ async function createApolloServer(services){
       const token = userToken && services.auth.verifyToken(userToken);
       const user = token && await services.user.findById(token.id);
 
+      await delay(1500);
       return { user, services };
     },
     plugins: [

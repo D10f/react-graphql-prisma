@@ -15,6 +15,10 @@ module.exports = {
     async postsForFavoriteFeed(parent, { limit, skip }, { user, services }) {
       return await services.user.getLikedPosts(limit, skip, user);
     },
+    // Returns an array of posts
+    async postsForDashboardFeed(parent, { limit, skip }, { user, services }) {
+      return await services.user.getUserPosts(limit, skip, user);
+    },
   },
   Post: {
     async author({ authorId }, args, { user, services }, info) {

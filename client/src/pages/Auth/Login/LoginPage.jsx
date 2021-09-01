@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { authenticationVar } from '@services/apollo/cache';
-import RegisterForm from './RegisterForm';
+import LoginForm from './LoginForm';
 import Toast from '@components/Toast';
 
-import { REGISTER_USER } from '@services/users/mutations';
+import { LOGIN_USER } from '@services/users/mutations';
 
-const RegisterPage = ({ history }) => {
+const LoginPage = ({ history }) => {
 
   const [ error, setError ] = useState('');
 
-  const [ registerUser, { data, loading, client }] = useMutation(REGISTER_USER, {
+  const [ loginUser, { data, loading, client }] = useMutation(LOGIN_USER, {
     onCompleted: responseData => {
-      authenticationVar(responseData.registerUser);
+      authenticationVar(responseData.loginUser);
       localStorage.setItem('token', JSON.stringify(authenticationVar()));
       history.push('/');
     },
@@ -24,13 +24,13 @@ const RegisterPage = ({ history }) => {
     },
   });
 
-  const onSubmit = async data => {
-    registerUser({ variables: { input: data } });
+  const onSubmit = async ({ username, password }) => {
+    loginUser({ variables: { username, password } });
   };
 
   return (
     <>
-      <RegisterForm onSubmit={onSubmit} loading={loading} />
+      <LoginForm onSubmit={onSubmit} loading={loading} />
       {error && (
         <Toast
           message={error}
@@ -42,4 +42,4 @@ const RegisterPage = ({ history }) => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;

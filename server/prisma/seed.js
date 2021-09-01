@@ -49,24 +49,28 @@ async function main() {
               id: postId1,
               title: faker.company.catchPhrase(),
               body: faker.lorem.paragraph(),
+              excerpt: faker.lorem.sentence(),
               published: faker.datatype.boolean(),
             },
             {
               id: postId2,
               title: faker.company.catchPhrase(),
               body: faker.lorem.paragraph(),
+              excerpt: faker.lorem.sentence(),
               published: faker.datatype.boolean(),
             },
             {
               id: postId3,
               title: faker.company.catchPhrase(),
               body: faker.lorem.paragraph(),
+              excerpt: faker.lorem.sentence(),
               published: faker.datatype.boolean(),
             },
             {
               id: postId4,
               title: faker.company.catchPhrase(),
               body: faker.lorem.paragraph(),
+              excerpt: faker.lorem.sentence(),
               published: faker.datatype.boolean(),
             },
           ]

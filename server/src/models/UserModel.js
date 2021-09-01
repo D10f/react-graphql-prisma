@@ -20,8 +20,12 @@ module.exports = prisma => ({
       : await prisma.user.findMany()
   },
 
-  async getUserPosts(userId) {
-    return await prisma.user.findUnique({ where: { id: userId }}).posts();
+  async getUserPosts(userId, limit, skip) {
+    const result = await prisma.user.findUnique({
+      where: { id: userId },
+    }).posts();
+
+    return result.slice(skip, limit);
   },
 
   async getUserComments(userId) {

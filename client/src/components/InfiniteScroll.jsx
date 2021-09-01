@@ -63,7 +63,7 @@ const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
       <div ref={setTargetElement} className={centerContent}>
         { loading && <CircularProgress /> }
         { error && <p>ERROR: {error.message}</p> }
-        { nextItems?.length === 0 && <p>End of feed...</p> }
+        { nextItems && nextItems?.length === 0 && <p>End of feed...</p> }
       </div>
     </>
   );

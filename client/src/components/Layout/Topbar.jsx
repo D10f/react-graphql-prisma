@@ -1,12 +1,16 @@
 import { useLocation } from 'react-router-dom';
+import { authenticationVar } from '@services/apollo/cache';
+import { useReactiveVar } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 
+import padiColorMapper from '@utils/padiColorMapper';
+
 import { DRAWER_WIDTH } from '@constants';
-import { ROUTE_TITLES } from '@enums';
+import { ROUTE_TITLES, PADI_CERTS } from '@enums';
 
 import mario from '@assets/mario-av.png';
 
@@ -18,14 +22,16 @@ const useStyles = makeStyles({
     flexGrow: 1
   },
   avatar: {
-    marginLeft: 16
+    marginLeft: 16,
+    backgroundColor: padiColorMapper
   }
 });
 
 const Sidebar = () => {
 
   const location = useLocation();
-  const classes = useStyles();
+  const classes = useStyles({ certification: PADI_CERTS.OPEN_WATER });
+  const loggedInAs = useReactiveVar(authenticationVar);
 
   return (
     <AppBar elevation={0} className={classes.appbar}>
@@ -35,14 +41,23 @@ const Sidebar = () => {
           {ROUTE_TITLES[location.pathname]}
         </Typography>
 
-        <Typography>
-          Mario
-        </Typography>
-        <Avatar src={mario} className={classes.avatar} />
+        { loggedInAs && (
+          <>
+            <Typography>
+              {loggedInAs.username}
+            </Typography>
+            <Avatar
+              src="./image.jpg"
+              alt={loggedInAs.username.toUpperCase()}
+              className={classes.avatar}
+            />
+          </>
+        )}
 
       </Toolbar>
     </AppBar>
   );
 };
 
+// {!loggedInAs.avatar && loggedInAs.username[0].toUpperCase()}
 export default Sidebar;

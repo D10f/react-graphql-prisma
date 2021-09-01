@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useLazyQuery, useReactiveVar } from '@apollo/client';
+import { useQuery, useLazyQuery, useReactiveVar } from '@apollo/client';
 
 import Grid from '@components/Grid';
 import InfiniteScroll from '@components/InfiniteScroll';
@@ -22,10 +22,13 @@ const Feed = ({ cache, query }) => {
   // The name of the query value, varies depending on the query string used to fetch data
   const queryName = query.definitions[0].name.value;
 
-  const [ startQuery, { data, loading, error }] = useLazyQuery(query, {
-    variables: { limit: PER_PAGE, skip: currentPage },
+  // const { data, loading, error, fetchMore, client } = useQuery(query, {
+  const [ startQuery, { data, loading, error, client }] = useLazyQuery(query, {
+    variables: { limit: PER_PAGE, skip: 0 },
+    fetchPolicy: 'network-only',
+    // fetchPolicy: 'cache-first',
     onCompleted: (responseData) => cache([
-      ...cache(),
+      ...postsInCache,
       ...responseData[queryName]
     ])
   });
@@ -35,11 +38,11 @@ const Feed = ({ cache, query }) => {
 
   // fetchNext: Increasing currentPage triggers a re-render, changes the variables of the query
   // nextItems: Incoming items from the latest query
+  // fetchNext={() => setCurrentPage(prev => prev + PER_PAGE)}
   return (
     <InfiniteScroll
-      items={postsInCache}
-      fetchNext={() => setCurrentPage(prev => prev + PER_PAGE)}
-      nextItems={data?.responseData || []}
+      nextItems={data && data[queryName]}
+      fetchNext={() => startQuery({ variables: { skip: postsInCache.length } })}
       loading={loading}
       error={error}
     >

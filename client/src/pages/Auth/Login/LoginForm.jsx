@@ -19,24 +19,14 @@ const validators = {
     minLength: 2,
     maxLength: 64
   },
-  email: {
-    required: true,
-    pattern: /\w{2,}@\w+\.\w{2,3}(\.\w{2,3})?$/,
-    maxLength: 64
-  },
   password: {
-    required: true,
-    minLength: 10,
-    maxLength: 100
-  },
-  confirmPassword: {
     required: true,
     minLength: 10,
     maxLength: 100
   }
 };
 
-const RegisterForm = ({ onSubmit, loading }) => {
+const LoginForm = ({ onSubmit, loading }) => {
 
   const classes = useStyles();
   const { register, control, handleSubmit, formState: { errors } } = useForm();
@@ -63,24 +53,6 @@ const RegisterForm = ({ onSubmit, loading }) => {
         />
 
         <Controller
-          name="email"
-          control={control}
-          defaultValue="snow@snow.com"
-          rules={validators.email}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              variant="outlined"
-              className={classes.field}
-              error={!!errors?.email}
-              fullWidth
-              required
-            />
-          )}
-        />
-
-        <Controller
           name="password"
           control={control}
           defaultValue="1234567897"
@@ -99,25 +71,6 @@ const RegisterForm = ({ onSubmit, loading }) => {
           )}
         />
 
-        <Controller
-          name="confirmPassword"
-          control={control}
-          defaultValue="1234567897"
-          rules={validators.password}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Confirm Password"
-              variant="outlined"
-              type="password"
-              className={classes.field}
-              error={!!errors?.confirmPassword}
-              fullWidth
-              required
-            />
-          )}
-        />
-
         <Button
           type="submit"
           variant="contained"
@@ -127,11 +80,11 @@ const RegisterForm = ({ onSubmit, loading }) => {
           disabled={loading}
           endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<SendIcon />}
         >
-          SignUp
+          Login
         </Button>
       </form>
     </Container>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

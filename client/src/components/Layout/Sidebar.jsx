@@ -1,5 +1,7 @@
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
+import { useReactiveVar } from '@apollo/client';
+import { authenticationVar } from '@services/apollo/cache';
 
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
@@ -31,6 +33,7 @@ const Sidebar = () => {
   const history  = useHistory();
   const location = useLocation();
   const classes  = useStyles();
+  const loggedInAs = useReactiveVar(authenticationVar);
 
   return (
     <Hidden>
@@ -52,17 +55,29 @@ const Sidebar = () => {
         </Typography>
 
         <List>
-          {constants.SIDEBAR_ITEMS.map(item => (
-            <ListItem
-              button
-              key={item.text}
-              onClick={() => history.push(item.path)}
-              className={location.pathname === item.path ? classes.active : null}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
+          {constants.SIDEBAR_ITEMS.map(item => {
+            // onlyPublic routes show when you are NOT logged in
+            if (loggedInAs && item.onlyPublic) {
+              return null;
+            }
+
+            // not public routes show when you ARE logged in
+            if (!loggedInAs && !item.public) {
+              return null;
+            }
+
+            return (
+              <ListItem
+                button
+                key={item.text}
+                onClick={() => history.push(item.path)}
+                className={location.pathname === item.path ? classes.active : null}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            );
+          })}
         </List>
 
       </Drawer>

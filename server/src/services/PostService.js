@@ -33,6 +33,12 @@ module.exports = ({ PostModel }) => ({
     //   throw new ForbiddenError('You are not authorized to perform this action.');
     // }
 
+    // Create a short excerpt if there isn't one
+    if (!input.excerpt) {
+      newExcerpt = input.body.slice(0, 60);
+      input.excerpt = newExcerpt.padEnd(newExcerpt.length + 3, '.');
+    }
+
     input.authorId = reqUser.id;
 
     return await PostModel.create(input);

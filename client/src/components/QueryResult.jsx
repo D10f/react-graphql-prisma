@@ -1,5 +1,6 @@
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Toast from '@components/Toast';
 import { makeStyles } from '@material-ui/core';
 
 import { DRAWER_WIDTH } from '@constants';
@@ -17,7 +18,7 @@ const useStyles = makeStyles({
   }
 });
 
-const MutationResult = ({ error, loading, data, children }) => {
+const QueryResult = ({ error, loading, data, children }) => {
 
   const { centerContent, mb } = useStyles();
 
@@ -30,20 +31,10 @@ const MutationResult = ({ error, loading, data, children }) => {
   }
 
   if (error) {
-    return (
-      <>
-        <Alert onClose={() => {}} className={mb} severity="error" >
-          {error.message === 'User Input Validation Error'
-            ? error.graphQLErrors.map(gqlError => gqlError.extensions.errors.map(err => err.message))
-            : error.message
-          }
-        </Alert>
-        {children}
-      </>
-    );
+    return <Toast message={error.message} severity='error' onClose={() => {}} />
   }
 
-  return children
+  return children;
 };
 
-export default MutationResult;
+export default QueryResult;

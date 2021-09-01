@@ -20,10 +20,10 @@ export const PADI_COLORS = {
 
 /* Each route maps to a title which is displayed at the top bar */
 export const ROUTE_TITLES = {
-  '/'         : 'Your Friend\'s Dive Logs',
-  '/feed'     : 'Latest Public Dive Logs',
-  '/favorites': 'Your Favorite Dive Logs',
+  '/'         : 'Latest Public Treks',
+  '/favorites': 'Your Favorite Treks',
   '/dashboard': 'Dashboard',
   '/register' : 'Sign Up For A New Account',
-  '/login'    : 'Log Back In'
+  '/login'    : 'Log Back In',
+  '/new-trek' : 'Add A New Trek Adventure Log'
 };
