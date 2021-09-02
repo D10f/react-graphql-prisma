@@ -1,12 +1,23 @@
 import { useQuery } from '@apollo/client';
-import { postDetailsVar } from '@services/apollo/cache';
+import { makeStyles } from '@material-ui/core';
+import QueryResult from '@components/QueryResult';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import QueryResult from '@components/QueryResult';
+import Divider from '@material-ui/core/Divider';
+import PostCommentList from './PostCommentList';
+import CommentForm from './CommentForm';
 
 import { GET_POST_DETAILS } from '@services/posts/queries';
 
+const useStyles = makeStyles(theme => ({
+  divider: {
+    marginBottom: '2rem'
+  },
+}));
+
 const PostDetails = ({ match }) => {
+
+  const classes = useStyles();
 
   const { data, loading, error } = useQuery(GET_POST_DETAILS, {
     variables: { id: match.params.id }
@@ -16,16 +27,25 @@ const PostDetails = ({ match }) => {
     <QueryResult error={error} loading={loading} >
       <Container maxWidth="md">
         <Typography
-          variant="h3"
+          variant="h4"
           component="h2"
+          color="textSecondary"
         >
-          <p>{data?.getPostDetails.title}</p>
+          {data?.getPostDetails.title}
         </Typography>
 
-        <Typography
-        >
-          <p>{data?.getPostDetails.body}</p>
+        <Divider className={classes.divider}/>
+
+        <Typography>
+          {data?.getPostDetails.body}
         </Typography>
+
+        {data?.getPostDetails.allowComments && (
+          <CommentForm loading={loading}/>
+        )}
+
+        <PostCommentList comments={data?.getPostDetails.comments || []} />
+
       </Container>
     </QueryResult>
   );

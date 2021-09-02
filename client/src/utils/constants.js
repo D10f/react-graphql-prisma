@@ -63,6 +63,10 @@ export const SIDEBAR_ITEMS = [
   },
 ];
 
+/* COMMENTS */
+
+export const NO_COMMENTS_YET = 'Be the first one to leave a comment!';
+
 /* TOOLTIPS */
 
 export const IMG_UPLOAD_TOOLTIP = 'Allowed image files of up to 1MB and 1200x800 pixels';

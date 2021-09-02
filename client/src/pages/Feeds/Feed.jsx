@@ -39,9 +39,6 @@ const Feed = ({ cache, query }) => {
     startQuery({ variables: { limit: PER_PAGE, skip: postsInCache.length }, fetchPolicy: 'network-only' });
   }, []);
 
-  // fetchNext: Increasing currentPage triggers a re-render, changes the variables of the query
-  // nextItems: Incoming items from the latest query
-  // fetchNext={() => setCurrentPage(prev => prev + PER_PAGE)}
   return (
     <InfiniteScroll
       nextItems={data && data[queryName]}
@@ -55,6 +52,5 @@ const Feed = ({ cache, query }) => {
     </InfiniteScroll>
   );
 };
-// <Grid items={postsInCache} />
 
 export default Feed;

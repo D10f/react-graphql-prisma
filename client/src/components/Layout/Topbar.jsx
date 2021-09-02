@@ -57,7 +57,7 @@ const Sidebar = () => {
         </Typography>
 
         { loggedInAs && (
-          <Badge className={classes.badge} color="secondary" badgeContent={31} max={99} >
+          <Badge className={classes.badge} color="secondary" badgeContent={7} max={99} >
             <Avatar
               src="./image.jpg"
               alt={loggedInAs.username.toUpperCase()}

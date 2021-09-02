@@ -65,8 +65,15 @@ export const GET_POST_DETAILS = gql`
     getPostDetails(id: $id) {
       title
       body
+      allowComments
       comments {
         id
+        text
+        author {
+          id
+          username
+          certification
+        }
       }
     }
   }

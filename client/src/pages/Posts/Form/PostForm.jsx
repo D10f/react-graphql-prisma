@@ -13,6 +13,7 @@ import SendIcon from '@material-ui/icons/Send';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 import { PUBLISH_POST_TOOLTIP, IMG_UPLOAD_TOOLTIP, ALLOW_COMMENTS_TOOLTIP } from '@constants';
+import { PADI_COLORS } from '@enums';
 
 const useStyles = makeStyles(theme => ({
   field: {
@@ -20,6 +21,9 @@ const useStyles = makeStyles(theme => ({
   },
   ml: {
     marginLeft: theme.spacing(2)
+  },
+  gradientBg: {
+    background: PADI_COLORS.OPEN_WATER
   }
 }));
 
@@ -108,7 +112,7 @@ const PostForm = ({ onSubmit, loading, post }) => {
           type="submit"
           variant="contained"
           color="primary"
-          size="large"
+          className={classes.gradientBg}
           disableElevation
           disabled={loading}
           endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<SendIcon />}
@@ -122,7 +126,6 @@ const PostForm = ({ onSubmit, loading, post }) => {
             type="submit"
             variant="outlined"
             color="primary"
-            size="large"
             disableElevation
             disabled={loading}
             endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<PhotoCamera />}
