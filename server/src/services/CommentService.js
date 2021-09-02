@@ -1,4 +1,5 @@
 const { AuthenticationError, ForbiddenError } = require('apollo-server');
+const sanitizeHtml = require('sanitize-html');
 const validators = require('../validators');
 
 // const { CommentModel } = require('../models');
@@ -19,7 +20,6 @@ module.exports = ({ CommentModel }) => ({
   },
 
   async create(input, reqUser) {
-    validators.validateCreateCommentInput(input);
 
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
@@ -27,8 +27,13 @@ module.exports = ({ CommentModel }) => ({
 
     // Check if user has permission to comment on this post (because is blocked or post author doesnt allow comments)
     // if (! await AuthService.isAuthorized(reqUser, null, [ AuthService.isSameUser ])) {
-    //   throw new ForbiddenError('You are not authorized to perform this action.');
-    // }
+      //   throw new ForbiddenError('You are not authorized to perform this action.');
+      // }
+
+    validators.validateCreateCommentInput(input);
+
+    // Sanitize user input
+    input.text = sanitizeHtml(input.text.trim());
 
     input.authorId = Number(reqUser.id);
     input.postId = Number(input.postId);

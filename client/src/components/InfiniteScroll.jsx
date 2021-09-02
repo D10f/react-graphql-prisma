@@ -37,7 +37,7 @@ const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
     if (entry.isIntersecting) {
       fetchNextRef.current();
     }
-  }, { threshold: 1 }));
+  }, { threshold: 0.6 }));
 
   // 4. Same logic as above (keep references up to date) but with a DOM element.
   const [ targetElement, setTargetElement ] = useState(null);

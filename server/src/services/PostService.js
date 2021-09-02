@@ -1,6 +1,6 @@
 const { AuthenticationError, ForbiddenError } = require('apollo-server');
+const sanitizeHtml = require('sanitize-html');
 const validators = require('../validators');
-
 const AuthService = require('./AuthService');
 
 module.exports = ({ PostModel }) => ({
@@ -22,22 +22,23 @@ module.exports = ({ PostModel }) => ({
   },
 
   async create(input, reqUser) {
-    validators.validateCreatePostInput(input);
 
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    // Check if user has write permission to create posts
-    // if (!AuthService.isSameUser(reqUser)) {
-    //   throw new ForbiddenError('You are not authorized to perform this action.');
-    // }
+    validators.validateCreatePostInput(input);
 
     // Create a short excerpt if there isn't one
     if (!input.excerpt) {
-      newExcerpt = input.body.slice(0, 60);
+      newExcerpt = input.body.slice(0, 120);
       input.excerpt = newExcerpt.padEnd(newExcerpt.length + 3, '.');
     }
+
+    // Sanitize user input
+    input.title = sanitizeHtml(input.title.trim());
+    input.body = sanitizeHtml(input.body.trim());
+    input.excerpt = sanitizeHtml(input.excerpt.trim());
 
     input.authorId = reqUser.id;
 
@@ -45,15 +46,16 @@ module.exports = ({ PostModel }) => ({
   },
 
   async update(postId, input, reqUser) {
-    validators.validateUpdatePostInput(input);
-
-    // if (!AuthService.isAuthenticated(reqUser)) {
-    //   throw new AuthenticationError('You must be logged in to perform this action.');
-    // }
 
     if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
+
+    validators.validateUpdatePostInput(input);
+
+    input.title = sanitizeHtml(input.title.trim());
+    input.body = sanitizeHtml(input.body.trim());
+    input.excerpt = sanitizeHtml(input.excerpt.trim());
 
     return await PostModel.update(postId, input);
   },

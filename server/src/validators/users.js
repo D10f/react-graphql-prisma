@@ -4,11 +4,25 @@ module.exports.validateRegisterUserInput = ajv.compile({
   type: 'object',
   required: [ 'username', 'email', 'password', 'confirmPassword' ],
   properties: {
-    username: { type: 'string', minLength: 2 },
-    email: { type: 'string', format: 'email' },
-    password: { type: 'string', minLength: 8 },
+    username: {
+      type: 'string',
+      minLength: 2,
+      maxLength: 24,
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+    },
+    password: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 100,
+    },
     confirmPassword: { const: { $data: '1/password' }},
-    role: { type: 'string', enum: [ 'USER', 'ADMIN' ] }
+    role: {
+      type: 'string',
+      enum: [ 'USER', 'ADMIN' ],
+    }
   },
   errorMessage: {
     properties: {
@@ -24,10 +38,24 @@ module.exports.validateRegisterUserInput = ajv.compile({
 module.exports.validateUpdateUserInput = ajv.compile({
   type: 'object',
   properties: {
-    username: { type: 'string', minLength: 2 },
-    email: { type: 'string', format: 'email' },
-    password: { type: 'string', minLength: 8 },
-    role: { type: 'string', enum: [ 'USER', 'ADMIN' ] }
+    username: {
+      type: 'string',
+      minLength: 2,
+      maxLength: 24,
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+    },
+    password: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 100,
+    },
+    role: {
+      type: 'string',
+      enum: [ 'USER', 'ADMIN' ]
+    }
   },
   errorMessage: {
     properties: {

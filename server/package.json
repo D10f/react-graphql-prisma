@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "serve": "node src/index.js",
-    "test": "jest --watch --runInBand"
+    "test": "jest --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +22,8 @@
     "dotenv": "^10.0.0",
     "graphql": "^15.5.1",
     "graphql-tools": "^8.0.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "sanitize-html": "^2.4.0"
   },
   "devDependencies": {
     "apollo-server-integration-testing": "^3.0.0",

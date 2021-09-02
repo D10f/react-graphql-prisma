@@ -4,7 +4,11 @@ module.exports.validateCreateCommentInput = ajv.compile({
   type: 'object',
   required: [ 'text', 'postId' ],
   properties: {
-    text: { type: "string", minLength: 1, maxLength: 1000 },
+    text: {
+      type: "string",
+      minLength: 1,
+      maxLength: 1000,
+    },
     postId: { type: "string" }
   },
   errorMessage: {
@@ -19,7 +23,11 @@ module.exports.validateUpdateCommentInput = ajv.compile({
   type: 'object',
   required: [ 'text' ],
   properties: {
-    text: { type: "string", minLength: 1, maxLength: 1000 },
+    text: {
+      type: "string",
+      minLength: 1,
+      maxLength: 1000,
+    },
   },
   errorMessage: {
     properties: {

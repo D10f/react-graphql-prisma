@@ -7,8 +7,9 @@ const ajv = new Ajv({
   removeAdditional: true
 });
 
-require("ajv-errors")(ajv);
-require("ajv-formats")(ajv);
+require('ajv-errors')(ajv);
+require('ajv-formats')(ajv);
+// require('ajv-sanitizer')(ajv);
 
 function addCustomErrors(errors) {
   return errors.map(error => ({

@@ -4,10 +4,24 @@ module.exports.validateCreatePostInput = ajv.compile({
   type: 'object',
   required: [ 'title', 'body' ],
   properties: {
-    title: { type: 'string', minLength: 1, maxLength: 100 },
-    body: { type: 'string' },
-    excerpt: { type: 'string', maxLength: 240 },
-    published: { type: 'boolean' },
+    title: {
+      type: 'string',
+      minLength: 1,
+      maxLength: 100,
+    },
+    body: {
+      type: 'string',
+    },
+    excerpt: {
+      type: 'string',
+      maxLength: 240,
+    },
+    published: {
+      type: 'boolean',
+    },
+    allowComments: {
+      type: 'boolean'
+    }
   },
   errorMessage: {
     properties: {
@@ -22,10 +36,24 @@ module.exports.validateCreatePostInput = ajv.compile({
 module.exports.validateUpdatePostInput = ajv.compile({
   type: 'object',
   properties: {
-    title: { type: 'string', minLength: 1, maxLength: 100 },
-    body: { type: 'string' },
-    excerpt: { type: 'string', maxLength: 240 },
-    published: { type: 'boolean' },
+    title: {
+      type: 'string',
+      minLength: 1,
+      maxLength: 100,
+    },
+    body: {
+      type: 'string',
+    },
+    excerpt: {
+      type: 'string',
+      maxLength: 240,
+    },
+    published: {
+      type: 'boolean',
+    },
+    allowComments: {
+      type: 'boolean'
+    }
   },
   errorMessage: {
     properties: {

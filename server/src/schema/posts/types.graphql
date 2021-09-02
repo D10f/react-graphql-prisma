@@ -49,8 +49,9 @@ type PostSubscriptionPayload {
 input CreatePostInput {
   title: String!
   body: String!
-  published: Boolean
   excerpt: String
+  published: Boolean
+  allowComments: Boolean
 }
 
 input UpdatePostInput {

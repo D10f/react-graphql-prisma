@@ -11,7 +11,6 @@ const PostFormPage = ({ history }) => {
 
   const [ createPost, { data, loading, client }] = useMutation(CREATE_POST, {
     onCompleted: responseData => {
-      console.log(responseData.createPost);
       authorFeedVar([ ...authorFeedVar(), responseData.createPost ]);
       history.push('/dashboard');
     },
@@ -23,7 +22,7 @@ const PostFormPage = ({ history }) => {
     }
   });
 
-  const onSubmit = async data => {
+  const onSubmit = data => {
     createPost({ variables: { input: data }});
   };
 

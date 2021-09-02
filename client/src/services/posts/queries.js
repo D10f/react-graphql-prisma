@@ -66,6 +66,7 @@ export const GET_POST_DETAILS = gql`
       title
       body
       allowComments
+      commentCount
       comments {
         id
         text
