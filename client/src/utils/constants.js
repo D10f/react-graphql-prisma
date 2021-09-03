@@ -64,7 +64,7 @@ export const SIDEBAR_ITEMS = [
 ];
 
 /* FILE UPLOAD */
-export const VALID_MIME_TYPES = new RegExp(/^image\/(png|jpeg|webp|gif)$/ig);
+export const VALID_MIME_TYPES = new RegExp(/^image\/(png|jpeg|webp|gif)$/i);
 export const MAX_FILE_SIZE = 1024 * 1024 // 1MB
 export const ERROR_MESSAGE = 'Only image files of up to 1MB are allowed';
 

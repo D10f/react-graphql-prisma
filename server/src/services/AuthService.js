@@ -24,12 +24,19 @@ module.exports = {
     return !!user;
   },
 
-  isAuthorized(user, ownerId, permissions) {
+  isAuthorized(user, ownerId, checkPermissions) {
+
     if (!this.isAuthenticated(user)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    return permissions.some(authFn => authFn(user, ownerId));
+    // If provided as an array of permissions to check
+    if (checkPermissions instanceof Array) {
+      return checkPermissions.some(authFn => authFn(user, ownerId));
+    }
+
+    // If provided as a single argument to check
+    return checkPermissions(user, ownerId);
   },
 
   isAdmin(user) {
@@ -39,7 +46,7 @@ module.exports = {
 
   // Created separately for better readability on the Services layer
   isSameUser(user, userId) {
-    return this.isAuthor(user, userId);
+    return user.id === userId;
   },
 
   isAuthor(user, authorId) {

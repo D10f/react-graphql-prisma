@@ -1,11 +1,13 @@
 scalar Upload
 
 type File {
-  filename: String!
-  mimetype: String!
-  encoding: String!
+  filename: String
+  mimetype: String
+  encoding: String
+  url: String!
+  previewUrl: String!
 }
 
 type Mutation {
-  singleUpload(file: Upload!): File!
+  singleUpload(id: ID!, file: Upload!): File!
 }

@@ -113,7 +113,7 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange }) => {
         />
 
         {/* Only show file upload when editing a post */}
-        {post && <FileUpload />}
+        {post && <FileUpload resourceId={post.id} />}
 
         <Controller
           name="published"

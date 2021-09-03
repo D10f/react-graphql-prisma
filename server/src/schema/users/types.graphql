@@ -30,6 +30,9 @@ type User {
   "The user's diving certification level as defined by PADI"
   certification: Certification!
 
+  "The user's avatar profile picture"
+  url: String
+
   "The role in the application to determine the access to administrative tasks"
   role: UserRole!
 

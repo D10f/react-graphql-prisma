@@ -41,7 +41,7 @@ const EditFormPage = ({ history, match }) => {
       <PostForm
         onSubmit={onSubmit}
         loading={submitLoading}
-        post={data?.getPostDetails}
+        post={data && { ...data?.getPostDetails, id: Number(match.params.id) }}
       />
       {error && (
         <Toast

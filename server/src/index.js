@@ -1,6 +1,6 @@
 require('dotenv').config();
-const { PrismaClient } = require('@prisma/client');
 
+const { PrismaClient } = require('@prisma/client');
 const { createApolloServer, app } = require('./server');
 
 const prisma = new PrismaClient(/* { log: ['query'] } */);

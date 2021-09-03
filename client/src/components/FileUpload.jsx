@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Toast from '@components/Toast';
-import { UPLOAD_FILE } from '@services/files/mutations';
+import { POST_UPLOAD_FILE } from '@services/files/mutations';
 
 import { IMG_UPLOAD_TOOLTIP, VALID_MIME_TYPES, MAX_FILE_SIZE, ERROR_MESSAGE } from '@constants';
 
@@ -20,12 +20,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FileUpload = () => {
+/**
+ * resourceId refers to either a user profile or a post, each with a separate endpoint
+ */
+const FileUpload = ({ resourceId }) => {
 
   const classes = useStyles();
   const [ error, setError ] = useState('');
 
-  const [ fileUpload, { loading } ] = useMutation(UPLOAD_FILE, {
+  const [ postFileUpload, { loading } ] = useMutation(POST_UPLOAD_FILE, {
     onCompleted: data => console.log(data),
     onError: err => setError(err.message),
   });
@@ -37,10 +40,11 @@ const FileUpload = () => {
     const validMimeType = VALID_MIME_TYPES.test(file.type);
 
     if (!validMimeType || file.size > MAX_FILE_SIZE) {
-      setError(ERROR_MESSAGE)
+      setError(ERROR_MESSAGE);
+      return;
     };
 
-    fileUpload({ variables: { file }});
+    postFileUpload({ variables: { id: resourceId, file }});
   };
 
   return (

@@ -29,6 +29,7 @@ module.exports.validateCreatePostInput = ajv.compile({
       body: "Body of the post must be a string",
       excerpt: "Exceprt must be a 240 max characters long",
       published: "Published status must be a boolean.",
+      allowComments: "allowComments status must be a boolean.",
     },
   },
 });
@@ -61,6 +62,7 @@ module.exports.validateUpdatePostInput = ajv.compile({
       body: "Body of the post must be a string",
       excerpt: "Exceprt must be a 240 max characters long",
       published: "Published status must be a boolean.",
+      allowComments: "allowComments status must be a boolean.",
     },
   },
 });

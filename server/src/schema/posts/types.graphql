@@ -22,6 +22,7 @@ type Post {
   published: Boolean!
   allowComments: Boolean!
   url: String
+  previewUrl: String
   createdAt: String!
   updatedAt: String!
   likeCount: Int!

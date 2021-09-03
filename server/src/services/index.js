@@ -1,6 +1,6 @@
 module.exports = models => ({
-  file: require('./FileUploadService'),
   auth: require('./AuthService'),
+  file: require('./FileUploadService')(models),
   user: require('./UserService')(models),
   post: require('./PostService')(models),
   comment: require('./CommentService')(models),
