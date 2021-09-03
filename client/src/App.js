@@ -6,7 +6,8 @@ import Layout from '@components/Layout';
 
 import { createTheme, ThemeProvider } from '@material-ui/core';
 import lightBlue from '@material-ui/core/colors/lightBlue';
-import amber from '@material-ui/core/colors/amber';
+import lime from '@material-ui/core/colors/lime';
+// import yellow from '@material-ui/core/colors/yellow';
 
 const theme = createTheme({
   palette: {
@@ -14,7 +15,7 @@ const theme = createTheme({
       main: lightBlue[600],
     },
     secondary: {
-      main: amber[600]
+      main: lime['A200']
     }
   }
 });

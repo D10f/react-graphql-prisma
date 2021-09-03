@@ -65,6 +65,7 @@ export const GET_POST_DETAILS = gql`
     getPostDetails(id: $id) {
       title
       body
+      excerpt
       allowComments
       commentCount
       comments {

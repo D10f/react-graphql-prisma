@@ -33,6 +33,7 @@ model Post {
   title         String    @db.VarChar(255)
   body          String    @db.Text
   excerpt       String    @db.VarChar(255)
+  url           String    @db.VarChar(255)
   published     Boolean   @default(true)
   allowComments Boolean   @default(true)
   author        User      @relation("WrittenPosts", fields: [authorId], references: [id])

@@ -47,7 +47,9 @@ module.exports = ({ PostModel }) => ({
 
   async update(postId, input, reqUser) {
 
-    if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
+    const post = await PostModel.findById(postId);
+
+    if (!AuthService.isAuthorized(reqUser, post.authorId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 

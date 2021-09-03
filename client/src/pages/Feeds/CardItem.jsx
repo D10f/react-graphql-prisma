@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
@@ -60,8 +60,10 @@ const CardItem = ({
   likedBy,
   author,
   loggedInAs,
-  giveALike
+  giveALike,
 }) => {
+
+  const history = useHistory();
 
   // const { id: authorId, username, certification } = author;
   const classes = useStyles({ certification: PADI_CERTS[author?.certification] });
@@ -114,7 +116,11 @@ const CardItem = ({
 
         {loggedInAs === author?.id && (
           <Tooltip title={EDIT_POST_TOOLTIP}>
-            <IconButton className={classes.pushRight} aria-label="edit this post" onClick={() => console.log('EDIT ME')}>
+            <IconButton
+              className={classes.pushRight}
+              aria-label="edit this post"
+              onClick={() => history.push(`/edit-trek/${id}`)}
+            >
               <EditOutlinedIcon />
             </IconButton>
           </Tooltip>

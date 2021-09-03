@@ -33,7 +33,10 @@ const useStyles = makeStyles(theme => {
     avatar: {
       // marginLeft: 16,
       background: padiColorMapper,
-      boxShadow: theme.shadows[1]
+      boxShadow: theme.shadows[1],
+      '&:hover': {
+        cursor: 'pointer'
+      }
     },
     badge: {
       '&:hover': {
@@ -43,17 +46,20 @@ const useStyles = makeStyles(theme => {
   };
 });
 
-const Sidebar = () => {
+const Topbar = () => {
 
   const location = useLocation();
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
+  // Extracts the initial part of a route e.g., "/edit-trek/123" -> "/edit-trek"
+  const routePath = path => path.match(/^\/([a-zA-Z-]+)?/)[0];
+
   return (
     <AppBar elevation={0} className={classes.appbar}>
       <Toolbar>
         <Typography className={classes.grow}>
-          {ROUTE_TITLES[location.pathname]}
+          {ROUTE_TITLES[routePath(location.pathname)]}
         </Typography>
 
         { loggedInAs && (
@@ -72,4 +78,4 @@ const Sidebar = () => {
 };
 
 // {!loggedInAs.avatar && loggedInAs.username[0].toUpperCase()}
-export default Sidebar;
+export default Topbar;

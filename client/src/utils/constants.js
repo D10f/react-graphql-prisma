@@ -41,7 +41,7 @@ export const SIDEBAR_ITEMS = [
     onlyPublic: false
   },
   {
-    text: 'Log New Trek',
+    text: 'New Log',
     icon: <AddCircleOutlineOutlined color="primary" />,
     path: '/new-trek',
     public: false,
@@ -63,9 +63,10 @@ export const SIDEBAR_ITEMS = [
   },
 ];
 
-/* COMMENTS */
-
-export const NO_COMMENTS_YET = 'Be the first one to leave a comment!';
+/* FILE UPLOAD */
+export const VALID_MIME_TYPES = new RegExp(/^image\/(png|jpeg|webp|gif)$/ig);
+export const MAX_FILE_SIZE = 1024 * 1024 // 1MB
+export const ERROR_MESSAGE = 'Only image files of up to 1MB are allowed';
 
 /* TOOLTIPS */
 

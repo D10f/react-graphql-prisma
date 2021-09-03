@@ -12,7 +12,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import SendIcon from '@material-ui/icons/Send';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
-import { PUBLISH_POST_TOOLTIP, IMG_UPLOAD_TOOLTIP, ALLOW_COMMENTS_TOOLTIP } from '@constants';
+import FileUpload from '@components/FileUpload';
+
+import { PUBLISH_POST_TOOLTIP, ALLOW_COMMENTS_TOOLTIP } from '@constants';
 import { PADI_COLORS } from '@enums';
 
 const useStyles = makeStyles(theme => ({
@@ -20,9 +22,11 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3)
   },
   ml: {
-    marginLeft: theme.spacing(2)
+    // marginLeft: theme.spacing(2)
   },
-  gradientBg: {
+  submitBtn: {
+    display: 'flex',
+    marginTop: theme.spacing(2),
     background: PADI_COLORS.OPEN_WATER
   }
 }));
@@ -44,7 +48,7 @@ const validators = {
   }
 };
 
-const PostForm = ({ onSubmit, loading, post }) => {
+const PostForm = ({ onSubmit, loading, post, fileHandleChange }) => {
 
   const classes = useStyles();
   const { register, control, handleSubmit, formState: { errors } } = useForm();
@@ -108,31 +112,8 @@ const PostForm = ({ onSubmit, loading, post }) => {
           )}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className={classes.gradientBg}
-          disableElevation
-          disabled={loading}
-          endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<SendIcon />}
-        >
-          {post ? "Update Post" : "Create Post"}
-        </Button>
-
-        <Tooltip arrow title={IMG_UPLOAD_TOOLTIP}>
-          <Button
-            className={classes.ml}
-            type="submit"
-            variant="outlined"
-            color="primary"
-            disableElevation
-            disabled={loading}
-            endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<PhotoCamera />}
-          >
-            Upload Image
-          </Button>
-        </Tooltip>
+        {/* Only show file upload when editing a post */}
+        {post && <FileUpload />}
 
         <Controller
           name="published"
@@ -175,6 +156,18 @@ const PostForm = ({ onSubmit, loading, post }) => {
             </Tooltip>
           )}
         />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className={classes.submitBtn}
+          disableElevation
+          disabled={loading}
+          endIcon={loading ? <CircularProgress size={22} color="secondary" /> :<SendIcon />}
+        >
+          {post ? "Update Post" : "Create Post"}
+        </Button>
 
       </form>
     </Container>

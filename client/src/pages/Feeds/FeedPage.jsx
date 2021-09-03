@@ -9,9 +9,7 @@ import { PER_PAGE } from '@constants';
 
 /**
  * Queries the server and retrieves posts data to be displayed as a feed.
- * The graphql query string and cache received as props are based on the current route.
- * @param {function} cache apollo-client's reactive variable instance
- * @param {string}   query graphql query string built using apollo-client's gql
+ * The graphql query string and cache are based on the current route.
  */
 const Feed = () => {
 
@@ -24,7 +22,7 @@ const Feed = () => {
   const queryName = query.definitions[0].name.value;
 
   // const { data, loading, error, fetchMore } = useQuery(query, {
-  const [ startQuery, { data, loading, error }] = useLazyQuery(query, {
+  const [ startQuery, { data, loading, error, called }] = useLazyQuery(query, {
     onCompleted: (responseData) => {
 
       const newUniqueValues = responseData[queryName].filter(post => {

@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 
 import PostComment from './PostComment';
-import { NO_COMMENTS_YET } from '@constants';
 
 const useStyles = makeStyles(theme => ({
   commentCount: {
@@ -20,9 +19,8 @@ const PostCommentList = ({ comments }) => {
   return (
     <>
       <Typography color="textSecondary" className={classes.commentCount}>
-        {commentsLength === 0 && NO_COMMENTS_YET}
         {commentsLength === 1 && `${commentsLength} Comment`}
-        {commentsLength   > 1 && `${commentsLength} Comments`}
+        {commentsLength  >  1 && `${commentsLength} Comments`}
       </Typography>
       {comments.map(comment => <PostComment key={comment.id} {...comment} />)}
     </>

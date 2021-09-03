@@ -33,6 +33,7 @@ module.exports = {
   },
 
   isAdmin(user) {
+    // TODO: add logger for any admin-overruled operation
     return user.role === 'ADMIN';
   },
 

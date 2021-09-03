@@ -5,7 +5,7 @@ import PostForm from './PostForm';
 import Toast from '@components/Toast';
 import { CREATE_POST } from '@services/posts/mutations';
 
-const PostFormPage = ({ history }) => {
+const CreateFormPage = ({ history }) => {
 
   const [ error, setError ] = useState('');
 
@@ -40,4 +40,4 @@ const PostFormPage = ({ history }) => {
   );
 };
 
-export default PostFormPage;
+export default CreateFormPage;
