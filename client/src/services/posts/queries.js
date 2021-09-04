@@ -78,6 +78,7 @@ export const GET_POST_DETAILS = gql`
         author {
           id
           username
+          url
           certification
         }
       }

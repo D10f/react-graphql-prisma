@@ -1,5 +1,6 @@
-import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS, GET_AUTHOR_POSTS } from '@services/posts/queries';
 import { authenticationVar } from '@services/apollo/cache';
+import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS, GET_AUTHOR_POSTS } from '@services/posts/queries';
+import { PADI_CERTS, PADI_COLORS } from '@enums';
 
 /**
  * Returns a gql query based on the present route
@@ -38,5 +39,27 @@ export const selectFeedPosts = (posts, location) => {
         console.log(post);
         return post?.author?.id === loggedInAs.id
       });
+  }
+};
+
+/**
+ * Returns a color based on the user certification level
+ */
+export const selectCertificationColor = (certification) => {
+  switch (certification) {
+    case PADI_CERTS.OPEN_WATER:
+      return PADI_COLORS.OPEN_WATER
+
+    case PADI_CERTS.ADVANCED:
+      return PADI_COLORS.ADVANCED
+
+    case PADI_CERTS.RESCUE:
+      return PADI_COLORS.RESCUE
+
+    case PADI_CERTS.DIVEMASTER:
+      return PADI_COLORS.DIVEMASTER
+
+    default:
+      return PADI_COLORS.DIVEMASTER
   }
 };

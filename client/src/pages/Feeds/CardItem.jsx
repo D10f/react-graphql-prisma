@@ -15,7 +15,9 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 
-import padiColorMapper from '@utils/padiColorMapper';
+// import padiColorMapper from '@utils/padiColorMapper';
+import { selectCertificationColor } from '@utils/selectors';
+
 import { PADI_CERTS } from '@enums';
 import {
   UNLIKE_POST_TOOLTIP,
@@ -29,7 +31,7 @@ const useStyles = makeStyles(theme => {
   // console.log(theme)
   return {
     avatar: {
-      background: padiColorMapper,
+      background: ({ certification }) => selectCertificationColor(certification),
       boxShadow: theme.shadows[1]
     },
     counter: {

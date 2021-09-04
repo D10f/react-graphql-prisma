@@ -8,7 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
-import padiColorMapper from '@utils/padiColorMapper';
+// import padiColorMapper from '@utils/padiColorMapper';
+import { selectCertificationColor } from '@utils/selectors';
 
 import { DRAWER_WIDTH } from '@constants';
 import { ROUTE_TITLES, PADI_CERTS } from '@enums';
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => {
     },
     avatar: {
       // marginLeft: 16,
-      background: padiColorMapper,
+      background: ({ certification }) => selectCertificationColor(certification),
       boxShadow: theme.shadows[1],
       '&:hover': {
         cursor: 'pointer'

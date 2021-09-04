@@ -1,8 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const { pipeline } = require('stream/promises');
-const { ForbiddenError, UserInputError } = require('apollo-server');
 const sharp = require('sharp');
+const { ForbiddenError, UserInputError } = require('apollo-server');
 const AuthService = require('./AuthService');
 
 const validMimeTypes = new RegExp(/^image\/(png|jpeg|webp|gif)$/i);
@@ -19,7 +19,7 @@ const USER_PREV_IMG_SIZE = 40;
 
 module.exports = ({ UserModel, PostModel }) => ({
   /**
-   * Uploads an image associated to a post or user's profile, defined by the resource parameter
+   * Uploads an image associated to a post
    */
   async singlePostUpload(id, file, reqUser) {
 
@@ -32,16 +32,21 @@ module.exports = ({ UserModel, PostModel }) => ({
 
     const post = await PostModel.findById(id);
 
-    // Check permissions: is either the author of the post, owner of the profile or an admin
+    if (!post) {
+      throw new UserInputError('Cannot find post with that id.');
+    }
+
     if (!AuthService.isAuthorized(reqUser, post.authorId, [ isAuthor, isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
-    // Get the final location of the file and it's public web urls
+    // Get the file system location path and public web urls for the file
+    // TODO: Add some unique identifier to filename
     const fileLocation = this.getFileLocation(filename);
     const { url, previewUrl } = this.getFileUrls(filename);
 
     // Produce the transformer stream, passing the path where images should be saved to
+    // TODO: provide additional options to specify dimensions, etc
     const transformerStream = this.transformImage(fileLocation);
 
     try {
@@ -54,7 +59,7 @@ module.exports = ({ UserModel, PostModel }) => ({
     }
   },
 
-  transformImage(fileLocation) {
+  transformImage(fileLocation, options = {}) {
     const transformerStream = sharp();
     const url = `${fileLocation}-${POST_FULL_IMG_SIZE}.webp`
     const previewUrl = `${fileLocation}-${POST_PREV_IMG_SIZE}.webp`;

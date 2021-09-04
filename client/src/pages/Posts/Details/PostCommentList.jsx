@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const PostCommentList = ({ comments }) => {
+const PostCommentList = ({ comments, handleError }) => {
 
   const classes = useStyles();
   const commentsLength = comments.length;
@@ -22,7 +22,7 @@ const PostCommentList = ({ comments }) => {
         {commentsLength === 1 && `${commentsLength} Comment`}
         {commentsLength  >  1 && `${commentsLength} Comments`}
       </Typography>
-      {comments.map(comment => <PostComment key={comment.id} {...comment} />)}
+      {comments.map(comment => <PostComment key={comment.id} handleError={handleError} {...comment} />)}
     </>
   );
 };

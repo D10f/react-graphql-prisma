@@ -7,6 +7,7 @@ import Layout from '@components/Layout';
 import { createTheme, ThemeProvider } from '@material-ui/core';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import lime from '@material-ui/core/colors/lime';
+import red from '@material-ui/core/colors/red';
 // import yellow from '@material-ui/core/colors/yellow';
 
 const theme = createTheme({
@@ -16,6 +17,9 @@ const theme = createTheme({
     },
     secondary: {
       main: lime['A200']
+    },
+    status: {
+      error: red[500]
     }
   }
 });
