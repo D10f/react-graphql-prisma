@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const { graphqlUploadExpress } = require('graphql-upload');
@@ -36,6 +37,8 @@ async function createApolloServer(services){
 
   await apolloServer.start();
 
+  // app.use(express.static(path.resolve(__dirname, 'public')));
+  app.use(express.static('public'));
   app.use(graphqlUploadExpress({ maxFileSize: 1024 * 1024, maxFiles: 1 }));
   apolloServer.applyMiddleware({ app });
 

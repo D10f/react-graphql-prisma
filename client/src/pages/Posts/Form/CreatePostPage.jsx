@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { authorFeedVar } from '@services/apollo/cache';
+import { postsFeed } from '@services/apollo/cache';
 import PostForm from './PostForm';
 import Toast from '@components/Toast';
 import { CREATE_POST } from '@services/posts/mutations';
@@ -11,7 +11,7 @@ const CreateFormPage = ({ history }) => {
 
   const [ createPost, { data, loading, client }] = useMutation(CREATE_POST, {
     onCompleted: responseData => {
-      authorFeedVar([ ...authorFeedVar(), responseData.createPost ]);
+      postsFeed([ ...postsFeed(), responseData.createPost ]);
       history.push('/dashboard');
     },
     onError: err => {
@@ -22,9 +22,7 @@ const CreateFormPage = ({ history }) => {
     }
   });
 
-  const onSubmit = data => {
-    createPost({ variables: { input: data }});
-  };
+  const onSubmit = data => createPost({ variables: { input: data }});
 
   return (
     <>

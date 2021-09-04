@@ -6,6 +6,7 @@ export const GET_PUBLIC_POSTS = gql`
       id
       title
       excerpt
+      previewUrl
       commentCount
       likeCount
       likedBy {
@@ -26,6 +27,7 @@ export const GET_FAVORITE_POSTS = gql`
       id
       title
       excerpt
+      previewUrl
       commentCount
       likeCount
       likedBy {
@@ -46,6 +48,7 @@ export const GET_AUTHOR_POSTS = gql`
       id
       title
       excerpt
+      previewUrl
       commentCount
       likeCount
       likedBy {
@@ -66,6 +69,7 @@ export const GET_POST_DETAILS = gql`
       title
       body
       excerpt
+      url
       allowComments
       commentCount
       comments {

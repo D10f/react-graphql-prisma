@@ -16,6 +16,19 @@ export const CREATE_POST = gql`
   mutation createPost($input: CreatePostInput!) {
     createPost(input: $input) {
       id
+      title
+      excerpt
+      previewUrl
+      commentCount
+      likeCount
+      likedBy {
+        id
+      }
+      author {
+        id
+        username
+        certification
+      }
     }
   }
 `;
@@ -24,6 +37,19 @@ export const UPDATE_POST = gql`
   mutation updatePost($id: ID!, $input: UpdatePostInput!) {
     updatePost(id: $id, input: $input) {
       id
+      title
+      excerpt
+      previewUrl
+      commentCount
+      likeCount
+      likedBy {
+        id
+      }
+      author {
+        id
+        username
+        certification
+      }
     }
   }
 `;

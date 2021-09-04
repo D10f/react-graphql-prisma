@@ -5,6 +5,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -47,6 +48,10 @@ const useStyles = makeStyles(theme => {
       '&:hover': {
         color: theme.palette.primary.main,
       }
+    },
+    previewImg: {
+      width: 'min-content',
+      maxHeight: '200px'
     }
   }
 });
@@ -55,6 +60,7 @@ const CardItem = ({
   id,
   title,
   excerpt,
+  previewUrl,
   commentCount,
   likeCount,
   likedBy,
@@ -83,6 +89,12 @@ const CardItem = ({
           <Link className={classes.link} to={`/trek/${id}`}>{title}</Link>
         }
         subheader={author?.username}
+      />
+
+      <CardMedia
+        classes={{ media: classes.previewImg }}
+        component="img"
+        src={previewUrl}
       />
 
       <CardContent>

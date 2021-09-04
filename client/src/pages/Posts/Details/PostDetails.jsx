@@ -13,6 +13,10 @@ const useStyles = makeStyles(theme => ({
   divider: {
     marginBottom: '2rem'
   },
+  postImage: {
+    textAlign: 'center',
+    marginBottom: '2rem'
+  }
 }));
 
 const PostDetails = ({ match }) => {
@@ -26,6 +30,7 @@ const PostDetails = ({ match }) => {
   return (
     <QueryResult error={error} loading={loading} >
       <Container maxWidth="md">
+
         <Typography
           variant="h4"
           component="h2"
@@ -35,6 +40,12 @@ const PostDetails = ({ match }) => {
         </Typography>
 
         <Divider className={classes.divider}/>
+
+        <Container className={classes.postImage}>
+          {data?.getPostDetails?.url && (
+            <img src={data.getPostDetails.url} alt="Main image accompanying the post" />
+          )}
+        </Container>
 
         <Typography>
           {data?.getPostDetails.body}

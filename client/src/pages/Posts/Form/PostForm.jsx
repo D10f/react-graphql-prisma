@@ -28,6 +28,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginTop: theme.spacing(2),
     background: PADI_COLORS.OPEN_WATER
+  },
+  form: {
+    marginBottom: theme.spacing(3)
   }
 }));
 
@@ -48,13 +51,13 @@ const validators = {
   }
 };
 
-const PostForm = ({ onSubmit, loading, post, fileHandleChange }) => {
+const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }) => {
 
   const classes = useStyles();
   const { register, control, handleSubmit, formState: { errors } } = useForm();
 
   return (
-    <Container>
+    <Container className={classes.form}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
         <Controller
           name="title"
@@ -113,7 +116,12 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange }) => {
         />
 
         {/* Only show file upload when editing a post */}
-        {post && <FileUpload resourceId={post.id} />}
+        {post && (
+          <FileUpload
+            fileHandleChange={fileHandleChange}
+            fileHandleError={fileHandleError}
+          />
+        )}
 
         <Controller
           name="published"

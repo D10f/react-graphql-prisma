@@ -6,8 +6,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import Toast from '@components/Toast';
-import { POST_UPLOAD_FILE } from '@services/files/mutations';
 
 import { IMG_UPLOAD_TOOLTIP, VALID_MIME_TYPES, MAX_FILE_SIZE, ERROR_MESSAGE } from '@constants';
 
@@ -20,31 +18,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-/**
- * resourceId refers to either a user profile or a post, each with a separate endpoint
- */
-const FileUpload = ({ resourceId }) => {
+const FileUpload = ({ fileHandleChange, fileHandleError }) => {
 
   const classes = useStyles();
-  const [ error, setError ] = useState('');
+  const [ loading, setLoading ] = useState(false);
 
-  const [ postFileUpload, { loading } ] = useMutation(POST_UPLOAD_FILE, {
-    onCompleted: data => console.log(data),
-    onError: err => setError(err.message),
-  });
+  const onChange = ({ target }) => {
+    setLoading(true);
 
-  const fileHandleChange = ({ target }) => {
     const [ file ] = target.files;
-    if (!file) return;
+
+    if (!file) {
+      setLoading(false);
+      return;
+    };
 
     const validMimeType = VALID_MIME_TYPES.test(file.type);
 
     if (!validMimeType || file.size > MAX_FILE_SIZE) {
-      setError(ERROR_MESSAGE);
+      fileHandleError(ERROR_MESSAGE);
+      setLoading(false);
       return;
     };
 
-    postFileUpload({ variables: { id: resourceId, file }});
+    fileHandleChange(file).then(() => setLoading(false));
   };
 
   return (
@@ -54,7 +51,7 @@ const FileUpload = ({ resourceId }) => {
         id="contained-button-file"
         type="file"
         disabled={loading}
-        onChange={fileHandleChange}
+        onChange={onChange}
       />
       <label htmlFor="contained-button-file">
         <Tooltip arrow title={IMG_UPLOAD_TOOLTIP}>
@@ -69,13 +66,6 @@ const FileUpload = ({ resourceId }) => {
           </Button>
         </Tooltip>
       </label>
-      {error && (
-        <Toast
-          message={error}
-          severity='error'
-          onClose={() => setError('')}
-        />
-      )}
     </>
   );
 };

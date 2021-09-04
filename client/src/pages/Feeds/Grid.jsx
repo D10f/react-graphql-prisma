@@ -6,7 +6,7 @@ import Toast from '@components/Toast';
 import Masonry from 'react-masonry-css';
 import CardItem from './CardItem';
 
-import { authenticationVar, authorFeedVar, favoriteFeedVar, publicFeedVar } from '@services/apollo/cache';
+import { authenticationVar, postsFeed } from '@services/apollo/cache';
 import { LIKE_POST } from '@services/posts/mutations';
 
 const breakpoints = {
@@ -18,7 +18,6 @@ const breakpoints = {
 const useStyles = makeStyles(theme => ({
   fullHeight: {
     minHeight: (items) => items ? '100vh' : '0vh'
-    // minHeight: '100vh'
   }
 }));
 
@@ -31,15 +30,7 @@ const Grid = ({ items }) => {
 
   const [ likeOrUnlikePost, { data, loading, client }] = useMutation(LIKE_POST, {
     onCompleted: ({ likeOrUnlikePost: { id, likeCount, likedBy } }) => {
-      publicFeedVar(publicFeedVar().map(post => {
-        return post.id === id ? { ...post, likeCount, likedBy } : post;
-      }));
-
-      favoriteFeedVar(favoriteFeedVar().map(post => {
-        return post.id === id ? { ...post, likeCount, likedBy } : post;
-      }));
-
-      authorFeedVar(authorFeedVar().map(post => {
+      postsFeed(postsFeed().map(post => {
         return post.id === id ? { ...post, likeCount, likedBy } : post;
       }));
     },
@@ -49,8 +40,6 @@ const Grid = ({ items }) => {
   const giveALike = useCallback(postId => {
     likeOrUnlikePost({ variables: { postId } });
   }, []);
-
-// className={classes.fullHeight}
 
   return (
     <Container>

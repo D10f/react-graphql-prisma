@@ -25,13 +25,13 @@ async function main() {
   const postIds = [];
 
   for (let i = 0; i < TOTAL_SEED_USERS; i++) {
-    const userId = faker.unique(faker.datatype.number);
+    const userId  = faker.unique(faker.datatype.number);
     const postId1 = faker.unique(faker.datatype.number);
     const postId2 = faker.unique(faker.datatype.number);
     const postId3 = faker.unique(faker.datatype.number);
     const postId4 = faker.unique(faker.datatype.number);
 
-    // To later add comments in these posts
+    // Keep references for later use (add comments)
     userIds.push(userId);
     postIds.push(postId1, postId2, postId3, postId4);
 

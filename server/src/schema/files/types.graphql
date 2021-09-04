@@ -9,5 +9,5 @@ type File {
 }
 
 type Mutation {
-  singleUpload(id: ID!, file: Upload!): File!
+  singlePostUpload(id: ID!, file: Upload!): File!
 }

@@ -18,7 +18,7 @@ model User {
   password      String
   role          UserRole      @default(USER)
   certification Certification @default(OPEN_WATER)
-  url           String        @db.VarChar(255)
+  url           String        @default("") @db.VarChar(255)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   posts         Post[]        @relation("WrittenPosts")
@@ -34,8 +34,8 @@ model Post {
   title         String    @db.VarChar(255)
   body          String    @db.Text
   excerpt       String    @db.VarChar(255)
-  url           String    @db.VarChar(255)
-  previewUrl    String    @db.VarChar(255)
+  url           String    @default("") @db.VarChar(255)
+  previewUrl    String    @default("") @db.VarChar(255)
   published     Boolean   @default(true)
   allowComments Boolean   @default(true)
   author        User      @relation("WrittenPosts", fields: [authorId], references: [id])
