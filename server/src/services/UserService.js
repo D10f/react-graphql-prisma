@@ -91,8 +91,19 @@ module.exports = ({ UserModel }) => ({
     return deletedUser;
   },
 
-  async findById(id) {
-    return await UserModel.findById(id);
+  async findById(id, reqUser) {
+    const { isSameUser, isAdmin } = AuthService;
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return new UserInputError('Cannot find user with that id.');
+    }
+
+    if (user.isPrivate && !AuthService.isAuthorized(reqUser, id, [ isSameUser, isAdmin ])) {
+      throw new ForbiddenError('You are not authorized to perform this action.');
+    }
+
+    return user;
   },
 
   async findUsers(query) {

@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { authenticationVar } from '@services/apollo/cache';
 import { useReactiveVar } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
@@ -50,10 +50,14 @@ const useStyles = makeStyles(theme => {
 const Topbar = () => {
 
   const location = useLocation();
+  const history = useHistory();
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
-  // Extracts the initial part of a route e.g., "/edit-trek/123" -> "/edit-trek"
+  /* Extracts the initial part of a route e.g.:
+   *  /edit-trek/123 -> /edit-trek
+   *  /user/123      -> /user
+   */
   const routePath = path => path.match(/^\/([a-zA-Z-]+)?/)[0];
 
   return (
@@ -69,6 +73,7 @@ const Topbar = () => {
               src={loggedInAs.url}
               alt={loggedInAs.username.toUpperCase()}
               className={classes.avatar}
+              onClick={() => history.push(`/user/${loggedInAs.id}`)}
             >
               {loggedInAs?.username[0].toUpperCase()}
             </Avatar>

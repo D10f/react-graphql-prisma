@@ -9,8 +9,8 @@ module.exports = ({ PostModel }) => ({
 
   async findPosts(limit = 10, skip = 0, reqUser) {
 
-    if (AuthService.isAuthorized(reqUser, null, AuthService.isAdmin)) {
-      // As admin, return both public and private posts
+    // As admin, return both public and private posts
+    if (reqUser && AuthService.isAuthorized(reqUser, null, AuthService.isAdmin)) {
       return await PostModel.findAll(limit, skip);
     }
 
@@ -21,7 +21,7 @@ module.exports = ({ PostModel }) => ({
     return await PostModel.findById(postId);
   },
 
-  async findByAuthorId(authorId) {
+  async findByAuthorId(authorId, limit = 10, skip = 0) {
     return await PostModel.findByAuthorId(authorId);
   },
 

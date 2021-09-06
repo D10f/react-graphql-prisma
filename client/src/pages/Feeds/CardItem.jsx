@@ -28,7 +28,7 @@ import {
 } from '@constants';
 
 const useStyles = makeStyles(theme => {
-  // console.log(theme)
+  console.log(theme)
   return {
     avatar: {
       background: ({ certification }) => selectCertificationColor(certification),
@@ -47,6 +47,16 @@ const useStyles = makeStyles(theme => {
       color: theme.palette.grey['A400'],
       textDecoration: 'none',
       fontSize: theme.typography.subtitle1.fontSize,
+      '&:hover': {
+        color: theme.palette.primary.main,
+      }
+    },
+    subheader: {
+      color: theme.palette.grey[500],
+      textDecoration: 'none',
+      fontFamily: theme.typography.subtitle2.fontFamily,
+      fontWeight: theme.typography.subtitle2.fontWeight,
+      fontSize: theme.typography.subtitle2.fontSize,
       '&:hover': {
         color: theme.palette.primary.main,
       }
@@ -94,7 +104,9 @@ const CardItem = ({
         title={
           <Link className={classes.link} to={`/trek/${id}`}>{title}</Link>
         }
-        subheader={author?.username}
+        subheader={
+          <Link className={classes.subheader} to={`/user/${author?.id}`}>{author?.username}</Link>
+        }
       />
 
       <CardMedia

@@ -21,8 +21,12 @@ module.exports = prisma => ({
     return await prisma.post.findUnique({ where: { id }});
   },
 
-  async findByAuthorId(id) {
-    return await prisma.post.findMany({ where: { authorId: id }});
+  async findByAuthorId(id, limit, skip) {
+    return await prisma.post.findMany({
+      where: { authorId: id },
+      take: limit,
+      skip
+    });
   },
 
   async findLikedBy(id) {

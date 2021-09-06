@@ -29,5 +29,6 @@ export const ROUTE_TITLES = {
   '/register'  : 'Sign Up For A New Account',
   '/login'     : 'Welcome Back!',
   '/new-trek'  : 'Add A New Adventure Log',
-  '/edit-trek' : 'Editing Log'
+  '/edit-trek' : 'Editing Log',
+  '/user'      : 'Viewing Profile'
 };

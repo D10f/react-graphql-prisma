@@ -5,7 +5,7 @@ module.exports = {
     },
     // Retrieves a single profile by user id
     async getUserProfile(parent, { id }, { user, services }) {
-      return await services.user.findById(id);
+      return await services.user.findById(Number(id), user);
     }
   },
   User: {

@@ -63,3 +63,27 @@ export const selectCertificationColor = (certification) => {
       return PADI_COLORS.DIVEMASTER
   }
 };
+
+/**
+ * Returns a string of usernames, concatenated as "mario, luigi and peach liked this post"
+ * If the list is 4+ then is formated as "mario, luigi, peach and 3 others liked this post"
+ */
+export const selectUsersWhoLikedPost = users => {
+  if (users.length === 0) return '';
+  if (users.length === 1) return `${users[0].username} liked this post`;
+
+  if (users.length < 5) {
+    return users
+      .reduce((acc, current) => `${acc?.username || acc}, ${current.username}`)
+      .replace(/,\s([\w\.\-]+)$/i, ' & $1')
+      + ' liked this post';
+  }
+
+  const subset = users
+    .slice(0, 4)
+    .reduce((acc, current) => `${acc?.username || acc}, ${current.username}`);
+
+  const rest = users.slice(4).length;
+
+  return `${subset} & ${rest}` + ` ${rest > 1 ? 'others' : 'other'} liked this post`;
+};

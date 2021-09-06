@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     background: '#f9f9f9',
     width: '100vw',
     minHeight: '100vh',
-    paddingTop: 20
+    paddingTop: theme.spacing(2)
   },
   toolbarOffset: theme.mixins.toolbar
 }));

@@ -12,6 +12,9 @@ type Query {
 
   "Retrieves a post details"
   getPostDetails(id: ID!): Post!
+
+  "Retrieves posts created by an author"
+  getPostsByAuthor(id: ID!, limit: Int, skip: Int): [Post!]!
 }
 
 type Post {

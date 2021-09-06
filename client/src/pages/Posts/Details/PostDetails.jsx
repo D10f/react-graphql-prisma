@@ -34,10 +34,10 @@ const useStyles = makeStyles(theme => ({
     boxShadow: theme.shadows[1],
     background: ({ certification }) => selectCertificationColor(certification)
   },
-  link: {
-    color: theme.palette.grey['A400'],
+  authorLink: {
+    color: theme.palette.text.primary,
     textDecoration: 'none',
-    fontSize: theme.typography.subtitle1.fontSize,
+    fontSize: theme.typography.body1.fontSize,
     '&:hover': {
       color: theme.palette.primary.main,
     }
@@ -157,7 +157,10 @@ const PostDetails = ({ match, history }) => {
 
           <Container className={classes.paddingless}>
             <Typography variant="subtitle2" component="p">
-              {data?.getPostDetails.author.username}
+              {/*data?.getPostDetails.author.username*/}
+              <Link className={classes.authorLink} to={`/user/${data?.getPostDetails.author.id}`}>
+                {data?.getPostDetails.author.username}
+              </Link>
             </Typography>
 
             <Typography variant="subtitle2" component="p">
@@ -168,13 +171,10 @@ const PostDetails = ({ match, history }) => {
           {(loggedInAs?.id === data?.getPostDetails.author.id || loggedInAs.role === 'ADMIN') && (
             <Container className={classes.actionBtnsContainer}>
               <Tooltip title={EDIT_POST_TOOLTIP}>
-                <Link
-                  className={classes.link}
-                  to={`/edit-trek/${match.params.id}`}
-                >
-                <IconButton aria-label="edit this comment">
-                  <EditOutlinedIcon />
-                </IconButton>
+                <Link to={`/edit-trek/${match.params.id}`}>
+                  <IconButton aria-label="edit this comment">
+                    <EditOutlinedIcon />
+                  </IconButton>
                 </Link>
               </Tooltip>
 

@@ -95,3 +95,19 @@ export const GET_POST_DETAILS = gql`
     }
   }
 `;
+
+export const GET_POST_BY_AUTHOR = gql`
+query getPostsByAuthor($id: ID!, $limit: Int, $skip: Int) {
+  getPostsByAuthor(id: $id, limit: $limit, skip: $skip) {
+    id
+    title
+    commentCount
+    likeCount
+    likedBy {
+      id
+      username
+      url
+      certification
+    }
+  }
+}`;

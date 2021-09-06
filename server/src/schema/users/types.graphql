@@ -30,6 +30,12 @@ type User {
   "The user's diving certification level as defined by PADI"
   certification: Certification!
 
+  "A timestamp for the exact date when the user was created"
+  createdAt: String
+
+  "A timestamp for the exact date when the user was last updated"
+  updatedAt: String
+
   "The user's avatar profile picture"
   url: String
 

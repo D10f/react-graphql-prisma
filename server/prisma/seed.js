@@ -98,6 +98,24 @@ async function main() {
       ]
     });
   }
+
+  // And a final round to add likes to a number of posts
+  for (let i = 0; i < postIds.length; i++) {
+    // Give it a chance not to give any likes
+    if (Math.random() > 0.75) continue;
+
+    // The users who will give a like to this post, formatted to accomodate prisma's "connect"
+    // keyword
+    const likedByIds = faker.random.arrayElements(userIds).map(id => ({ id: id }))
+
+    await prisma.post.update({
+      where: { id: postIds[i] },
+      data: {
+        likeCount: { set: likedByIds.length },
+        likedBy: { connect: likedByIds }
+      }
+    });
+  }
 }
 
 function postGenerator() {

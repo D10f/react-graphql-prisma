@@ -19,6 +19,10 @@ module.exports = {
     async postsForDashboardFeed(parent, { limit, skip }, { user, services }) {
       return await services.user.getUserPosts(limit, skip, user);
     },
+    // Returns an array of posts created by a author
+    async getPostsByAuthor(parent, { id, limit, skip }, { user, services}) {
+      return await services.post.findByAuthorId(Number(id), limit, skip, user);
+    }
   },
   Post: {
     async author({ authorId }, args, { user, services }, info) {
