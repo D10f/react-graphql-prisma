@@ -9,7 +9,7 @@ module.exports = {
     },
     // Returns an array of posts meant to be used in the public landing page feed
     async postsForPublicFeed(parent, { limit, skip }, { user, services}) {
-      return await services.post.findPosts(limit, skip);
+      return await services.post.findPosts(limit, skip, user);
     },
     // Returns an array of filtered posts that an authenticated user has given a like
     async postsForFavoriteFeed(parent, { limit, skip }, { user, services }) {

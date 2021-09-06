@@ -63,13 +63,15 @@ const Topbar = () => {
           {ROUTE_TITLES[routePath(location.pathname)]}
         </Typography>
 
-        { loggedInAs && (
+        {loggedInAs && (
           <Badge className={classes.badge} color="secondary" badgeContent={7} max={99} >
             <Avatar
-              src="./image.jpg"
+              src={loggedInAs.url}
               alt={loggedInAs.username.toUpperCase()}
               className={classes.avatar}
-            />
+            >
+              {loggedInAs?.username[0].toUpperCase()}
+            </Avatar>
           </Badge>
         )}
 

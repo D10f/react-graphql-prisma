@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 
 const TOTAL_SEED_USERS = 6;
 
+/**
+ * Generate:
+ * 6 users ( +1 admin without posts nor comments )
+ * 4 posts each ( using predefined images )
+ * 2 comments each
+*/
 async function main() {
 
   // Fresh start
@@ -15,14 +21,24 @@ async function main() {
     prisma.user.deleteMany()
   ]);
 
-  /**
-   * Generate:
-   * 6 users
-   * 4 posts each
-   * 2 comments each
-  */
+  // Creat an admin user
+  await prisma.user.create({
+    data: {
+      id: faker.unique(faker.datatype.number),
+      username: 'Admin',
+      email: 'admin@example.com',
+      password: await argon2.hash('adminpassword'),
+      role: 'ADMIN',
+      certification: 'INSTRUCTOR'
+    }
+  });
+
+  // Keep references for later use (add comments)
   const userIds = [];
   const postIds = [];
+
+  // Initialize function to associate images to each post
+  const createPosts = postGenerator();
 
   for (let i = 0; i < TOTAL_SEED_USERS; i++) {
     const userId  = faker.unique(faker.datatype.number);
@@ -41,39 +57,11 @@ async function main() {
         username: faker.internet.userName(),
         email: faker.internet.exampleEmail(),
         password: await argon2.hash(faker.internet.password()),
-        role: faker.random.arrayElement(['USER', 'ADMIN']),
-        certification: faker.random.arrayElement([ 'OPEN_WATER', 'ADVANCED', 'RESCUE', 'DIVEMASTER' ]),
+        role: 'USER',
+        certification: faker.random.arrayElement([ 'OPEN_WATER', 'ADVANCED', 'RESCUE', 'DIVEMASTER', 'INSTRUCTOR' ]),
+        url: faker.datatype.boolean() ? faker.image.avatar() : '',
         posts: {
-          create: [
-            {
-              id: postId1,
-              title: faker.company.catchPhrase(),
-              body: faker.lorem.paragraph(),
-              excerpt: faker.lorem.sentence(),
-              published: faker.datatype.boolean(),
-            },
-            {
-              id: postId2,
-              title: faker.company.catchPhrase(),
-              body: faker.lorem.paragraph(),
-              excerpt: faker.lorem.sentence(),
-              published: faker.datatype.boolean(),
-            },
-            {
-              id: postId3,
-              title: faker.company.catchPhrase(),
-              body: faker.lorem.paragraph(),
-              excerpt: faker.lorem.sentence(),
-              published: faker.datatype.boolean(),
-            },
-            {
-              id: postId4,
-              title: faker.company.catchPhrase(),
-              body: faker.lorem.paragraph(),
-              excerpt: faker.lorem.sentence(),
-              published: faker.datatype.boolean(),
-            },
-          ]
+          create: createPosts([ postId1, postId2, postId3, postId4 ])
         }
       }
     });
@@ -109,6 +97,29 @@ async function main() {
         },
       ]
     });
+  }
+}
+
+function postGenerator() {
+
+  const full = 900;
+  const preview = 350;
+
+  let currentIdx = 0;
+
+  return (postIds) => {
+    return postIds.map(id => {
+      currentIdx++;
+      return {
+        id: id,
+        title: faker.company.catchPhrase(),
+        body: faker.lorem.paragraph(),
+        excerpt: faker.lorem.sentences(2),
+        published: faker.datatype.boolean(),
+        url: `http://localhost:5000/nature${currentIdx}-${full}.webp`,
+        previewUrl: `http://localhost:5000/nature${currentIdx}-${preview}.webp`,
+      };
+    })
   }
 }
 

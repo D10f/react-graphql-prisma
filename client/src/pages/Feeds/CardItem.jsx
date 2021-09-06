@@ -83,8 +83,12 @@ const CardItem = ({
     <Card>
       <CardHeader
         avatar={
-          <Avatar className={classes.avatar}>
-            {author?.username[0].toUpperCase()}
+          <Avatar
+            src={author?.url}
+            alt={author?.username[0].toUpperCase()}
+            className={classes.avatar}
+          >
+            {author?.username[0]}
           </Avatar>
         }
         title={
@@ -128,7 +132,7 @@ const CardItem = ({
         </Tooltip>
         <span className={classes.counter}>{commentCount}</span>
 
-        {loggedInAs === author?.id && (
+        {(loggedInAs?.id === author?.id || loggedInAs?.role === 'ADMIN') && (
           <Tooltip title={EDIT_POST_TOOLTIP}>
             <IconButton
               className={classes.pushRight}

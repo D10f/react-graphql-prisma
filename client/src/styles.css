@@ -6,16 +6,20 @@
   box-sizing: border-box;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 /* react-masonry-css styles */
 .my-masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */
   display: -ms-flexbox; /* Not needed if autoprefixing */
   display: flex;
-  margin-left: -20px; /* gutter size offset */
+  margin-left: -14px; /* gutter size offset */
   width: auto;
 }
 .my-masonry-grid_column {
-  padding-left: 20px; /* gutter size */
+  padding-left: 14px; /* gutter size */
   background-clip: padding-box;
 }
 

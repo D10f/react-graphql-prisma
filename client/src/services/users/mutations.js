@@ -7,6 +7,8 @@ export const REGISTER_USER = gql`
       username
       token
       certification
+      role
+      url
     }
   }
 `;
@@ -18,6 +20,8 @@ export const LOGIN_USER = gql`
       username
       token
       certification
+      role
+      url
     }
   }
 `;

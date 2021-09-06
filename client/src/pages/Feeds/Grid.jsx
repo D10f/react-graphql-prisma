@@ -18,6 +18,11 @@ const breakpoints = {
 const useStyles = makeStyles(theme => ({
   fullHeight: {
     minHeight: (items) => items ? '100vh' : '0vh'
+  },
+  container: {
+    maxWidth: 'calc(100% - 2rem)',
+    padding: '0 1rem',
+    margin: 0,
   }
 }));
 
@@ -26,7 +31,7 @@ const Grid = ({ items }) => {
   const classes = useStyles({ items: items.length });
   const [ error, setError ] = useState('');
 
-  const loggedInAs = authenticationVar()?.id;
+  const loggedInAs = authenticationVar();
 
   const [ likeOrUnlikePost, { data, loading, client }] = useMutation(LIKE_POST, {
     onCompleted: ({ likeOrUnlikePost: { id, likeCount, likedBy } }) => {
@@ -42,7 +47,7 @@ const Grid = ({ items }) => {
   }, []);
 
   return (
-    <Container>
+    <Container className={classes.container}>
       <Masonry
         breakpointCols={breakpoints}
         className="my-masonry-grid"

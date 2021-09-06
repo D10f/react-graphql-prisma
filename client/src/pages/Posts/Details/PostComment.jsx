@@ -36,12 +36,10 @@ const useStyles = makeStyles(theme => {
       background: PADI_COLORS.INSTRUCTOR,
       color: theme.palette.grey[100]
     },
-    // pushRight: {
-    //   marginLeft: 'auto !important'
-    // },
     actionBtnsContainer: {
       display: 'flex',
-      justifyContent: 'flex-end'
+      justifyContent: 'flex-end',
+      padding: 0,
     },
     commentCard: {
       margin: '1rem 0',
@@ -67,20 +65,24 @@ const useStyles = makeStyles(theme => {
       boxShadow: theme.shadows[1],
       border: '1px solid #777',
       borderRadius: '5px',
-      padding: '1rem'
-    }
+      padding: '1rem',
+      width: '100%'
+    },
+    paddingless: {
+      padding: 0
+    },
   }
 });
 
-const PostComment = ({ id, author, text, handleError }) => {
+const PostComment = ({ id, author, text, createdAt, handleError }) => {
 
   const { username, certification, url } = author;
   const classes = useStyles({ certification: PADI_CERTS[certification] });
   const loggedInAs = authenticationVar();
 
   const [ editing, setEditing ] = useState(false);
-  const [ confirm, setConfirm ] = useState(false);
-  const [ loading, setLoading ] = useState(false);
+  const [ confirm, setConfirm ] = useState(false); // confirm delete
+  const [ loading, setLoading ] = useState(false); // send update / delete query
   const [ content, setContent ] = useState(text);
 
   const [ updateComment ] = useMutation(UPDATE_COMMENT, {
@@ -115,12 +117,21 @@ const PostComment = ({ id, author, text, handleError }) => {
             src={url}
             alt={username}
             className={classes.avatar}
-          />
-          <Typography variant="subtitle2" component="span">
-            {username}
-          </Typography>
+          >
+            {username[0]}
+          </Avatar>
 
-          {loggedInAs?.id === author?.id && (
+          <Container className={classes.paddingless}>
+            <Typography variant="subtitle2" component="p">
+              {username}
+            </Typography>
+
+            <Typography variant="subtitle2" component="p">
+              {createdAt}
+            </Typography>
+          </Container>
+
+          {(loggedInAs?.id === author?.id || loggedInAs.role === 'ADMIN') && (
             <Container className={classes.actionBtnsContainer}>
               <Tooltip title={editing ? STOP_EDIT_COMMENT_TOOLTIP : EDIT_COMMENT_TOOLTIP}>
                 <IconButton
@@ -159,10 +170,10 @@ const PostComment = ({ id, author, text, handleError }) => {
 
         {(editing || confirm) && (
           <Button
+            disableElevation
             variant="contained"
             color={editing ? "primary" : "status"}
-            className={confirm ? classes.deleteBtn : classes.submitBtn}
-            disableElevation
+            className={editing ? classes.submitBtn : classes.deleteBtn}
             disabled={loading}
             onClick={() => {
               setLoading(true);

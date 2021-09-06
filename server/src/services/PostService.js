@@ -3,9 +3,17 @@ const sanitizeHtml = require('sanitize-html');
 const validators = require('../validators');
 const AuthService = require('./AuthService');
 
+const MAX_EXCERPT_LENGTH = 120;
+
 module.exports = ({ PostModel }) => ({
 
-  async findPosts(limit = 10, skip = 0) {
+  async findPosts(limit = 10, skip = 0, reqUser) {
+
+    if (AuthService.isAuthorized(reqUser, null, AuthService.isAdmin)) {
+      // As admin, return both public and private posts
+      return await PostModel.findAll(limit, skip);
+    }
+
     return await PostModel.find(limit, skip);
   },
 
@@ -31,8 +39,11 @@ module.exports = ({ PostModel }) => ({
 
     // Create a short excerpt if there isn't one
     if (!input.excerpt) {
-      newExcerpt = input.body.slice(0, 120);
-      input.excerpt = newExcerpt.padEnd(newExcerpt.length + 3, '.');
+      newExcerpt = input.body.slice(0, MAX_EXCERPT_LENGTH);
+      // input.excerpt = newExcerpt.padEnd(newExcerpt.length + 3, '.');
+      input.excerpt = newExcerpt.length <= input.body.length
+        ? newExcerpt.padEnd(newExcerpt.length + 3, '.')
+        : input.body;
     }
 
     // Sanitize user input

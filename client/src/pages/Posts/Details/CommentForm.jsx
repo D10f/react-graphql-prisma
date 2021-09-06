@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { currentPostComments } from '@services/apollo/cache';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -28,8 +29,8 @@ const CommentForm = ({ postId, handleError }) => {
   const [ createComment ] = useMutation(CREATE_COMMENT, {
     variables: { input: { postId, text }},
     onCompleted: ({ createComment }) => {
-      console.log(createComment);
       setLoading(false);
+      currentPostComments([ ...currentPostComments(), createComment ])
     },
     onError: err => {
       setLoading(false);

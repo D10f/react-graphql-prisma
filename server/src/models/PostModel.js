@@ -10,6 +10,13 @@ module.exports = prisma => ({
     });
   },
 
+  async findAll(limit, skip) {
+    return await prisma.post.findMany({
+      take: limit,
+      skip
+    });
+  },
+
   async findById(id) {
     return await prisma.post.findUnique({ where: { id }});
   },

@@ -88,4 +88,5 @@ enum Certification {
   ADVANCED
   RESCUE
   DIVEMASTER
+  INSTRUCTOR
 }
