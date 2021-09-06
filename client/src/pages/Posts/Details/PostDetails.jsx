@@ -1,25 +1,29 @@
 import { useState } from 'react';
-import { useQuery, useReactiveVar } from '@apollo/client';
+import { useQuery, useMutation, useReactiveVar } from '@apollo/client';
 import { authenticationVar, currentPostComments } from '@services/apollo/cache';
 import { makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import ReactModal from 'react-modal';
 import QueryResult from '@components/QueryResult';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import PostCommentList from './PostCommentList';
 import CommentForm from './CommentForm';
 import Toast from '@components/Toast';
 
 import { selectCertificationColor } from '@utils/selectors';
-import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP } from '@constants';
-import { PADI_CERTS } from '@enums';
+import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP, DRAWER_WIDTH } from '@constants';
+import { PADI_CERTS, PADI_COLORS } from '@enums';
 import { GET_POST_DETAILS } from '@services/posts/queries';
+import { DELETE_POST } from '@services/posts/mutations';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -66,9 +70,45 @@ const useStyles = makeStyles(theme => ({
   paddingless: {
     padding: 0
   },
+  deleteBtn: {
+    background: PADI_COLORS.INSTRUCTOR,
+    color: theme.palette.grey[100],
+  },
+  modalContent: {
+    display: 'flex',
+    gap: theme.spacing(1),
+    padding: 0,
+    marginTop: theme.spacing(3)
+  }
 }));
 
-const PostDetails = ({ match }) => {
+const modalStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 50,
+    left: DRAWER_WIDTH,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  content: {
+    position: 'absolute',
+    top: '20%',
+    left: '20%',
+    right: '20%',
+    bottom: '20%',
+    border: '1px solid #ccc',
+    background: '#fff',
+    overflow: 'auto',
+    WebkitOverflowScrolling: 'touch',
+    borderRadius: '4px',
+    outline: 'none',
+    padding: '20px',
+    height: 'min-content'
+  }
+};
+
+const PostDetails = ({ match, history }) => {
 
   const loggedInAs = authenticationVar();
 
@@ -76,12 +116,31 @@ const PostDetails = ({ match }) => {
     variables: { id: match.params.id },
     onCompleted: ({ getPostDetails }) => {
       currentPostComments(getPostDetails.comments);
+    },
+    onError: err => {
+      if (err.message.includes('non-nullable')) {
+        setTimeout(() => history.push('/'), 1000);
+      }
+    }
+  });
+
+  const [ deletePost ] = useMutation(DELETE_POST, {
+    variables: { id: match.params.id },
+    onCompleted: () => {
+      setDeleteLoading(false);
+      history.push('/');
+    },
+    onError: err => {
+      setDeleteLoading(false);
+      submitError(err.message);
     }
   });
 
   const classes = useStyles({ certification: PADI_CERTS[data?.getPostDetails.author.certification] });
-  const [ submitError, setSubmitError ] = useState(false);
   const cachedComments = useReactiveVar(currentPostComments);
+  const [ modalOpen, setModalOpen ] = useState(false);
+  const [ submitError, setSubmitError ] = useState(false);
+  const [ deleteLoading, setDeleteLoading ] = useState(false);
 
   return (
     <QueryResult error={error} loading={loading} >
@@ -122,7 +181,7 @@ const PostDetails = ({ match }) => {
               <Tooltip title={DELETE_POST_TOOLTIP}>
                 <IconButton
                   aria-label="delete this comment"
-                  onClick={() => {}}
+                  onClick={() => setModalOpen(true)}
                 >
                   <DeleteOutlined />
                 </IconButton>
@@ -162,6 +221,42 @@ const PostDetails = ({ match }) => {
 
         <PostCommentList comments={data?.getPostDetails.comments || []} handleError={setSubmitError} />
 
+        <ReactModal
+          style={modalStyles}
+          isOpen={modalOpen}
+          onRequestClose={() => setModalOpen(false)}
+          preventScroll={true}
+        >
+          <Container>
+            <Typography variant="h5" component="h3" color="textPrimary">
+              Are you sure you want to delete this post?
+            </Typography>
+            <Container className={classes.modalContent}>
+              <Button
+                disableElevation
+                variant="contained"
+                className={classes.deleteBtn}
+                disabled={deleteLoading}
+                onClick={() => {
+                  setDeleteLoading(true);
+                  deletePost();
+                }}
+                endIcon={deleteLoading ? <CircularProgress size={22} color="secondary" /> : <DeleteOutlined />}
+              >
+                Delete Post
+              </Button>
+
+              <Button
+                disableElevation
+                variant="outlined"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </Container>
+          </Container>
+        </ReactModal>
+
       </Container>
       {submitError && (
         <Toast
@@ -173,31 +268,5 @@ const PostDetails = ({ match }) => {
     </QueryResult>
   );
 };
-
-/*
-
-{loggedInAs?.id === data?.getPostDetails.author.id && (
-  <Container className={classes.actionBtnsContainer}>
-    <Tooltip title={EDIT_POST_TOOLTIP}>
-      <Link
-        className={classes.link}
-        to={`/trek/${match.params.id}`}
-      >
-        {data?.getPostDetails.title}
-      </Link>
-    </Tooltip>
-
-    <Tooltip title={DELETE_POST_TOOLTIP}>
-      <IconButton
-        aria-label="delete this comment"
-        onClick={() => {}}
-      >
-        <DeleteOutlined />
-      </IconButton>
-    </Tooltip>
-  </Container>
-)}
-
-*/
 
 export default PostDetails;
