@@ -3,7 +3,6 @@ import { useForm, Controller } from 'react-hook-form';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
 import SendIcon from '@material-ui/icons/Send';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -29,7 +28,7 @@ const validators = {
 const LoginForm = ({ onSubmit, loading }) => {
 
   const classes = useStyles();
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   return (
     <Container>

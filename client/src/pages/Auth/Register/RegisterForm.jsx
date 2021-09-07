@@ -3,7 +3,6 @@ import { useForm, Controller } from 'react-hook-form';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
 import SendIcon from '@material-ui/icons/Send';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -39,7 +38,7 @@ const validators = {
 const RegisterForm = ({ onSubmit, loading }) => {
 
   const classes = useStyles();
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   return (
     <Container>
@@ -47,7 +46,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
         <Controller
           name="username"
           control={control}
-          defaultValue="jon"
+          defaultValue=""
           rules={validators.username}
           render={({ field }) => (
             <TextField
@@ -65,7 +64,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
         <Controller
           name="email"
           control={control}
-          defaultValue="snow@snow.com"
+          defaultValue=""
           rules={validators.email}
           render={({ field }) => (
             <TextField
@@ -83,7 +82,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
         <Controller
           name="password"
           control={control}
-          defaultValue="1234567897"
+          defaultValue=""
           rules={validators.password}
           render={({ field }) => (
             <TextField
@@ -102,7 +101,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
         <Controller
           name="confirmPassword"
           control={control}
-          defaultValue="1234567897"
+          defaultValue=""
           rules={validators.password}
           render={({ field }) => (
             <TextField

@@ -136,8 +136,8 @@ const PostDetails = ({ match, history }) => {
     }
   });
 
+  useReactiveVar(currentPostComments);
   const classes = useStyles({ certification: PADI_CERTS[data?.getPostDetails.author.certification] });
-  const cachedComments = useReactiveVar(currentPostComments);
   const [ modalOpen, setModalOpen ] = useState(false);
   const [ submitError, setSubmitError ] = useState(false);
   const [ deleteLoading, setDeleteLoading ] = useState(false);

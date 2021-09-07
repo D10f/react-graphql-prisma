@@ -22,7 +22,7 @@ const EditFormPage = ({ history, match }) => {
 
   const classes = useStyles();
   const [ submitError, setSubmitError ] = useState('');
-  const postsInCache = useReactiveVar(postsFeed);
+  useReactiveVar(postsFeed);
 
   const { data, loading, error } = useQuery(GET_POST_DETAILS, {
     variables: { id: match.params.id }

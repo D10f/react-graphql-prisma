@@ -6,15 +6,15 @@ import Toast from '@components/Toast';
 
 import { LOGIN_USER } from '@services/users/mutations';
 
-const LoginPage = ({ history }) => {
+const LoginPage = ({ history, location }) => {
 
   const [ error, setError ] = useState('');
 
-  const [ loginUser, { data, loading, client }] = useMutation(LOGIN_USER, {
+  const [ loginUser, { loading }] = useMutation(LOGIN_USER, {
     onCompleted: responseData => {
       authenticationVar(responseData.loginUser);
       localStorage.setItem('token', JSON.stringify(authenticationVar()));
-      history.push('/');
+      history.push(location?.state?.referrer || '/');
     },
     onError: (err) => {
       const msg = err.message === 'User Input Validation Error'

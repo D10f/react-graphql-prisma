@@ -10,7 +10,8 @@ const TOTAL_SEED_USERS = 6;
  * Generate:
  * 6 users ( +1 admin without posts nor comments )
  * 4 posts each ( using predefined images )
- * 2 comments each
+ * random amount of comments on a random amount of posts
+ * random amount of likes on a random amount of posts
 */
 async function main() {
 
@@ -68,41 +69,34 @@ async function main() {
     });
   }
 
-  // Now create 2 comments per user on a random post
+  // Randomly pick any number of posts, increase their commentCount, and comment in each of them
   for (let i = 0 ; i < TOTAL_SEED_USERS; i++) {
 
     // The posts where the new comments will be added, increase their commentCount
-    const postId1 = faker.random.arrayElement(postIds);
-    const postId2 = faker.random.arrayElement(postIds);
+    const postsIdsToCommentOn = faker.random.arrayElements(postIds);
 
     await prisma.post.updateMany({
-      where: { id: { in: [ postId1, postId2 ] }},
+      where: { id: { in: postsIdsToCommentOn }},
       data: {
         commentCount: { increment: 1 }
       }
     });
 
+    const commentsOnPosts = postsIdsToCommentOn.map(postId => ({
+      id: faker.unique(faker.datatype.number),
+      text: faker.lorem.sentences(),
+      authorId: userIds[i],
+      postId: postId
+    }))
+
     await prisma.comment.createMany({
-      data: [
-        {
-          id: faker.unique(faker.datatype.number),
-          text: faker.lorem.sentences(),
-          authorId: userIds[i],
-          postId: postId1
-        },
-        {
-          id: faker.unique(faker.datatype.number),
-          text: faker.lorem.sentences(),
-          authorId: userIds[i],
-          postId: postId2
-        },
-      ]
+      data: commentsOnPosts
     });
   }
 
   // And a final round to add likes to a number of posts
   for (let i = 0; i < postIds.length; i++) {
-    // Give it a chance not to give any likes
+    // Give it a chance to not give any likes
     if (Math.random() > 0.75) continue;
 
     // The users who will give a like to this post, formatted to accomodate prisma's "connect"

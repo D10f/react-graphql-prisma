@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     maxWidth: 'calc(100% - 2rem)',
     padding: '0 1rem',
-    margin: 0,
+    margin: '0 auto',
   }
 }));
 
@@ -33,7 +33,7 @@ const Grid = ({ items }) => {
 
   const loggedInAs = authenticationVar();
 
-  const [ likeOrUnlikePost, { data, loading, client }] = useMutation(LIKE_POST, {
+  const [ likeOrUnlikePost ] = useMutation(LIKE_POST, {
     onCompleted: ({ likeOrUnlikePost: { id, likeCount, likedBy } }) => {
       // Update both sources of local-cached posts
       postsFeed(postsFeed().map(post => {

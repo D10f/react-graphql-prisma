@@ -1,6 +1,5 @@
 import SubjectOutlined from '@material-ui/icons/SubjectOutlined';
 import AddCircleOutlineOutlined from '@material-ui/icons/AddCircleOutlineOutlined';
-import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import PublicOutlinedIcon from '@material-ui/icons/PublicOutlined';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
@@ -19,13 +18,6 @@ export const SIDEBAR_ITEMS = [
     public: true,
     onlyPublic: false
   },
-  // {
-  //   text: 'Feed',
-  //   icon: <BookmarkBorderOutlinedIcon color="primary" />,
-  //   path: '/feed',
-  //   public: true,
-  //   onlyPublic: false
-  // },
   {
     text: 'Favorites',
     icon: <FavoriteBorderIcon color="primary" />,

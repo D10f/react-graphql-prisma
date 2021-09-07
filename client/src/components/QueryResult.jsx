@@ -1,4 +1,3 @@
-import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Toast from '@components/Toast';
 import { makeStyles } from '@material-ui/core';
@@ -13,14 +12,14 @@ const useStyles = makeStyles({
     width: '100%',
     height: `calc(100vh - ${DRAWER_WIDTH}px)`,
   },
-  mb: {
-    marginBottom: 25
-  }
+  // mb: {
+  //   marginBottom: 25
+  // },
 });
 
 const QueryResult = ({ error, loading, data, children }) => {
 
-  const { centerContent, mb } = useStyles();
+  const { centerContent } = useStyles();
 
   if (loading) {
     return (

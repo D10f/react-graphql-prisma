@@ -3,14 +3,28 @@ import { makeStyles } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { DRAWER_WIDTH } from '@constants';
+import ServerError from '@components/ServerError';
 
-const useStyles = makeStyles({
-  centerContent: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: `calc(100vh - ${DRAWER_WIDTH}px)`,
+const useStyles = makeStyles(theme => {
+  return {
+    centerContent: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: `calc(100vh - ${DRAWER_WIDTH}px)`,
+    },
+    errorImage: {
+      width: '25rem',
+      height: '25rem',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing(2),
+      fontFamily: theme.typography.subtitle1.fontFamily,
+      fontSize: theme.typography.subtitle1.fontSize,
+    }
   }
 });
 
@@ -20,7 +34,7 @@ const useStyles = makeStyles({
  */
 const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
 
-  const { centerContent } = useStyles();
+  const { centerContent, errorImage } = useStyles();
 
   // 1. useRef returns an object whose in-memory reference will stay constant throughout re-renders
   const fetchNextRef = useRef(fetchNext);
@@ -62,7 +76,12 @@ const InfiniteScroll = ({ children, fetchNext, nextItems, loading, error }) => {
       {children}
       <div ref={setTargetElement} className={centerContent}>
         { loading && <CircularProgress /> }
-        { error && <p>ERROR: {error.message}</p> }
+        { error && (
+          <div className={errorImage}>
+            <ServerError />
+            <p>{error.message}</p>
+          </div>
+          )}
         { nextItems && nextItems?.length === 0 && <p>End of feed...</p> }
       </div>
     </>

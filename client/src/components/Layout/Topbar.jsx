@@ -7,21 +7,19 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
+import IconButton from '@material-ui/core/IconButton';
+import MenuOutlinedIcon from '@material-ui/icons/MenuOutlined';
 
-// import padiColorMapper from '@utils/padiColorMapper';
 import { selectCertificationColor, selectPathnameComponents } from '@utils/selectors';
 
-import { DRAWER_WIDTH } from '@constants';
 import { ROUTE_TITLES, PADI_CERTS } from '@enums';
 
 const useStyles = makeStyles(theme => {
   // console.log(theme);
   return {
     appbar: {
-      // background: `linear-gradient(to right top, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
       backgroundColor: theme.palette.primary.light,
-      width: `calc(100% - ${DRAWER_WIDTH}px)`,
-      padding: '0 1rem',
+      padding: '0.25rem 1rem',
       [theme.breakpoints.down('sm')]: {
         width: '100%'
       }
@@ -30,7 +28,6 @@ const useStyles = makeStyles(theme => {
       flexGrow: 1
     },
     avatar: {
-      // marginLeft: 16,
       background: ({ certification }) => selectCertificationColor(certification),
       boxShadow: theme.shadows[1],
       '&:hover': {
@@ -45,7 +42,7 @@ const useStyles = makeStyles(theme => {
   };
 });
 
-const Topbar = () => {
+const Topbar = ({ setIsOpen }) => {
 
   const location = useLocation();
   const history = useHistory();
@@ -57,6 +54,15 @@ const Topbar = () => {
   return (
     <AppBar elevation={0} className={classes.appbar}>
       <Toolbar>
+        <IconButton
+          onClick={() => setIsOpen(true)}
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+        >
+          <MenuOutlinedIcon />
+        </IconButton>
+
         <Typography className={classes.grow}>
           {ROUTE_TITLES[routePath]}
         </Typography>

@@ -25,6 +25,8 @@ export const selectFeedQuery = (location) => {
       return GET_FAVORITE_POSTS;
     case '/dashboard':
       return GET_AUTHOR_POSTS;
+    default:
+      return GET_PUBLIC_POSTS;
   }
 };
 
@@ -57,6 +59,9 @@ export const selectFeedPosts = (posts, location) => {
       return posts.filter(post => {
         return post?.author?.id === parameter;
       });
+
+    default:
+      return [];
   }
 };
 
@@ -96,7 +101,7 @@ export const selectUsersWhoLikedPost = users => {
   if (users.length < 5) {
     return users
       .reduce((acc, current) => `${acc?.username || acc}, ${current.username}`)
-      .replace(/,\s([\w\.\-]+)$/i, ' and $1')
+      .replace(/,\s([\w.-]+)$/i, ' and $1')
       + ' liked this post';
   }
 
@@ -106,5 +111,5 @@ export const selectUsersWhoLikedPost = users => {
 
   const rest = users.slice(4).length;
 
-  return `${subset} and ${rest}` + ` ${rest > 1 ? 'others' : 'other'} liked this post`;
+  return `${subset} and ${rest} ${rest > 1 ? 'others' : 'other'} liked this post`;
 };

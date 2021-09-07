@@ -3,14 +3,11 @@ import { useForm, Controller } from 'react-hook-form';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SendIcon from '@material-ui/icons/Send';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 import FileUpload from '@components/FileUpload';
 
@@ -54,7 +51,7 @@ const validators = {
 const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }) => {
 
   const classes = useStyles();
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   return (
     <Container className={classes.form}>
@@ -62,7 +59,7 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }
         <Controller
           name="title"
           control={control}
-          defaultValue={post?.title || "A Good Day To Practice Web Development"}
+          defaultValue={post?.title || ""}
           rules={validators.title}
           render={({ field }) => (
             <TextField

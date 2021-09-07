@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-import { useQuery, useLazyQuery, useReactiveVar } from '@apollo/client';
+import { useLazyQuery, useReactiveVar } from '@apollo/client';
 import { postsFeed } from '@services/apollo/cache';
 import { selectFeedQuery, selectFeedPosts } from '@utils/selectors';
 import InfiniteScroll from '@components/InfiniteScroll';

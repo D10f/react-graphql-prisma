@@ -10,7 +10,7 @@ const RegisterPage = ({ history }) => {
 
   const [ error, setError ] = useState('');
 
-  const [ registerUser, { data, loading, client }] = useMutation(REGISTER_USER, {
+  const [ registerUser, { loading }] = useMutation(REGISTER_USER, {
     onCompleted: responseData => {
       authenticationVar(responseData.registerUser);
       localStorage.setItem('token', JSON.stringify(authenticationVar()));

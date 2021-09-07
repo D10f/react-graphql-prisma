@@ -3,7 +3,7 @@ const sanitizeHtml = require('sanitize-html');
 const validators = require('../validators');
 const AuthService = require('./AuthService');
 
-const MAX_EXCERPT_LENGTH = 120;
+const MAX_EXCERPT_LENGTH = 240;
 
 module.exports = ({ PostModel }) => ({
 

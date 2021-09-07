@@ -10,12 +10,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 
-// import padiColorMapper from '@utils/padiColorMapper';
 import { selectCertificationColor } from '@utils/selectors';
 
 import { PADI_CERTS } from '@enums';
@@ -30,6 +28,9 @@ import {
 const useStyles = makeStyles(theme => {
   // console.log(theme)
   return {
+    card: {
+      maxWidth: '350px'
+    },
     avatar: {
       background: ({ certification }) => selectCertificationColor(certification),
       boxShadow: theme.shadows[1]
@@ -90,7 +91,7 @@ const CardItem = ({
   if (!author) return null;
 
   return (
-    <Card>
+    <Card className={classes.card}>
       <CardHeader
         avatar={
           <Avatar

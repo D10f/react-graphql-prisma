@@ -8,7 +8,10 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       if (authenticationVar()) {
         return <Component {...props} />
       }
-      return <Redirect to="/login" />
+      return <Redirect to={{
+        pathname: '/login',
+        state: { referrer: rest.computedMatch.url }
+      }} />
     }}
   />
 );

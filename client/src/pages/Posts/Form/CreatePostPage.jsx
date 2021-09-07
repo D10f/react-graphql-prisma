@@ -9,7 +9,7 @@ const CreateFormPage = ({ history }) => {
 
   const [ error, setError ] = useState('');
 
-  const [ createPost, { data, loading, client }] = useMutation(CREATE_POST, {
+  const [ createPost, { loading }] = useMutation(CREATE_POST, {
     onCompleted: responseData => {
       postsFeed([ ...postsFeed(), responseData.createPost ]);
       history.push('/dashboard');

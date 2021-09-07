@@ -9,7 +9,6 @@ import Toast from '@components/Toast';
 import { makeStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 
@@ -24,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
   },
   userImg: {
     display: 'flex',
@@ -31,12 +33,19 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     flex: '0 1 min-content',
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: theme.spacing(2)
+    }
   },
   avatar: {
     background: ({ certification }) => selectCertificationColor(certification),
     width: theme.spacing(12),
     height: theme.spacing(12),
     margin: theme.spacing(2),
+    [theme.breakpoints.up('md')]: {
+      width: theme.spacing(16),
+      height: theme.spacing(16),
+    }
   },
   uploadBtn: {
     width: 'max-content',
@@ -134,14 +143,3 @@ const ProfilePage = ({ match }) => {
 };
 
 export default ProfilePage;
-
-/*
-
-<Button
-  className={classes.uploadBtn}
-  variant="outlined"
->
-  Upload Image
-</Button>
-
-*/
