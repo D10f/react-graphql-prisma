@@ -6,7 +6,7 @@ import Container from '@material-ui/core/Container';
 import Toast from '@components/Toast';
 import QueryResult from '@components/QueryResult';
 import { UPDATE_POST } from '@services/posts/mutations';
-import { POST_UPLOAD_FILE } from '@services/files/mutations';
+import { UPLOAD_FILE } from '@services/files/mutations';
 import { GET_POST_DETAILS } from '@services/posts/queries';
 
 import PostForm from './PostForm';
@@ -48,9 +48,9 @@ const EditFormPage = ({ history, match }) => {
     updatePost({ variables: { id: Number(match.params.id), input: responseData }});
   };
 
-  const [ singlePostUpload ] = useMutation(POST_UPLOAD_FILE, {
-    onCompleted: ({ singlePostUpload }) => {
-      const { url, previewUrl } = singlePostUpload;
+  const [ singleFileUpload ] = useMutation(UPLOAD_FILE, {
+    onCompleted: ({ singleFileUpload }) => {
+      const { url, previewUrl } = singleFileUpload;
 
       postsFeed(postsFeed().map(cachedPost => {
         return cachedPost.id === match.params.id ? { ...cachedPost, url, previewUrl } : cachedPost;
@@ -60,7 +60,7 @@ const EditFormPage = ({ history, match }) => {
     onError: err => setSubmitError(err.message),
   });
 
-  const fileHandleChange = file => singlePostUpload({ variables: { id: match.params.id, file }});
+  const fileHandleChange = file => singleFileUpload({ variables: { id: match.params.id, file }});
 
   return (
     <QueryResult error={error} loading={loading}>

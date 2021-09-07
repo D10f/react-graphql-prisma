@@ -101,9 +101,14 @@ query getPostsByAuthor($id: ID!, $limit: Int, $skip: Int) {
   getPostsByAuthor(id: $id, limit: $limit, skip: $skip) {
     id
     title
+    excerpt
+    previewUrl
     commentCount
     likeCount
     likedBy {
+      id
+    }
+    author {
       id
       username
       url

@@ -1,6 +1,6 @@
 /**
- * Processes images following the same algorithm and libraries that the real application uses,
- * producing an equivalent quality images used for dummy test data while seeding the db.
+ * Processes images the exact same way the production application would. Use this to produce resized
+ * images out of a custom set of image files which can then be used while seeding the database
  */
 
 const path = require('path');
@@ -19,7 +19,8 @@ const POST_PREV_IMG_SIZE = 350;
 
 async function main() {
 
-  const files = await readdir('public');
+  const files = await readdir('public')
+  // const files = filesInDir.filter(file => file.endsWith('.png'));
 
   for (let i = 0; i < files.length; i++) {
     const fileLocation = getFileLocation(files[i]);

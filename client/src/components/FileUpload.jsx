@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FileUpload = ({ fileHandleChange, fileHandleError }) => {
+const FileUpload = ({ fileHandleChange, fileHandleError, className }) => {
 
   const classes = useStyles();
   const [ loading, setLoading ] = useState(false);
@@ -36,7 +36,7 @@ const FileUpload = ({ fileHandleChange, fileHandleError }) => {
     const validMimeType = VALID_MIME_TYPES.test(file.type);
 
     if (!validMimeType || file.size > MAX_FILE_SIZE) {
-      fileHandleError(ERROR_MESSAGE);
+      fileHandleError && fileHandleError(ERROR_MESSAGE);
       setLoading(false);
       return;
     };
@@ -45,7 +45,7 @@ const FileUpload = ({ fileHandleChange, fileHandleError }) => {
   };
 
   return (
-    <>
+    <span className={className}>
       <input
         className={classes.input}
         id="contained-button-file"
@@ -66,7 +66,7 @@ const FileUpload = ({ fileHandleChange, fileHandleError }) => {
           </Button>
         </Tooltip>
       </label>
-    </>
+    </span>
   );
 };
 

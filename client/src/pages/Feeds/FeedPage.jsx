@@ -4,7 +4,7 @@ import { useQuery, useLazyQuery, useReactiveVar } from '@apollo/client';
 import { postsFeed } from '@services/apollo/cache';
 import { selectFeedQuery, selectFeedPosts } from '@utils/selectors';
 import InfiniteScroll from '@components/InfiniteScroll';
-import Grid from './Grid';
+import Grid from '@components/Grid';
 
 import { PER_PAGE } from '@constants';
 
@@ -21,7 +21,7 @@ const FeedPage = () => {
   // The name of the query value, varies depending on the query string used to fetch data
   const queryName = query.definitions[0].name.value;
 
-  const [ startQuery, { data, loading, error, called }] = useLazyQuery(query, {
+  const [ startQuery, { data, loading, error }] = useLazyQuery(query, {
     onCompleted: (responseData) => {
 
       const newUniqueValues = responseData[queryName].filter(post => {
@@ -38,7 +38,7 @@ const FeedPage = () => {
   // Make initial server request
   useEffect(() => {
     startQuery({ variables: { limit: PER_PAGE, skip: postsInCache.length }, fetchPolicy: 'network-only' });
-  }, []);
+  }, [ location ]);
 
   return (
     <InfiniteScroll

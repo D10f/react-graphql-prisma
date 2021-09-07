@@ -29,6 +29,7 @@ async function main() {
       email: 'admin@example.com',
       password: await argon2.hash('adminpassword'),
       role: 'ADMIN',
+      url: 'http://localhost:5000/mario-av-350.webp',
       certification: 'INSTRUCTOR'
     }
   });

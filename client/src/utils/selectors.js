@@ -3,6 +3,18 @@ import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS, GET_AUTHOR_POSTS } from '@service
 import { PADI_CERTS, PADI_COLORS } from '@enums';
 
 /**
+ * Breaks down the components of the route provided.
+ * @return {Array} An array with the base followed by should be a paramter
+ * @example: /edit-trek/123 -> [ '/edit-treck', '123' ]
+ * @example: /user/123      -> [ '/user', '123' ]
+ * @example: /              -> [ '/', undefined ]
+ */
+export const selectPathnameComponents = location => {
+  const [ _, base, param ] = location.pathname.split('/');
+  return [ `/${base}`, param ];
+};
+
+/**
  * Returns a gql query based on the present route
  */
 export const selectFeedQuery = (location) => {
@@ -21,8 +33,9 @@ export const selectFeedQuery = (location) => {
  */
 export const selectFeedPosts = (posts, location) => {
   const loggedInAs = authenticationVar();
+  const [ basePathname, parameter ] = selectPathnameComponents(location);
 
-  switch (location.pathname.toLowerCase()) {
+  switch (basePathname.toLowerCase()) {
     // For a public route all posts should be returned
     case '/':
       return posts;
@@ -36,8 +49,13 @@ export const selectFeedPosts = (posts, location) => {
     // Returns only those posts that the user has created
     case '/dashboard':
       return posts.filter(post => {
-        console.log(post);
         return post?.author?.id === loggedInAs.id
+      });
+
+    // Returns posts by the author specified in the location parameter
+    case '/user':
+      return posts.filter(post => {
+        return post?.author?.id === parameter;
       });
   }
 };
@@ -65,8 +83,11 @@ export const selectCertificationColor = (certification) => {
 };
 
 /**
- * Returns a string of usernames, concatenated as "mario, luigi and peach liked this post"
- * If the list is 4+ then is formated as "mario, luigi, peach and 3 others liked this post"
+ * Returns a string of usernames, formatted based on number of users provided, as one of:
+ * "Mario liked this post"
+ * "Mario, Luigi and Peach liked this post"
+ * "Mario, Luigi, Peach and 1 other liked this post"
+ * "Mario, Luigi, Peach and 3 others liked this post"
  */
 export const selectUsersWhoLikedPost = users => {
   if (users.length === 0) return '';
@@ -75,7 +96,7 @@ export const selectUsersWhoLikedPost = users => {
   if (users.length < 5) {
     return users
       .reduce((acc, current) => `${acc?.username || acc}, ${current.username}`)
-      .replace(/,\s([\w\.\-]+)$/i, ' & $1')
+      .replace(/,\s([\w\.\-]+)$/i, ' and $1')
       + ' liked this post';
   }
 
@@ -85,5 +106,5 @@ export const selectUsersWhoLikedPost = users => {
 
   const rest = users.slice(4).length;
 
-  return `${subset} & ${rest}` + ` ${rest > 1 ? 'others' : 'other'} liked this post`;
+  return `${subset} and ${rest}` + ` ${rest > 1 ? 'others' : 'other'} liked this post`;
 };

@@ -21,7 +21,7 @@ module.exports = ({ UserModel, PostModel }) => ({
   /**
    * Uploads an image associated to a post
    */
-  async singlePostUpload(id, file, reqUser) {
+  async singleFileUpload(id, file, reqUser) {
 
     const { createReadStream, filename, mimetype, encoding } = await file;
     const { isAuthor, isAdmin } = AuthService;
@@ -30,28 +30,47 @@ module.exports = ({ UserModel, PostModel }) => ({
       throw new UserInputError('You must choose a valid image file.');
     }
 
-    const post = await PostModel.findById(id);
+    // Check if the post or user profile being updated exists; this determines the following options
+    const [ post, user ] = await Promise.all([
+      PostModel.findById(id),
+      UserModel.findById(id)
+    ]);
 
-    if (!post) {
-      throw new UserInputError('Cannot find post with that id.');
+    if (!post && !user) {
+      throw new UserInputError('Cannot find resource with that id.');
     }
 
-    if (!AuthService.isAuthorized(reqUser, post.authorId, [ isAuthor, isAdmin ])) {
+    // If the resource being updated is a post, extract it's authorId in order to check for permissions
+    const resourceId = post ? post.authorId : id;
+
+    if (!AuthService.isAuthorized(reqUser, resourceId, [ isAuthor, isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
     // Get the file system location path and public web urls for the file
     // TODO: Add some unique identifier to filename
     const fileLocation = this.getFileLocation(filename);
-    const { url, previewUrl } = this.getFileUrls(filename);
+    const { url, previewUrl } = this.getFileUrls(filename, {
+      url: post ? POST_FULL_IMG_SIZE : USER_FULL_IMG_SIZE,
+      previewUrl: post ? POST_PREV_IMG_SIZE : null,
+    });
 
     // Produce the transformer stream, passing the path where images should be saved to
     // TODO: provide additional options to specify dimensions, etc
-    const transformerStream = this.transformImage(fileLocation);
+    const transformerStream = this.transformImage(fileLocation, {
+      full: post ? POST_FULL_IMG_SIZE : USER_FULL_IMG_SIZE,
+      preview: post ? POST_PREV_IMG_SIZE : null,
+      format: 'webp'
+    });
 
     try {
       await pipeline(createReadStream(), transformerStream);
-      await PostModel.update(id, { url, previewUrl });
+      if (post) {
+        await PostModel.update(id, { url, previewUrl })
+      } else {
+        await UserModel.update(id, { url })
+      }
+
       return { url, previewUrl };
     } catch (err) {
       console.error(err);
@@ -60,21 +79,28 @@ module.exports = ({ UserModel, PostModel }) => ({
   },
 
   transformImage(fileLocation, options = {}) {
+    const { full, preview, format } = options;
+
+    const fullSizePath = full && `${fileLocation}-${full}.${format}`
+    const previewSizePath = preview && `${fileLocation}-${preview}.${format}`;
+
     const transformerStream = sharp();
-    const url = `${fileLocation}-${POST_FULL_IMG_SIZE}.webp`
-    const previewUrl = `${fileLocation}-${POST_PREV_IMG_SIZE}.webp`;
 
-    transformerStream
-      .clone()
-      .resize({ width: POST_FULL_IMG_SIZE, withoutEnlargement: true })
-      .webp()
-      .toFile(url);
+    if (full) {
+      transformerStream
+        .clone()
+        .resize({ width: full, withoutEnlargement: true })
+        .webp()
+        .toFile(fullSizePath);
+    }
 
-    transformerStream
-      .clone()
-      .resize({ width: POST_PREV_IMG_SIZE, withoutEnlargement: true })
-      .webp()
-      .toFile(previewUrl);
+    if (preview) {
+      transformerStream
+        .clone()
+        .resize({ width: preview, withoutEnlargement: true })
+        .webp()
+        .toFile(previewSizePath);
+    }
 
     return transformerStream;
   },
@@ -89,12 +115,13 @@ module.exports = ({ UserModel, PostModel }) => ({
     return absPath;
   },
 
-  getFileUrls(filename) {
+  getFileUrls(filename, options = {}) {
+
     const basename = filename.replace(path.extname(filename), '');
     // TODO: set environment variable for prefix url
     return {
-      url: `http://localhost:5000/${basename}-${POST_FULL_IMG_SIZE}.webp`,
-      previewUrl: `http://localhost:5000/${basename}-${POST_PREV_IMG_SIZE}.webp`,
+      url: options.url && `http://localhost:5000/${basename}-${options.url}.webp`,
+      previewUrl: options.previewUrl && `http://localhost:5000/${basename}-${options.previewUrl}.webp`,
     };
   },
 });

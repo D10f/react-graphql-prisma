@@ -28,7 +28,7 @@ import {
 } from '@constants';
 
 const useStyles = makeStyles(theme => {
-  console.log(theme)
+  // console.log(theme)
   return {
     avatar: {
       background: ({ certification }) => selectCertificationColor(certification),
@@ -78,14 +78,14 @@ const CardItem = ({
   likedBy,
   author,
   loggedInAs,
-  giveALike,
+  giveALike
 }) => {
 
   const history = useHistory();
 
   // const { id: authorId, username, certification } = author;
   const classes = useStyles({ certification: PADI_CERTS[author?.certification] });
-  const likesThisPost = likedBy?.some(user => user.id === loggedInAs);
+  const likesThisPost = likedBy?.some(user => user.id === loggedInAs?.id);
 
   if (!author) return null;
 

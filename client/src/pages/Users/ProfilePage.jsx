@@ -1,6 +1,10 @@
-import { useQuery } from '@apollo/client';
+import { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_PROFILE } from '@services/users/queries';
+import { UPLOAD_FILE } from '@services/files/mutations';
 import QueryResult from '@components/QueryResult';
+import FileUpload from '@components/FileUpload';
+import Toast from '@components/Toast';
 
 import { makeStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -9,7 +13,7 @@ import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 
-import LatestPosts from './LatestPosts';
+import ProfilePosts from './ProfilePosts';
 
 import { authenticationVar } from '@services/apollo/cache';
 import { selectCertificationColor } from '@utils/selectors';
@@ -60,8 +64,24 @@ const ProfilePage = ({ match }) => {
     variables: { id: match.params.id }
   });
 
+  const [ singleFileUpload ] = useMutation(UPLOAD_FILE, {
+    onCompleted: ({ singleFileUpload }) => {
+      const { url } = singleFileUpload;
+
+      if (match.params.id !== loggedInAs.id) return;
+
+      authenticationVar({ ...authenticationVar(), url });
+      localStorage.setItem('token', JSON.stringify(authenticationVar()));
+    },
+    onError: err => console.log(err.message),
+  });
+
+  const [ submitError, setSubmitError ] = useState(false);
+
   const classes = useStyles({ certification: PADI_CERTS[data?.getUserProfile.certification] });
   const loggedInAs = authenticationVar();
+
+  const fileHandleChange = file => singleFileUpload({ variables: { id: match.params.id, file }});
 
   return (
     <QueryResult error={error} loading={loading}>
@@ -75,9 +95,11 @@ const ProfilePage = ({ match }) => {
           />
 
           {(loggedInAs.id === match.params.id || loggedInAs.role === 'ADMIN') && (
-            <Button className={classes.uploadBtn} variant="outlined">
-              Upload Image
-            </Button>
+            <FileUpload
+              className={classes.uploadBtn}
+              fileHandleChange={fileHandleChange}
+              fileHandleError={setSubmitError}
+            />
           )}
         </Container>
 
@@ -98,10 +120,28 @@ const ProfilePage = ({ match }) => {
 
       <Divider className={classes.divider}/>
 
-      <LatestPosts authorId={match.params.id} />
+      <ProfilePosts authorId={match.params.id} />
 
+      {submitError && (
+        <Toast
+          message={submitError}
+          severity='error'
+          onClose={() => setSubmitError('')}
+        />
+      )}
     </QueryResult>
   );
 };
 
 export default ProfilePage;
+
+/*
+
+<Button
+  className={classes.uploadBtn}
+  variant="outlined"
+>
+  Upload Image
+</Button>
+
+*/

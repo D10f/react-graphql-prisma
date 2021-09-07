@@ -5,9 +5,9 @@ type File {
   mimetype: String
   encoding: String
   url: String!
-  previewUrl: String!
+  previewUrl: String
 }
 
 type Mutation {
-  singlePostUpload(id: ID!, file: Upload!): File!
+  singleFileUpload(id: ID!, file: Upload!): File!
 }

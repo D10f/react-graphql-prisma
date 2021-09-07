@@ -3,10 +3,10 @@ import { useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Toast from '@components/Toast';
+import CardItem from '@components/CardItem';
 import Masonry from 'react-masonry-css';
-import CardItem from './CardItem';
 
-import { authenticationVar, postsFeed } from '@services/apollo/cache';
+import { authenticationVar, postsFeed, profilePosts } from '@services/apollo/cache';
 import { LIKE_POST } from '@services/posts/mutations';
 
 const breakpoints = {
@@ -35,7 +35,12 @@ const Grid = ({ items }) => {
 
   const [ likeOrUnlikePost, { data, loading, client }] = useMutation(LIKE_POST, {
     onCompleted: ({ likeOrUnlikePost: { id, likeCount, likedBy } }) => {
+      // Update both sources of local-cached posts
       postsFeed(postsFeed().map(post => {
+        return post.id === id ? { ...post, likeCount, likedBy } : post;
+      }));
+
+      profilePosts(profilePosts().map(post => {
         return post.id === id ? { ...post, likeCount, likedBy } : post;
       }));
     },

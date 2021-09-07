@@ -9,12 +9,10 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
 // import padiColorMapper from '@utils/padiColorMapper';
-import { selectCertificationColor } from '@utils/selectors';
+import { selectCertificationColor, selectPathnameComponents } from '@utils/selectors';
 
 import { DRAWER_WIDTH } from '@constants';
 import { ROUTE_TITLES, PADI_CERTS } from '@enums';
-
-import mario from '@assets/mario-av.png';
 
 const useStyles = makeStyles(theme => {
   // console.log(theme);
@@ -54,17 +52,13 @@ const Topbar = () => {
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
-  /* Extracts the initial part of a route e.g.:
-   *  /edit-trek/123 -> /edit-trek
-   *  /user/123      -> /user
-   */
-  const routePath = path => path.match(/^\/([a-zA-Z-]+)?/)[0];
+  const [ routePath ] = selectPathnameComponents(location);
 
   return (
     <AppBar elevation={0} className={classes.appbar}>
       <Toolbar>
         <Typography className={classes.grow}>
-          {ROUTE_TITLES[routePath(location.pathname)]}
+          {ROUTE_TITLES[routePath]}
         </Typography>
 
         {loggedInAs && (

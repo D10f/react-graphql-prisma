@@ -37,7 +37,7 @@ const LoginForm = ({ onSubmit, loading }) => {
         <Controller
           name="username"
           control={control}
-          defaultValue="jon"
+          defaultValue=""
           rules={validators.username}
           render={({ field }) => (
             <TextField
@@ -55,7 +55,7 @@ const LoginForm = ({ onSubmit, loading }) => {
         <Controller
           name="password"
           control={control}
-          defaultValue="1234567897"
+          defaultValue=""
           rules={validators.password}
           render={({ field }) => (
             <TextField
