@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { authenticationVar } from '@services/apollo/cache';
-import { useReactiveVar, useMutation } from '@apollo/client';
+import { useReactiveVar, useMutation, useQuery } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
+import Toast from '@components/Toast';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Menu from '@material-ui/core/Menu';
@@ -14,10 +15,12 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuOutlinedIcon from '@material-ui/icons/MenuOutlined';
 
 import { LOGOUT_USER } from '@services/apollo/users/mutations';
+import { GET_NOTIFICATIONS } from '@services/apollo/users/queries';
 import localStorageService from '@services/localStorage';
 
 import { selectCertificationColor, selectPathnameComponents } from '@utils/selectors';
 
+import { NOTIFICATIONS_POLL_INTERVAL } from '@constants';
 import { ROUTE_TITLES, PADI_CERTS } from '@enums';
 
 const useStyles = makeStyles(theme => {
@@ -47,6 +50,10 @@ const useStyles = makeStyles(theme => {
       '&:hover': {
         cursor: 'default'
       }
+    },
+    profileMenu: {
+      marginTop: '3rem',
+      marginLeft: '-1rem'
     }
   };
 });
@@ -58,9 +65,19 @@ const Topbar = ({ setIsOpen }) => {
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
-  const [ anchorEl, setAnchorEl ] = useState(null);
   const [ routePath ] = selectPathnameComponents(location);
+
+  const [ anchorEl, setAnchorEl ] = useState(null);
+  const [ error, setError ] = useState(false);
   const [ logoutUser ] = useMutation(LOGOUT_USER, { variables: { id: loggedInAs?.id } });
+
+  const { data } = useQuery(GET_NOTIFICATIONS, {
+    variables: { id: loggedInAs?.id },
+    fetchPolicy: "network-only",
+    pollInterval: NOTIFICATIONS_POLL_INTERVAL,
+    notifyOnNetworkStatusChange: true,
+    onError: err => setError(err.message),
+  });
 
   const handleClose = (e) => setAnchorEl(null);
 
@@ -90,7 +107,11 @@ const Topbar = ({ setIsOpen }) => {
 
         {loggedInAs && (
           <>
-            <Badge className={classes.badge} color="secondary" badgeContent={7} max={99} >
+            <Badge
+              className={classes.badge}
+              color="secondary"
+              badgeContent={data?.getUserNotifications.length || 0} max={99}
+            >
               <Avatar
                 src={loggedInAs.url}
                 alt={loggedInAs.username.toUpperCase()}
@@ -106,6 +127,7 @@ const Topbar = ({ setIsOpen }) => {
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleClose}
+              className={classes.profileMenu}
             >
               <MenuItem>
                 <Link
@@ -116,9 +138,15 @@ const Topbar = ({ setIsOpen }) => {
               </MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
+            {error && (
+              <Toast
+                message={error}
+                severity='error'
+                onClose={() => setError('')}
+              />
+            )}
           </>
         )}
-
       </Toolbar>
     </AppBar>
   );

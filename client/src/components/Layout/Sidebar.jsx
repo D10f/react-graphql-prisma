@@ -50,6 +50,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       anchor="left"
       open={isOpen}
       onClose={() => setIsOpen(false)}
+      onOpen={() => {}}
       onKeyDown={toggleDrawer}
     >
       <List

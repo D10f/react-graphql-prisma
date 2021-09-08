@@ -8,6 +8,7 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
 export const DRAWER_WIDTH  = 250;
 export const WEBAPP_NAME   = 'Dive Mapper';
+export const NOTIFICATIONS_POLL_INTERVAL = 60_000; // every 60 seconds
 
 export const PER_PAGE = 10;
 

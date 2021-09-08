@@ -10,3 +10,14 @@ export const GET_PROFILE = gql`
     }
   }
 `;
+
+export const GET_NOTIFICATIONS = gql`
+  query getUserNotifications($id: ID!) {
+    getUserNotifications(id: $id) {
+      message
+      postId
+      commentId
+      emitterId
+    }
+  }
+`;
