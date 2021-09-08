@@ -28,7 +28,8 @@ export const ROUTE_TITLES = {
   '/dashboard' : 'See How Far You\'ve come',
   '/register'  : 'Sign Up For A New Account',
   '/login'     : 'Welcome Back!',
+  '/trek'      : 'Viewing Publication',
   '/new-trek'  : 'Add A New Adventure Log',
   '/edit-trek' : 'Editing Log',
-  '/user'      : 'Viewing Profile'
+  '/user'      : 'Viewing Profile',
 };

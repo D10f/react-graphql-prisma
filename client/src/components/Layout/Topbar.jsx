@@ -1,14 +1,20 @@
-import { useLocation, useHistory } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { authenticationVar } from '@services/apollo/cache';
-import { useReactiveVar } from '@apollo/client';
+import { useReactiveVar, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import MenuOutlinedIcon from '@material-ui/icons/MenuOutlined';
+
+import { LOGOUT_USER } from '@services/apollo/users/mutations';
+import localStorageService from '@services/localStorage';
 
 import { selectCertificationColor, selectPathnameComponents } from '@utils/selectors';
 
@@ -26,6 +32,9 @@ const useStyles = makeStyles(theme => {
     },
     grow: {
       flexGrow: 1
+    },
+    link: {
+      color: theme.palette.grey[900]
     },
     avatar: {
       background: ({ certification }) => selectCertificationColor(certification),
@@ -49,7 +58,19 @@ const Topbar = ({ setIsOpen }) => {
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
+  const [ anchorEl, setAnchorEl ] = useState(null);
   const [ routePath ] = selectPathnameComponents(location);
+  const [ logoutUser ] = useMutation(LOGOUT_USER, { variables: { id: loggedInAs?.id } });
+
+  const handleClose = (e) => setAnchorEl(null);
+
+  const handleLogout = () => {
+    logoutUser();
+    handleClose();
+    authenticationVar(null);
+    localStorageService.remove('token');
+    history.push('/login');
+  };
 
   return (
     <AppBar elevation={0} className={classes.appbar}>
@@ -68,16 +89,34 @@ const Topbar = ({ setIsOpen }) => {
         </Typography>
 
         {loggedInAs && (
-          <Badge className={classes.badge} color="secondary" badgeContent={7} max={99} >
-            <Avatar
-              src={loggedInAs.url}
-              alt={loggedInAs.username.toUpperCase()}
-              className={classes.avatar}
-              onClick={() => history.push(`/user/${loggedInAs.id}`)}
+          <>
+            <Badge className={classes.badge} color="secondary" badgeContent={7} max={99} >
+              <Avatar
+                src={loggedInAs.url}
+                alt={loggedInAs.username.toUpperCase()}
+                className={classes.avatar}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                {loggedInAs?.username[0].toUpperCase()}
+              </Avatar>
+            </Badge>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
             >
-              {loggedInAs?.username[0].toUpperCase()}
-            </Avatar>
-          </Badge>
+              <MenuItem>
+                <Link
+                  to={`/user/${loggedInAs.id}`}
+                  onClick={handleClose}
+                  className={classes.link}
+                >Profile</Link>
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+          </>
         )}
 
       </Toolbar>
@@ -85,5 +124,4 @@ const Topbar = ({ setIsOpen }) => {
   );
 };
 
-// {!loggedInAs.avatar && loggedInAs.username[0].toUpperCase()}
 export default Topbar;

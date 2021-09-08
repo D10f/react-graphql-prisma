@@ -31,6 +31,11 @@ async function createApolloServer(services){
         err.message = 'File truncated as it exceeds the 1MB size limit.'
       }
 
+      // Prevent leaking database errors
+      if (err.message.includes('prisma')) {
+        err.message = 'Internal Server Error, please try again later.'
+      }
+
       return err;
     }
   });

@@ -1,5 +1,5 @@
 import { authenticationVar } from '@services/apollo/cache';
-import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS, GET_AUTHOR_POSTS } from '@services/posts/queries';
+import { GET_PUBLIC_POSTS, GET_FAVORITE_POSTS, GET_AUTHOR_POSTS } from '@services/apollo/posts/queries';
 import { PADI_CERTS, PADI_COLORS } from '@enums';
 
 /**

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_PROFILE } from '@services/users/queries';
-import { UPLOAD_FILE } from '@services/files/mutations';
+import { GET_PROFILE } from '@services/apollo/users/queries';
+import { UPLOAD_FILE } from '@services/apollo/files/mutations';
 import QueryResult from '@components/QueryResult';
 import FileUpload from '@components/FileUpload';
 import Toast from '@components/Toast';

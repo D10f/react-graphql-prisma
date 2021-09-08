@@ -57,6 +57,7 @@ const RegisterForm = ({ onSubmit, loading }) => {
               error={!!errors?.username}
               fullWidth
               required
+              autoFocus
             />
           )}
         />

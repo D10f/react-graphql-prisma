@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core';
 import { useReactiveVar } from '@apollo/client';
 import { authenticationVar } from '@services/apollo/cache';
 
-import Drawer from '@material-ui/core/Drawer';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
@@ -16,9 +15,6 @@ import * as constants from '@constants';
 const useStyles = makeStyles(theme => ({
   drawer: {
     width: constants.DRAWER_WIDTH,
-  },
-  drawerPaper: {
-    width: constants.DRAWER_WIDTH
   },
   active: {
     background: '#f4f4f4'
@@ -41,14 +37,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }
   };
 
-  // <Drawer
-  // className={classes.drawer}
-  // classes={{ paper: classes.drawerPaper }}
-  // variant="permanent"
-  // open={isOpen}
-  // anchor="left"
-  // >
-
   // <Typography
   //   variant="h4"
   //   component="h2"
@@ -69,12 +57,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         className={classes.drawer}
       >
         {constants.SIDEBAR_ITEMS.map(item => {
-          // onlyPublic routes show when you are NOT logged in
+          // onlyPublic routes show only when you are NOT logged in
           if (loggedInAs && item.onlyPublic) {
             return null;
           }
 
-          // not public routes show when you ARE logged in
+          // not public routes show only when you ARE logged in
           if (!loggedInAs && !item.public) {
             return null;
           }

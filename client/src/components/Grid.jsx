@@ -7,7 +7,7 @@ import CardItem from '@components/CardItem';
 import Masonry from 'react-masonry-css';
 
 import { authenticationVar, postsFeed, profilePosts } from '@services/apollo/cache';
-import { LIKE_POST } from '@services/posts/mutations';
+import { LIKE_POST } from '@services/apollo/posts/mutations';
 
 const breakpoints = {
   default: 3,

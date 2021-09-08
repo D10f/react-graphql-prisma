@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SendIcon from '@material-ui/icons/Send';
 
-import { CREATE_COMMENT } from '@services/comments/mutations';
+import { CREATE_COMMENT } from '@services/apollo/comments/mutations';
 import { PADI_COLORS } from '@enums';
 
 const useStyles = makeStyles(theme => ({

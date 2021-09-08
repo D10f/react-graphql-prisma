@@ -46,6 +46,7 @@ const LoginForm = ({ onSubmit, loading }) => {
               className={classes.field}
               error={!!errors?.username}
               fullWidth
+              autoFocus
               required
             />
           )}

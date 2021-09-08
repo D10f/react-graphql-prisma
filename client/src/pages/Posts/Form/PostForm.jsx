@@ -53,6 +53,8 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }
   const classes = useStyles();
   const { control, handleSubmit, formState: { errors } } = useForm();
 
+  console.log(post)
+
   return (
     <Container className={classes.form}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
@@ -123,7 +125,7 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }
         <Controller
           name="published"
           control={control}
-          defaultValue={post?.published || true}
+          defaultValue={post?.published}
           render={({ field }) => (
             <Tooltip arrow title={PUBLISH_POST_TOOLTIP}>
               <FormControlLabel
@@ -144,7 +146,7 @@ const PostForm = ({ onSubmit, loading, post, fileHandleChange, fileHandleError }
         <Controller
           name="allowComments"
           control={control}
-          defaultValue={post?.allowComments || true}
+          defaultValue={post?.allowComments}
           render={({ field }) => (
             <Tooltip arrow title={ALLOW_COMMENTS_TOOLTIP}>
               <FormControlLabel

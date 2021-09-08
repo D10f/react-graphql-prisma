@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client';
 import { postsFeed } from '@services/apollo/cache';
 import PostForm from './PostForm';
 import Toast from '@components/Toast';
-import { CREATE_POST } from '@services/posts/mutations';
+import { CREATE_POST } from '@services/apollo/posts/mutations';
 
 const CreateFormPage = ({ history }) => {
 

@@ -25,3 +25,11 @@ export const LOGIN_USER = gql`
     }
   }
 `;
+
+export const LOGOUT_USER = gql`
+  mutation logoutUser($id: ID!) {
+    logoutUser(id: $id) {
+      id
+    }
+  }
+`;

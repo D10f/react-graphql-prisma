@@ -4,7 +4,9 @@ import { authenticationVar } from '@services/apollo/cache';
 import RegisterForm from './RegisterForm';
 import Toast from '@components/Toast';
 
-import { REGISTER_USER } from '@services/users/mutations';
+import { REGISTER_USER } from '@services/apollo/users/mutations';
+import localStorageService from '@services/localStorage';
+
 
 const RegisterPage = ({ history }) => {
 
@@ -13,7 +15,7 @@ const RegisterPage = ({ history }) => {
   const [ registerUser, { loading }] = useMutation(REGISTER_USER, {
     onCompleted: responseData => {
       authenticationVar(responseData.registerUser);
-      localStorage.setItem('token', JSON.stringify(authenticationVar()));
+      localStorageService.set('token', authenticationVar());
       history.push('/');
     },
     onError: (err) => {

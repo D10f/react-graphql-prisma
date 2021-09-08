@@ -72,8 +72,10 @@ export const GET_POST_DETAILS = gql`
       createdAt
       title
       body
+      excerpt
       url
       allowComments
+      published
       commentCount
       author {
         id

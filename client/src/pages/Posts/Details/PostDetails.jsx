@@ -22,8 +22,8 @@ import Toast from '@components/Toast';
 import { selectCertificationColor } from '@utils/selectors';
 import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP, DRAWER_WIDTH } from '@constants';
 import { PADI_CERTS, PADI_COLORS } from '@enums';
-import { GET_POST_DETAILS } from '@services/posts/queries';
-import { DELETE_POST } from '@services/posts/mutations';
+import { GET_POST_DETAILS } from '@services/apollo/posts/queries';
+import { DELETE_POST } from '@services/apollo/posts/mutations';
 
 const useStyles = makeStyles(theme => ({
   title: {

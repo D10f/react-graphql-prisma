@@ -4,7 +4,8 @@ import { authenticationVar } from '@services/apollo/cache';
 import LoginForm from './LoginForm';
 import Toast from '@components/Toast';
 
-import { LOGIN_USER } from '@services/users/mutations';
+import { LOGIN_USER } from '@services/apollo/users/mutations';
+import localStorageService from '@services/localStorage';
 
 const LoginPage = ({ history, location }) => {
 
@@ -13,7 +14,7 @@ const LoginPage = ({ history, location }) => {
   const [ loginUser, { loading }] = useMutation(LOGIN_USER, {
     onCompleted: responseData => {
       authenticationVar(responseData.loginUser);
-      localStorage.setItem('token', JSON.stringify(authenticationVar()));
+      localStorageService.set('token', authenticationVar());
       history.push(location?.state?.referrer || '/');
     },
     onError: (err) => {

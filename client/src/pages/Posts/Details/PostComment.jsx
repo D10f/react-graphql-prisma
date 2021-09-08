@@ -5,7 +5,7 @@ import { authenticationVar } from '@services/apollo/cache';
 import { selectCertificationColor } from '@utils/selectors';
 import { PADI_COLORS, PADI_CERTS } from '@enums';
 import { EDIT_COMMENT_TOOLTIP, STOP_EDIT_COMMENT_TOOLTIP, DELETE_COMMENT_TOOLTIP } from '@constants';
-import { UPDATE_COMMENT, DELETE_COMMENT } from '@services/comments/mutations';
+import { UPDATE_COMMENT, DELETE_COMMENT } from '@services/apollo/comments/mutations';
 
 import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';

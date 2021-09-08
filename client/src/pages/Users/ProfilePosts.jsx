@@ -6,7 +6,7 @@ import { profilePosts } from '@services/apollo/cache';
 import Grid from '@components/Grid';
 import InfiniteScroll from '@components/InfiniteScroll';
 
-import { GET_POST_BY_AUTHOR } from '@services/posts/queries';
+import { GET_POST_BY_AUTHOR } from '@services/apollo/posts/queries';
 import { PER_PAGE } from '@constants';
 import { selectFeedPosts } from '@utils/selectors';
 

@@ -26,6 +26,10 @@ const useStyles = makeStyles(theme => {
       gap: theme.spacing(4),
       fontFamily: theme.typography.subtitle1.fontFamily,
       fontSize: theme.typography.subtitle1.fontSize,
+      [theme.breakpoints.down('sm')]: {
+        width: '15rem',
+        height: '25rem',
+      }
     }
   }
 });

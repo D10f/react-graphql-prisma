@@ -51,6 +51,23 @@ module.exports = ({ UserModel }) => ({
     return user;
   },
 
+  async logout(id, reqUser) {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      throw new AuthenticationError('Cannot find user with that id.');
+    }
+
+    if (!AuthService.isAuthorized(reqUser, id, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+      throw new ForbiddenError('You are not authorized to perform this action.');
+    }
+
+    // TODO: implement refresh tokens
+    // await UserModel.update(id, { token: null });
+
+    return user;
+  },
+
   async update(userId, input, reqUser) {
     validators.validateUpdateUserInput(input);
 

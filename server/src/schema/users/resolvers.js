@@ -26,6 +26,9 @@ module.exports = {
     async loginUser(parent, { username, password }, { user, services }, info) {
       return await services.user.login(username, password);
     },
+    async logoutUser(parent, { id }, { user, services }, info) {
+      return await services.user.logout(Number(id), user);
+    },
     async updateUser(parent, { id, input }, { user, services }, info) {
       return await services.user.update(Number(id), input, user);
     },

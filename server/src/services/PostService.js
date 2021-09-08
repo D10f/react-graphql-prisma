@@ -40,7 +40,6 @@ module.exports = ({ PostModel }) => ({
     // Create a short excerpt if there isn't one
     if (!input.excerpt) {
       newExcerpt = input.body.slice(0, MAX_EXCERPT_LENGTH);
-      // input.excerpt = newExcerpt.padEnd(newExcerpt.length + 3, '.');
       input.excerpt = newExcerpt.length <= input.body.length
         ? newExcerpt.padEnd(newExcerpt.length + 3, '.')
         : input.body;
@@ -65,6 +64,14 @@ module.exports = ({ PostModel }) => ({
     }
 
     validators.validateUpdatePostInput(input);
+
+    // Create a short excerpt if there isn't one
+    if (!input.excerpt) {
+      newExcerpt = input.body.slice(0, MAX_EXCERPT_LENGTH);
+      input.excerpt = newExcerpt.length <= input.body.length
+        ? newExcerpt.padEnd(newExcerpt.length + 3, '.')
+        : input.body;
+    }
 
     input.title = sanitizeHtml(input.title.trim());
     input.body = sanitizeHtml(input.body.trim());

@@ -4,6 +4,7 @@ import PublicOutlinedIcon from '@material-ui/icons/PublicOutlined';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
 import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
 export const DRAWER_WIDTH  = 250;
 export const WEBAPP_NAME   = 'Dive Mapper';

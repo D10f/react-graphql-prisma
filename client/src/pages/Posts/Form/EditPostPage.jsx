@@ -5,9 +5,9 @@ import { makeStyles } from '@material-ui/core/';
 import Container from '@material-ui/core/Container';
 import Toast from '@components/Toast';
 import QueryResult from '@components/QueryResult';
-import { UPDATE_POST } from '@services/posts/mutations';
-import { UPLOAD_FILE } from '@services/files/mutations';
-import { GET_POST_DETAILS } from '@services/posts/queries';
+import { UPDATE_POST } from '@services/apollo/posts/mutations';
+import { UPLOAD_FILE } from '@services/apollo/files/mutations';
+import { GET_POST_DETAILS } from '@services/apollo/posts/queries';
 
 import PostForm from './PostForm';
 
@@ -20,9 +20,10 @@ const useStyles = makeStyles(theme => ({
 
 const EditFormPage = ({ history, match }) => {
 
+  useReactiveVar(postsFeed);
+
   const classes = useStyles();
   const [ submitError, setSubmitError ] = useState('');
-  useReactiveVar(postsFeed);
 
   const { data, loading, error } = useQuery(GET_POST_DETAILS, {
     variables: { id: match.params.id }
@@ -34,7 +35,7 @@ const EditFormPage = ({ history, match }) => {
         return post.id === responseData.updatePost.id ? responseData.updatePost : post;
       }));
 
-      history.push('/dashboard');
+      history.push(`/trek/${match.params.id}`);
     },
     onError: err => {
       const msg = err.message === 'User Input Validation Error'
@@ -44,10 +45,6 @@ const EditFormPage = ({ history, match }) => {
     }
   });
 
-  const onSubmit = responseData => {
-    updatePost({ variables: { id: Number(match.params.id), input: responseData }});
-  };
-
   const [ singleFileUpload ] = useMutation(UPLOAD_FILE, {
     onCompleted: ({ singleFileUpload }) => {
       const { url, previewUrl } = singleFileUpload;
@@ -55,10 +52,13 @@ const EditFormPage = ({ history, match }) => {
       postsFeed(postsFeed().map(cachedPost => {
         return cachedPost.id === match.params.id ? { ...cachedPost, url, previewUrl } : cachedPost;
       }));
-
     },
     onError: err => setSubmitError(err.message),
   });
+
+  const onSubmit = responseData => {
+    updatePost({ variables: { id: Number(match.params.id), input: responseData }});
+  };
 
   const fileHandleChange = file => singleFileUpload({ variables: { id: match.params.id, file }});
 

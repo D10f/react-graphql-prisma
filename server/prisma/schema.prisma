@@ -21,6 +21,7 @@ model User {
   url           String        @default("") @db.VarChar(255)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  token         String
   posts         Post[]        @relation("WrittenPosts")
   likes         Post[]        @relation("LikedPosts")
   comments      Comment[]
