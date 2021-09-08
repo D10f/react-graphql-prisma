@@ -5,7 +5,7 @@ const AuthService = require('./AuthService');
 
 const MAX_EXCERPT_LENGTH = 240;
 
-module.exports = ({ PostModel }) => ({
+module.exports = ({ PostModel, UserModel }) => ({
 
   async findPosts(limit = 10, skip = 0, reqUser) {
 
@@ -99,10 +99,18 @@ module.exports = ({ PostModel }) => ({
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
 
-    // if (!AuthService.isAuthorized(reqUser, postId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
-    //   throw new ForbiddenError('You are not authorized to perform this action.');
-    // }
+    const post = await PostModel.toggleLikeStatus(postId, reqUser.id);
 
-    return await PostModel.toggleLikeStatus(postId, reqUser.id);
+    // Do not notify if users like their own posts
+    if (post.authorId !== reqUser.id) {
+      await UserModel.notify({
+        receiverId: post.authorId,
+        emitterId: reqUser.id,
+        postId,
+        message: `${reqUser.username} has liked your post!`,
+      });
+    }
+
+    return post;
   },
 });

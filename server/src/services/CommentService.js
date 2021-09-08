@@ -5,7 +5,7 @@ const validators = require('../validators');
 // const { CommentModel } = require('../models');
 const AuthService = require('./AuthService');
 
-module.exports = ({ CommentModel }) => ({
+module.exports = ({ CommentModel, UserModel, PostModel }) => ({
 
   async findByAuthorId(authorId) {
     return await CommentModel.findByAuthorId(authorId);
@@ -38,7 +38,21 @@ module.exports = ({ CommentModel }) => ({
     input.authorId = Number(reqUser.id);
     input.postId = Number(input.postId);
 
-    return await CommentModel.create(input);
+    const comment = await CommentModel.create(input);
+
+    const post = await PostModel.findById(input.postId);
+
+    // Do not notify users if they commented on their own posts
+    if (post.authorId !== reqUser.id) {
+      await UserModel.notify({
+        receiverId: post.authorId,
+        emitterId: reqUser.id,
+        commentId: comment.id,
+        message: `${reqUser.username} has commented on one of your posts!`,
+      });
+    }
+
+    return comment;
   },
 
   async update(commentId, input, reqUser) {

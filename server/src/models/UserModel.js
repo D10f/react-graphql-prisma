@@ -20,6 +20,26 @@ module.exports = prisma => ({
       : await prisma.user.findMany()
   },
 
+  async getUserNotifications(userId) {
+    const notifications = await prisma.user.findUnique({ where: { id: userId }}).notifications();
+    console.log(Math.random())
+    return notifications
+  },
+
+  async notify({ receiverId, emitterId, postId, commentId, message }){
+    return await prisma.notification.create({
+      data: {
+        emitterId,
+        postId,
+        commentId,
+        message,
+        receiver: {
+          connect: { id: receiverId }
+        }
+      }
+    });
+  },
+
   async getUserPosts(userId, limit, skip) {
     const result = await prisma.user.findUnique({
       where: { id: userId },

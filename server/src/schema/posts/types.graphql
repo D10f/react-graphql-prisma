@@ -42,15 +42,6 @@ type Mutation {
   likeOrUnlikePost(postId: ID!): Post!
 }
 
-type Subscription {
-  post: PostSubscriptionPayload!
-}
-
-type PostSubscriptionPayload {
-  mutation: MutationType!
-  data: Post!
-}
-
 input CreatePostInput {
   title: String!
   body: String!

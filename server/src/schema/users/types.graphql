@@ -3,6 +3,9 @@ type Query {
 
   "Retrieves a single user profile by id"
   getUserProfile(id: ID!): User!
+
+  "Retrieves all user pending notifications"
+  getUserNotifications(id: ID!): [UserNotification!]!
 }
 
 type Mutation {
@@ -51,6 +54,13 @@ type User {
 
   "Comments created by the user"
   comments: [Comment!]!
+}
+
+type UserNotification {
+  emitterId: ID!
+  postId: ID
+  commentId: ID
+  message: String
 }
 
 "TODO: Update mutation responses with a more descriptive type"
