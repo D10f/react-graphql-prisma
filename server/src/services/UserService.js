@@ -123,6 +123,17 @@ module.exports = ({ UserModel }) => ({
     return notifications;
   },
 
+  async deleteNotification(notificationId, reqUser){
+
+    const { isAuthor, isAdmin } = AuthService;
+
+    if (!AuthService.isAuthenticated(reqUser)) {
+      throw new AuthenticationError('You must be logged in to perform this action.');
+    }
+
+    return await UserModel.deleteNotification(notificationId);
+  },
+
   async findById(id, reqUser) {
     const { isSameUser, isAdmin } = AuthService;
     const user = await UserModel.findById(id);

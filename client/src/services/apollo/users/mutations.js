@@ -33,3 +33,11 @@ export const LOGOUT_USER = gql`
     }
   }
 `;
+
+export const DELETE_NOTIFICATION = gql`
+  mutation deleteNotification($id: ID!) {
+    deleteNotification(id: $id) {
+      id
+    }
+  }
+`;

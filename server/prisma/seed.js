@@ -17,22 +17,34 @@ async function main() {
 
   // Fresh start
   await prisma.$transaction([
+    prisma.notification.deleteMany(),
     prisma.comment.deleteMany(),
     prisma.post.deleteMany(),
     prisma.user.deleteMany()
   ]);
 
-  // Creat an admin user
-  await prisma.user.create({
-    data: {
-      id: faker.unique(faker.datatype.number),
-      username: 'Admin',
-      email: 'admin@example.com',
-      password: await argon2.hash('adminpassword'),
-      role: 'ADMIN',
-      url: 'http://localhost:5000/mario-av-350.webp',
-      certification: 'INSTRUCTOR'
-    }
+  // Creat two admin users that I can easily login as to test on multiple sessions
+  await prisma.user.createMany({
+    data: [
+      {
+        id: faker.unique(faker.datatype.number),
+        username: 'Mario',
+        email: 'mario@example.com',
+        password: await argon2.hash('adminpassword'),
+        role: 'ADMIN',
+        url: 'http://localhost:5000/mario-av-350.webp',
+        certification: 'INSTRUCTOR'
+      },
+      {
+        id: faker.unique(faker.datatype.number),
+        username: 'Luigi',
+        email: 'luigi@example.com',
+        password: await argon2.hash('adminpassword'),
+        role: 'ADMIN',
+        url: 'http://localhost:5000/luigi-350.webp',
+        certification: 'INSTRUCTOR'
+      }
+    ]
   });
 
   // Keep references for later use (add comments)

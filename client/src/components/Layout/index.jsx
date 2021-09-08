@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+import Topbar from './Topbar/Topbar';
 
 const useStyles = makeStyles(theme => ({
   root: {

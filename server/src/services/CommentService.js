@@ -47,6 +47,7 @@ module.exports = ({ CommentModel, UserModel, PostModel }) => ({
       await UserModel.notify({
         receiverId: post.authorId,
         emitterId: reqUser.id,
+        postId: post.id,
         commentId: comment.id,
         message: `${reqUser.username} has commented on one of your posts!`,
       });

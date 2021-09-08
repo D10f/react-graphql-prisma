@@ -9,6 +9,7 @@ type Query {
 }
 
 type Mutation {
+  deleteNotification(id: ID!): UserNotification!
   registerUser(input: RegisterUserInput!): User!
   loginUser(username: String!, password: String!): User!
   logoutUser(id: ID!): User!
@@ -46,6 +47,9 @@ type User {
   "The role in the application to determine the access to administrative tasks"
   role: UserRole!
 
+  "Notifications this user has received"
+  notifications: [UserNotification!]
+
   "Posts created by the user"
   posts: [Post!]!
 
@@ -57,9 +61,18 @@ type User {
 }
 
 type UserNotification {
+  id: ID!
+
+  "The user who triggered the notification by giving a like or commenting on a post"
   emitterId: ID!
-  postId: ID
+
+  "The post that was liked or commented on"
+  postId: ID!
+
+  "The comment id as corresponds"
   commentId: ID
+
+  "A notification message to be displayed on the UI"
   message: String
 }
 

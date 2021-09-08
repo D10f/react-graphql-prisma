@@ -24,8 +24,14 @@ module.exports = prisma => ({
     return await prisma.user.findUnique({ where: { id: userId }}).notifications();
   },
 
+  async deleteNotification(notificationId) {
+    return await prisma.notification.delete({
+      where: { id: notificationId },
+    });
+  },
+
   async notify({ receiverId, emitterId, postId, commentId, message }){
-    return await prisma.notification.create({
+    const notification = await prisma.notification.create({
       data: {
         emitterId,
         postId,
@@ -36,6 +42,8 @@ module.exports = prisma => ({
         }
       }
     });
+
+    return notification;
   },
 
   async getUserPosts(userId, limit, skip) {

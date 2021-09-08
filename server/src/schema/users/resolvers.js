@@ -10,7 +10,7 @@ module.exports = {
     // Retrieves all notifications for a given user
     async getUserNotifications(parent, { id }, { user, services}) {
       return await services.user.getUserNotifications(Number(id), user);
-    }
+    },
   },
   User: {
     async posts({ id }, args, { user, services }, info) {
@@ -38,6 +38,9 @@ module.exports = {
     },
     async deleteUser(parent, { id }, { user, services }, info) {
       return await services.user.delete(Number(id), user);
+    },
+    async deleteNotification(parent, { id }, { user, services }, info) {
+      return await services.user.deleteNotification(Number(id), user);
     },
   }
 };

@@ -14,13 +14,17 @@ const readdir = promisify(fs.readdir);
 const IMG_PUBLIC_PATH = path.resolve('public');
 
 // Full and preview post picture
-const POST_FULL_IMG_SIZE = 900;
-const POST_PREV_IMG_SIZE = 350;
+const POST_FULL_IMG_SIZE = 350;
+const POST_PREV_IMG_SIZE = 300;
 
 async function main() {
 
-  const files = await readdir('public')
-  // const files = filesInDir.filter(file => file.endsWith('.png'));
+  const filesInDir = await readdir('public')
+  const files = filesInDir.filter(file => file.includes('luigi'));
+
+  console.log('PSA: Double check your filenames to avoid accidental deletion!')
+  console.log('exiting... ');
+  return;
 
   for (let i = 0; i < files.length; i++) {
     const fileLocation = getFileLocation(files[i]);
