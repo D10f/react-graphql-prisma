@@ -21,7 +21,7 @@ async function createApolloServer(services){
       const user = token && await services.user.findById(token.id);
 
       /* !!!!! REMOVE AFTER TESTING !!!!!*/
-      await delay(1500);
+      // await delay(1500);
 
       return { user, services };
     },

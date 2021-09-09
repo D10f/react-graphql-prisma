@@ -7,6 +7,7 @@ const CREATE_POST = gql`
       title
       body
       published
+      allowComments
     }
   }
 `;

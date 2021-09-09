@@ -13,11 +13,11 @@ module.exports = {
     },
     // Returns an array of filtered posts that an authenticated user has given a like
     async postsForFavoriteFeed(parent, { limit, skip }, { user, services }) {
-      return await services.user.getLikedPosts(limit, skip, user);
+      return await services.user.getLikedPosts(user, limit, skip);
     },
     // Returns an array of posts
     async postsForDashboardFeed(parent, { limit, skip }, { user, services }) {
-      return await services.user.getUserPosts(limit, skip, user);
+      return await services.user.getUserPosts(user, limit, skip);
     },
     // Returns an array of posts created by a author
     async getPostsByAuthor(parent, { id, limit, skip }, { user, services}) {
@@ -29,10 +29,10 @@ module.exports = {
       return await services.user.findById(authorId);
     },
     async comments({ id }, args, { user, services }, info) {
-      return await services.comment.findByPostId(id);
+      return await services.comment.findByPostId(id, user);
     },
     async likedBy({ id }, args, { user, services }, info) {
-      return await services.post.findLikedBy(id);
+      return await services.post.findLikedBy(id, user);
     }
   },
   Mutation: {

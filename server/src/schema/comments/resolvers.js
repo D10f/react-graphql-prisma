@@ -9,7 +9,7 @@ module.exports = {
       return await services.user.findById(authorId);
     },
     async post({ postId }, args, { user, services }, info) {
-      return await services.post.findById(postId);
+      return await services.post.findById(postId, user);
     }
   },
   Mutation: {

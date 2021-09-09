@@ -20,7 +20,7 @@ module.exports = {
       return await services.comment.findByAuthorId(id);
     },
     async likes({ id }, args, { user, services }, info) {
-      return await services.user.getLikedPosts(Number(id), user);
+      return await services.user.getLikedPosts(user);
     }
   },
   Mutation: {

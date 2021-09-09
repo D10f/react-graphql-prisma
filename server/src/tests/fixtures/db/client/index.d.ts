@@ -22,8 +22,38 @@ export type User = {
   username: string
   password: string
   role: UserRole
+  certification: Certification
+  url: string
   createdAt: Date
   updatedAt: Date
+}
+
+/**
+ * Model Token
+ */
+
+export type Token = {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  valid: boolean
+  userId: number
+  content: string
+}
+
+/**
+ * Model Notification
+ */
+
+export type Notification = {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+  receiverId: number
+  emitterId: number
+  postId: number
+  commentId: number
+  message: string
 }
 
 /**
@@ -35,8 +65,12 @@ export type Post = {
   createdAt: Date
   updatedAt: Date
   title: string
-  body: string | null
+  body: string
+  excerpt: string
+  url: string
+  previewUrl: string
   published: boolean
+  allowComments: boolean
   authorId: number
   likeCount: number
   commentCount: number
@@ -71,10 +105,21 @@ export const UserRole: {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const Certification: {
+  OPEN_WATER: 'OPEN_WATER',
+  ADVANCED: 'ADVANCED',
+  RESCUE: 'RESCUE',
+  DIVEMASTER: 'DIVEMASTER',
+  INSTRUCTOR: 'INSTRUCTOR'
+};
+
+export type Certification = (typeof Certification)[keyof typeof Certification]
+
+
 /**
  * ##  Prisma Client ʲˢ
  * 
- * Type-safe database client for TypeScript & Node.js (ORM replacement)
+ * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
  * const prisma = new PrismaClient()
@@ -120,7 +165,7 @@ export class PrismaClient<
     /**
    * ##  Prisma Client ʲˢ
    * 
-   * Type-safe database client for TypeScript & Node.js (ORM replacement)
+   * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
    * const prisma = new PrismaClient()
@@ -204,6 +249,26 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<GlobalReject>;
 
   /**
+   * `prisma.token`: Exposes CRUD operations for the **Token** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tokens
+    * const tokens = await prisma.token.findMany()
+    * ```
+    */
+  get token(): Prisma.TokenDelegate<GlobalReject>;
+
+  /**
+   * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Notifications
+    * const notifications = await prisma.notification.findMany()
+    * ```
+    */
+  get notification(): Prisma.NotificationDelegate<GlobalReject>;
+
+  /**
    * `prisma.post`: Exposes CRUD operations for the **Post** model.
     * Example usage:
     * ```ts
@@ -251,8 +316,8 @@ export namespace Prisma {
   export import Decimal = runtime.Decimal
 
   /**
-   * Prisma Client JS version: 2.28.0
-   * Query Engine version: 89facabd0366f63911d089156a7a70125bfbcd27
+   * Prisma Client JS version: 2.30.2
+   * Query Engine version: b8c35d44de987a9691890b3ddf3e2e7effb9bf20
    */
   export type PrismaVersion = {
     client: string
@@ -593,6 +658,8 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    Token: 'Token',
+    Notification: 'Notification',
     Post: 'Post',
     Comment: 'Comment'
   };
@@ -786,6 +853,8 @@ export namespace Prisma {
     username: string | null
     password: string | null
     role: UserRole | null
+    certification: Certification | null
+    url: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -796,6 +865,8 @@ export namespace Prisma {
     username: string | null
     password: string | null
     role: UserRole | null
+    certification: Certification | null
+    url: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -806,6 +877,8 @@ export namespace Prisma {
     username: number
     password: number
     role: number
+    certification: number
+    url: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -826,6 +899,8 @@ export namespace Prisma {
     username?: true
     password?: true
     role?: true
+    certification?: true
+    url?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -836,6 +911,8 @@ export namespace Prisma {
     username?: true
     password?: true
     role?: true
+    certification?: true
+    url?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -846,6 +923,8 @@ export namespace Prisma {
     username?: true
     password?: true
     role?: true
+    certification?: true
+    url?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -969,6 +1048,8 @@ export namespace Prisma {
     username: string
     password: string
     role: UserRole
+    certification: Certification
+    url: string
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -998,14 +1079,20 @@ export namespace Prisma {
     username?: boolean
     password?: boolean
     role?: boolean
+    certification?: boolean
+    url?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    token?: boolean | TokenFindManyArgs
+    notifications?: boolean | NotificationFindManyArgs
     posts?: boolean | PostFindManyArgs
     likes?: boolean | PostFindManyArgs
     comments?: boolean | CommentFindManyArgs
   }
 
   export type UserInclude = {
+    token?: boolean | TokenFindManyArgs
+    notifications?: boolean | NotificationFindManyArgs
     posts?: boolean | PostFindManyArgs
     likes?: boolean | PostFindManyArgs
     comments?: boolean | CommentFindManyArgs
@@ -1022,7 +1109,11 @@ export namespace Prisma {
     ?'include' extends U
     ? User  & {
     [P in TrueKeys<S['include']>]: 
-          P extends 'posts'
+          P extends 'token'
+        ? Array < TokenGetPayload<S['include'][P]>>  :
+        P extends 'notifications'
+        ? Array < NotificationGetPayload<S['include'][P]>>  :
+        P extends 'posts'
         ? Array < PostGetPayload<S['include'][P]>>  :
         P extends 'likes'
         ? Array < PostGetPayload<S['include'][P]>>  :
@@ -1033,7 +1124,11 @@ export namespace Prisma {
     ? {
     [P in TrueKeys<S['select']>]: P extends keyof User ?User [P]
   : 
-          P extends 'posts'
+          P extends 'token'
+        ? Array < TokenGetPayload<S['select'][P]>>  :
+        P extends 'notifications'
+        ? Array < NotificationGetPayload<S['select'][P]>>  :
+        P extends 'posts'
         ? Array < PostGetPayload<S['select'][P]>>  :
         P extends 'likes'
         ? Array < PostGetPayload<S['select'][P]>>  :
@@ -1378,6 +1473,10 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    token<T extends TokenFindManyArgs = {}>(args?: Subset<T, TokenFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Token>>, PrismaPromise<Array<TokenGetPayload<T>>>>;
+
+    notifications<T extends NotificationFindManyArgs = {}>(args?: Subset<T, NotificationFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Notification>>, PrismaPromise<Array<NotificationGetPayload<T>>>>;
+
     posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>>, PrismaPromise<Array<PostGetPayload<T>>>>;
 
     likes<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>>, PrismaPromise<Array<PostGetPayload<T>>>>;
@@ -1697,6 +1796,1878 @@ export namespace Prisma {
 
 
   /**
+   * Model Token
+   */
+
+
+  export type AggregateToken = {
+    _count: TokenCountAggregateOutputType | null
+    count: TokenCountAggregateOutputType | null
+    _avg: TokenAvgAggregateOutputType | null
+    avg: TokenAvgAggregateOutputType | null
+    _sum: TokenSumAggregateOutputType | null
+    sum: TokenSumAggregateOutputType | null
+    _min: TokenMinAggregateOutputType | null
+    min: TokenMinAggregateOutputType | null
+    _max: TokenMaxAggregateOutputType | null
+    max: TokenMaxAggregateOutputType | null
+  }
+
+  export type TokenAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type TokenSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type TokenMinAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    valid: boolean | null
+    userId: number | null
+    content: string | null
+  }
+
+  export type TokenMaxAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    valid: boolean | null
+    userId: number | null
+    content: string | null
+  }
+
+  export type TokenCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    valid: number
+    userId: number
+    content: number
+    _all: number
+  }
+
+
+  export type TokenAvgAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type TokenSumAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type TokenMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    valid?: true
+    userId?: true
+    content?: true
+  }
+
+  export type TokenMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    valid?: true
+    userId?: true
+    content?: true
+  }
+
+  export type TokenCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    valid?: true
+    userId?: true
+    content?: true
+    _all?: true
+  }
+
+  export type TokenAggregateArgs = {
+    /**
+     * Filter which Token to aggregate.
+     * 
+    **/
+    where?: TokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokenOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: TokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tokens
+    **/
+    _count?: true | TokenCountAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_count`
+    **/
+    count?: true | TokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TokenAvgAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_avg`
+    **/
+    avg?: TokenAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TokenSumAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_sum`
+    **/
+    sum?: TokenSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TokenMinAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_min`
+    **/
+    min?: TokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TokenMaxAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_max`
+    **/
+    max?: TokenMaxAggregateInputType
+  }
+
+  export type GetTokenAggregateType<T extends TokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateToken[P]>
+      : GetScalarType<T[P], AggregateToken[P]>
+  }
+
+
+    
+    
+  export type TokenGroupByArgs = {
+    where?: TokenWhereInput
+    orderBy?: Enumerable<TokenOrderByInput>
+    by: Array<TokenScalarFieldEnum>
+    having?: TokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TokenCountAggregateInputType | true
+    _avg?: TokenAvgAggregateInputType
+    _sum?: TokenSumAggregateInputType
+    _min?: TokenMinAggregateInputType
+    _max?: TokenMaxAggregateInputType
+  }
+
+
+  export type TokenGroupByOutputType = {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    valid: boolean
+    userId: number
+    content: string
+    _count: TokenCountAggregateOutputType | null
+    _avg: TokenAvgAggregateOutputType | null
+    _sum: TokenSumAggregateOutputType | null
+    _min: TokenMinAggregateOutputType | null
+    _max: TokenMaxAggregateOutputType | null
+  }
+
+  type GetTokenGroupByPayload<T extends TokenGroupByArgs> = Promise<
+    Array<
+      PickArray<TokenGroupByOutputType, T['by']> & 
+        {
+          [P in ((keyof T) & (keyof TokenGroupByOutputType))]: P extends '_count' 
+            ? T[P] extends boolean 
+              ? number 
+              : GetScalarType<T[P], TokenGroupByOutputType[P]> 
+            : GetScalarType<T[P], TokenGroupByOutputType[P]>
+        }
+      > 
+    >
+
+
+  export type TokenSelect = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    valid?: boolean
+    user?: boolean | UserArgs
+    userId?: boolean
+    content?: boolean
+  }
+
+  export type TokenInclude = {
+    user?: boolean | UserArgs
+  }
+
+  export type TokenGetPayload<
+    S extends boolean | null | undefined | TokenArgs,
+    U = keyof S
+      > = S extends true
+        ? Token
+    : S extends undefined
+    ? never
+    : S extends TokenArgs | TokenFindManyArgs
+    ?'include' extends U
+    ? Token  & {
+    [P in TrueKeys<S['include']>]: 
+          P extends 'user'
+        ? UserGetPayload<S['include'][P]> : never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]: P extends keyof Token ?Token [P]
+  : 
+          P extends 'user'
+        ? UserGetPayload<S['select'][P]> : never
+  } 
+    : Token
+  : Token
+
+
+  type TokenCountArgs = Merge<
+    Omit<TokenFindManyArgs, 'select' | 'include'> & {
+      select?: TokenCountAggregateInputType | true
+    }
+  >
+
+  export interface TokenDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one Token that matches the filter.
+     * @param {TokenFindUniqueArgs} args - Arguments to find a Token
+     * @example
+     * // Get one Token
+     * const token = await prisma.token.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends TokenFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, TokenFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Token'> extends True ? CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>> : CheckSelect<T, Prisma__TokenClient<Token | null >, Prisma__TokenClient<TokenGetPayload<T> | null >>
+
+    /**
+     * Find the first Token that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenFindFirstArgs} args - Arguments to find a Token
+     * @example
+     * // Get one Token
+     * const token = await prisma.token.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends TokenFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, TokenFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Token'> extends True ? CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>> : CheckSelect<T, Prisma__TokenClient<Token | null >, Prisma__TokenClient<TokenGetPayload<T> | null >>
+
+    /**
+     * Find zero or more Tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tokens
+     * const tokens = await prisma.token.findMany()
+     * 
+     * // Get first 10 Tokens
+     * const tokens = await prisma.token.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tokenWithIdOnly = await prisma.token.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends TokenFindManyArgs>(
+      args?: SelectSubset<T, TokenFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Token>>, PrismaPromise<Array<TokenGetPayload<T>>>>
+
+    /**
+     * Create a Token.
+     * @param {TokenCreateArgs} args - Arguments to create a Token.
+     * @example
+     * // Create one Token
+     * const Token = await prisma.token.create({
+     *   data: {
+     *     // ... data to create a Token
+     *   }
+     * })
+     * 
+    **/
+    create<T extends TokenCreateArgs>(
+      args: SelectSubset<T, TokenCreateArgs>
+    ): CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>>
+
+    /**
+     * Create many Tokens.
+     *     @param {TokenCreateManyArgs} args - Arguments to create many Tokens.
+     *     @example
+     *     // Create many Tokens
+     *     const token = await prisma.token.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends TokenCreateManyArgs>(
+      args?: SelectSubset<T, TokenCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Token.
+     * @param {TokenDeleteArgs} args - Arguments to delete one Token.
+     * @example
+     * // Delete one Token
+     * const Token = await prisma.token.delete({
+     *   where: {
+     *     // ... filter to delete one Token
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends TokenDeleteArgs>(
+      args: SelectSubset<T, TokenDeleteArgs>
+    ): CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>>
+
+    /**
+     * Update one Token.
+     * @param {TokenUpdateArgs} args - Arguments to update one Token.
+     * @example
+     * // Update one Token
+     * const token = await prisma.token.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends TokenUpdateArgs>(
+      args: SelectSubset<T, TokenUpdateArgs>
+    ): CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>>
+
+    /**
+     * Delete zero or more Tokens.
+     * @param {TokenDeleteManyArgs} args - Arguments to filter Tokens to delete.
+     * @example
+     * // Delete a few Tokens
+     * const { count } = await prisma.token.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends TokenDeleteManyArgs>(
+      args?: SelectSubset<T, TokenDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tokens
+     * const token = await prisma.token.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends TokenUpdateManyArgs>(
+      args: SelectSubset<T, TokenUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Token.
+     * @param {TokenUpsertArgs} args - Arguments to update or create a Token.
+     * @example
+     * // Update or create a Token
+     * const token = await prisma.token.upsert({
+     *   create: {
+     *     // ... data to create a Token
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Token we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends TokenUpsertArgs>(
+      args: SelectSubset<T, TokenUpsertArgs>
+    ): CheckSelect<T, Prisma__TokenClient<Token>, Prisma__TokenClient<TokenGetPayload<T>>>
+
+    /**
+     * Count the number of Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenCountArgs} args - Arguments to filter Tokens to count.
+     * @example
+     * // Count the number of Tokens
+     * const count = await prisma.token.count({
+     *   where: {
+     *     // ... the filter for the Tokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends TokenCountArgs>(
+      args?: Subset<T, TokenCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TokenAggregateArgs>(args: Subset<T, TokenAggregateArgs>): PrismaPromise<GetTokenAggregateType<T>>
+
+    /**
+     * Group by Token.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TokenGroupByArgs['orderBy'] }
+        : { orderBy?: TokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTokenGroupByPayload<T> : Promise<InputErrors>
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Token.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in 
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__TokenClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+  // Custom InputTypes
+
+  /**
+   * Token findUnique
+   */
+  export type TokenFindUniqueArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * Throw an Error if a Token can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Token to fetch.
+     * 
+    **/
+    where: TokenWhereUniqueInput
+  }
+
+
+  /**
+   * Token findFirst
+   */
+  export type TokenFindFirstArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * Throw an Error if a Token can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Token to fetch.
+     * 
+    **/
+    where?: TokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokenOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tokens.
+     * 
+    **/
+    cursor?: TokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tokens.
+     * 
+    **/
+    distinct?: Enumerable<TokenScalarFieldEnum>
+  }
+
+
+  /**
+   * Token findMany
+   */
+  export type TokenFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where?: TokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokenOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tokens.
+     * 
+    **/
+    cursor?: TokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<TokenScalarFieldEnum>
+  }
+
+
+  /**
+   * Token create
+   */
+  export type TokenCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * The data needed to create a Token.
+     * 
+    **/
+    data: XOR<TokenCreateInput, TokenUncheckedCreateInput>
+  }
+
+
+  /**
+   * Token createMany
+   */
+  export type TokenCreateManyArgs = {
+    data: Enumerable<TokenCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Token update
+   */
+  export type TokenUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * The data needed to update a Token.
+     * 
+    **/
+    data: XOR<TokenUpdateInput, TokenUncheckedUpdateInput>
+    /**
+     * Choose, which Token to update.
+     * 
+    **/
+    where: TokenWhereUniqueInput
+  }
+
+
+  /**
+   * Token updateMany
+   */
+  export type TokenUpdateManyArgs = {
+    data: XOR<TokenUpdateManyMutationInput, TokenUncheckedUpdateManyInput>
+    where?: TokenWhereInput
+  }
+
+
+  /**
+   * Token upsert
+   */
+  export type TokenUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * The filter to search for the Token to update in case it exists.
+     * 
+    **/
+    where: TokenWhereUniqueInput
+    /**
+     * In case the Token found by the `where` argument doesn't exist, create a new Token with this data.
+     * 
+    **/
+    create: XOR<TokenCreateInput, TokenUncheckedCreateInput>
+    /**
+     * In case the Token was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<TokenUpdateInput, TokenUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Token delete
+   */
+  export type TokenDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+    /**
+     * Filter which Token to delete.
+     * 
+    **/
+    where: TokenWhereUniqueInput
+  }
+
+
+  /**
+   * Token deleteMany
+   */
+  export type TokenDeleteManyArgs = {
+    where?: TokenWhereInput
+  }
+
+
+  /**
+   * Token without action
+   */
+  export type TokenArgs = {
+    /**
+     * Select specific fields to fetch from the Token
+     * 
+    **/
+    select?: TokenSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TokenInclude | null
+  }
+
+
+
+  /**
+   * Model Notification
+   */
+
+
+  export type AggregateNotification = {
+    _count: NotificationCountAggregateOutputType | null
+    count: NotificationCountAggregateOutputType | null
+    _avg: NotificationAvgAggregateOutputType | null
+    avg: NotificationAvgAggregateOutputType | null
+    _sum: NotificationSumAggregateOutputType | null
+    sum: NotificationSumAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+    max: NotificationMaxAggregateOutputType | null
+  }
+
+  export type NotificationAvgAggregateOutputType = {
+    id: number | null
+    receiverId: number | null
+    emitterId: number | null
+    postId: number | null
+    commentId: number | null
+  }
+
+  export type NotificationSumAggregateOutputType = {
+    id: number | null
+    receiverId: number | null
+    emitterId: number | null
+    postId: number | null
+    commentId: number | null
+  }
+
+  export type NotificationMinAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    receiverId: number | null
+    emitterId: number | null
+    postId: number | null
+    commentId: number | null
+    message: string | null
+  }
+
+  export type NotificationMaxAggregateOutputType = {
+    id: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    receiverId: number | null
+    emitterId: number | null
+    postId: number | null
+    commentId: number | null
+    message: string | null
+  }
+
+  export type NotificationCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    receiverId: number
+    emitterId: number
+    postId: number
+    commentId: number
+    message: number
+    _all: number
+  }
+
+
+  export type NotificationAvgAggregateInputType = {
+    id?: true
+    receiverId?: true
+    emitterId?: true
+    postId?: true
+    commentId?: true
+  }
+
+  export type NotificationSumAggregateInputType = {
+    id?: true
+    receiverId?: true
+    emitterId?: true
+    postId?: true
+    commentId?: true
+  }
+
+  export type NotificationMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    receiverId?: true
+    emitterId?: true
+    postId?: true
+    commentId?: true
+    message?: true
+  }
+
+  export type NotificationMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    receiverId?: true
+    emitterId?: true
+    postId?: true
+    commentId?: true
+    message?: true
+  }
+
+  export type NotificationCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    receiverId?: true
+    emitterId?: true
+    postId?: true
+    commentId?: true
+    message?: true
+    _all?: true
+  }
+
+  export type NotificationAggregateArgs = {
+    /**
+     * Filter which Notification to aggregate.
+     * 
+    **/
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<NotificationOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Notifications
+    **/
+    _count?: true | NotificationCountAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_count`
+    **/
+    count?: true | NotificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: NotificationAvgAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_avg`
+    **/
+    avg?: NotificationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: NotificationSumAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_sum`
+    **/
+    sum?: NotificationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationMinAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_min`
+    **/
+    min?: NotificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationMaxAggregateInputType
+    /**
+     * @deprecated since 2.23.0 please use `_max`
+    **/
+    max?: NotificationMaxAggregateInputType
+  }
+
+  export type GetNotificationAggregateType<T extends NotificationAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotification[P]>
+      : GetScalarType<T[P], AggregateNotification[P]>
+  }
+
+
+    
+    
+  export type NotificationGroupByArgs = {
+    where?: NotificationWhereInput
+    orderBy?: Enumerable<NotificationOrderByInput>
+    by: Array<NotificationScalarFieldEnum>
+    having?: NotificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationCountAggregateInputType | true
+    _avg?: NotificationAvgAggregateInputType
+    _sum?: NotificationSumAggregateInputType
+    _min?: NotificationMinAggregateInputType
+    _max?: NotificationMaxAggregateInputType
+  }
+
+
+  export type NotificationGroupByOutputType = {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    receiverId: number
+    emitterId: number
+    postId: number
+    commentId: number
+    message: string
+    _count: NotificationCountAggregateOutputType | null
+    _avg: NotificationAvgAggregateOutputType | null
+    _sum: NotificationSumAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  type GetNotificationGroupByPayload<T extends NotificationGroupByArgs> = Promise<
+    Array<
+      PickArray<NotificationGroupByOutputType, T['by']> & 
+        {
+          [P in ((keyof T) & (keyof NotificationGroupByOutputType))]: P extends '_count' 
+            ? T[P] extends boolean 
+              ? number 
+              : GetScalarType<T[P], NotificationGroupByOutputType[P]> 
+            : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+        }
+      > 
+    >
+
+
+  export type NotificationSelect = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    receiver?: boolean | UserArgs
+    receiverId?: boolean
+    emitterId?: boolean
+    postId?: boolean
+    commentId?: boolean
+    message?: boolean
+  }
+
+  export type NotificationInclude = {
+    receiver?: boolean | UserArgs
+  }
+
+  export type NotificationGetPayload<
+    S extends boolean | null | undefined | NotificationArgs,
+    U = keyof S
+      > = S extends true
+        ? Notification
+    : S extends undefined
+    ? never
+    : S extends NotificationArgs | NotificationFindManyArgs
+    ?'include' extends U
+    ? Notification  & {
+    [P in TrueKeys<S['include']>]: 
+          P extends 'receiver'
+        ? UserGetPayload<S['include'][P]> : never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]: P extends keyof Notification ?Notification [P]
+  : 
+          P extends 'receiver'
+        ? UserGetPayload<S['select'][P]> : never
+  } 
+    : Notification
+  : Notification
+
+
+  type NotificationCountArgs = Merge<
+    Omit<NotificationFindManyArgs, 'select' | 'include'> & {
+      select?: NotificationCountAggregateInputType | true
+    }
+  >
+
+  export interface NotificationDelegate<GlobalRejectSettings> {
+    /**
+     * Find zero or one Notification that matches the filter.
+     * @param {NotificationFindUniqueArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends NotificationFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, NotificationFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Notification'> extends True ? CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>> : CheckSelect<T, Prisma__NotificationClient<Notification | null >, Prisma__NotificationClient<NotificationGetPayload<T> | null >>
+
+    /**
+     * Find the first Notification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends NotificationFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, NotificationFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Notification'> extends True ? CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>> : CheckSelect<T, Prisma__NotificationClient<Notification | null >, Prisma__NotificationClient<NotificationGetPayload<T> | null >>
+
+    /**
+     * Find zero or more Notifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Notifications
+     * const notifications = await prisma.notification.findMany()
+     * 
+     * // Get first 10 Notifications
+     * const notifications = await prisma.notification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationWithIdOnly = await prisma.notification.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends NotificationFindManyArgs>(
+      args?: SelectSubset<T, NotificationFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Notification>>, PrismaPromise<Array<NotificationGetPayload<T>>>>
+
+    /**
+     * Create a Notification.
+     * @param {NotificationCreateArgs} args - Arguments to create a Notification.
+     * @example
+     * // Create one Notification
+     * const Notification = await prisma.notification.create({
+     *   data: {
+     *     // ... data to create a Notification
+     *   }
+     * })
+     * 
+    **/
+    create<T extends NotificationCreateArgs>(
+      args: SelectSubset<T, NotificationCreateArgs>
+    ): CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>>
+
+    /**
+     * Create many Notifications.
+     *     @param {NotificationCreateManyArgs} args - Arguments to create many Notifications.
+     *     @example
+     *     // Create many Notifications
+     *     const notification = await prisma.notification.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends NotificationCreateManyArgs>(
+      args?: SelectSubset<T, NotificationCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Notification.
+     * @param {NotificationDeleteArgs} args - Arguments to delete one Notification.
+     * @example
+     * // Delete one Notification
+     * const Notification = await prisma.notification.delete({
+     *   where: {
+     *     // ... filter to delete one Notification
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends NotificationDeleteArgs>(
+      args: SelectSubset<T, NotificationDeleteArgs>
+    ): CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>>
+
+    /**
+     * Update one Notification.
+     * @param {NotificationUpdateArgs} args - Arguments to update one Notification.
+     * @example
+     * // Update one Notification
+     * const notification = await prisma.notification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends NotificationUpdateArgs>(
+      args: SelectSubset<T, NotificationUpdateArgs>
+    ): CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>>
+
+    /**
+     * Delete zero or more Notifications.
+     * @param {NotificationDeleteManyArgs} args - Arguments to filter Notifications to delete.
+     * @example
+     * // Delete a few Notifications
+     * const { count } = await prisma.notification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends NotificationDeleteManyArgs>(
+      args?: SelectSubset<T, NotificationDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Notifications
+     * const notification = await prisma.notification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends NotificationUpdateManyArgs>(
+      args: SelectSubset<T, NotificationUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Notification.
+     * @param {NotificationUpsertArgs} args - Arguments to update or create a Notification.
+     * @example
+     * // Update or create a Notification
+     * const notification = await prisma.notification.upsert({
+     *   create: {
+     *     // ... data to create a Notification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Notification we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends NotificationUpsertArgs>(
+      args: SelectSubset<T, NotificationUpsertArgs>
+    ): CheckSelect<T, Prisma__NotificationClient<Notification>, Prisma__NotificationClient<NotificationGetPayload<T>>>
+
+    /**
+     * Count the number of Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationCountArgs} args - Arguments to filter Notifications to count.
+     * @example
+     * // Count the number of Notifications
+     * const count = await prisma.notification.count({
+     *   where: {
+     *     // ... the filter for the Notifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationCountArgs>(
+      args?: Subset<T, NotificationCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationAggregateArgs>(args: Subset<T, NotificationAggregateArgs>): PrismaPromise<GetNotificationAggregateType<T>>
+
+    /**
+     * Group by Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationGroupByPayload<T> : Promise<InputErrors>
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Notification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in 
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__NotificationClient<T> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    receiver<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+  // Custom InputTypes
+
+  /**
+   * Notification findUnique
+   */
+  export type NotificationFindUniqueArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * Throw an Error if a Notification can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Notification to fetch.
+     * 
+    **/
+    where: NotificationWhereUniqueInput
+  }
+
+
+  /**
+   * Notification findFirst
+   */
+  export type NotificationFindFirstArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * Throw an Error if a Notification can't be found
+     * 
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Notification to fetch.
+     * 
+    **/
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<NotificationOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     * 
+    **/
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     * 
+    **/
+    distinct?: Enumerable<NotificationScalarFieldEnum>
+  }
+
+
+  /**
+   * Notification findMany
+   */
+  export type NotificationFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * Filter, which Notifications to fetch.
+     * 
+    **/
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<NotificationOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Notifications.
+     * 
+    **/
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<NotificationScalarFieldEnum>
+  }
+
+
+  /**
+   * Notification create
+   */
+  export type NotificationCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * The data needed to create a Notification.
+     * 
+    **/
+    data: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+  }
+
+
+  /**
+   * Notification createMany
+   */
+  export type NotificationCreateManyArgs = {
+    data: Enumerable<NotificationCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Notification update
+   */
+  export type NotificationUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * The data needed to update a Notification.
+     * 
+    **/
+    data: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+    /**
+     * Choose, which Notification to update.
+     * 
+    **/
+    where: NotificationWhereUniqueInput
+  }
+
+
+  /**
+   * Notification updateMany
+   */
+  export type NotificationUpdateManyArgs = {
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput>
+    where?: NotificationWhereInput
+  }
+
+
+  /**
+   * Notification upsert
+   */
+  export type NotificationUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * The filter to search for the Notification to update in case it exists.
+     * 
+    **/
+    where: NotificationWhereUniqueInput
+    /**
+     * In case the Notification found by the `where` argument doesn't exist, create a new Notification with this data.
+     * 
+    **/
+    create: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+    /**
+     * In case the Notification was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Notification delete
+   */
+  export type NotificationDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+    /**
+     * Filter which Notification to delete.
+     * 
+    **/
+    where: NotificationWhereUniqueInput
+  }
+
+
+  /**
+   * Notification deleteMany
+   */
+  export type NotificationDeleteManyArgs = {
+    where?: NotificationWhereInput
+  }
+
+
+  /**
+   * Notification without action
+   */
+  export type NotificationArgs = {
+    /**
+     * Select specific fields to fetch from the Notification
+     * 
+    **/
+    select?: NotificationSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: NotificationInclude | null
+  }
+
+
+
+  /**
    * Model Post
    */
 
@@ -1734,7 +3705,11 @@ export namespace Prisma {
     updatedAt: Date | null
     title: string | null
     body: string | null
+    excerpt: string | null
+    url: string | null
+    previewUrl: string | null
     published: boolean | null
+    allowComments: boolean | null
     authorId: number | null
     likeCount: number | null
     commentCount: number | null
@@ -1746,7 +3721,11 @@ export namespace Prisma {
     updatedAt: Date | null
     title: string | null
     body: string | null
+    excerpt: string | null
+    url: string | null
+    previewUrl: string | null
     published: boolean | null
+    allowComments: boolean | null
     authorId: number | null
     likeCount: number | null
     commentCount: number | null
@@ -1758,7 +3737,11 @@ export namespace Prisma {
     updatedAt: number
     title: number
     body: number
+    excerpt: number
+    url: number
+    previewUrl: number
     published: number
+    allowComments: number
     authorId: number
     likeCount: number
     commentCount: number
@@ -1786,7 +3769,11 @@ export namespace Prisma {
     updatedAt?: true
     title?: true
     body?: true
+    excerpt?: true
+    url?: true
+    previewUrl?: true
     published?: true
+    allowComments?: true
     authorId?: true
     likeCount?: true
     commentCount?: true
@@ -1798,7 +3785,11 @@ export namespace Prisma {
     updatedAt?: true
     title?: true
     body?: true
+    excerpt?: true
+    url?: true
+    previewUrl?: true
     published?: true
+    allowComments?: true
     authorId?: true
     likeCount?: true
     commentCount?: true
@@ -1810,7 +3801,11 @@ export namespace Prisma {
     updatedAt?: true
     title?: true
     body?: true
+    excerpt?: true
+    url?: true
+    previewUrl?: true
     published?: true
+    allowComments?: true
     authorId?: true
     likeCount?: true
     commentCount?: true
@@ -1934,8 +3929,12 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     title: string
-    body: string | null
+    body: string
+    excerpt: string
+    url: string
+    previewUrl: string
     published: boolean
+    allowComments: boolean
     authorId: number
     likeCount: number
     commentCount: number
@@ -1966,7 +3965,11 @@ export namespace Prisma {
     updatedAt?: boolean
     title?: boolean
     body?: boolean
+    excerpt?: boolean
+    url?: boolean
+    previewUrl?: boolean
     published?: boolean
+    allowComments?: boolean
     author?: boolean | UserArgs
     authorId?: boolean
     likedBy?: boolean | UserFindManyArgs
@@ -3613,11 +5616,39 @@ export namespace Prisma {
     username: 'username',
     password: 'password',
     role: 'role',
+    certification: 'certification',
+    url: 'url',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const TokenScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    valid: 'valid',
+    userId: 'userId',
+    content: 'content'
+  };
+
+  export type TokenScalarFieldEnum = (typeof TokenScalarFieldEnum)[keyof typeof TokenScalarFieldEnum]
+
+
+  export const NotificationScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    receiverId: 'receiverId',
+    emitterId: 'emitterId',
+    postId: 'postId',
+    commentId: 'commentId',
+    message: 'message'
+  };
+
+  export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
   export const PostScalarFieldEnum: {
@@ -3626,7 +5657,11 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     title: 'title',
     body: 'body',
+    excerpt: 'excerpt',
+    url: 'url',
+    previewUrl: 'previewUrl',
     published: 'published',
+    allowComments: 'allowComments',
     authorId: 'authorId',
     likeCount: 'likeCount',
     commentCount: 'commentCount'
@@ -3669,8 +5704,12 @@ export namespace Prisma {
     username?: StringFilter | string
     password?: StringFilter | string
     role?: EnumUserRoleFilter | UserRole
+    certification?: EnumCertificationFilter | Certification
+    url?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
+    token?: TokenListRelationFilter
+    notifications?: NotificationListRelationFilter
     posts?: PostListRelationFilter
     likes?: PostListRelationFilter
     comments?: CommentListRelationFilter
@@ -3682,6 +5721,8 @@ export namespace Prisma {
     username?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    certification?: SortOrder
+    url?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3701,8 +5742,92 @@ export namespace Prisma {
     username?: StringWithAggregatesFilter | string
     password?: StringWithAggregatesFilter | string
     role?: EnumUserRoleWithAggregatesFilter | UserRole
+    certification?: EnumCertificationWithAggregatesFilter | Certification
+    url?: StringWithAggregatesFilter | string
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
+  }
+
+  export type TokenWhereInput = {
+    AND?: Enumerable<TokenWhereInput>
+    OR?: Enumerable<TokenWhereInput>
+    NOT?: Enumerable<TokenWhereInput>
+    id?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    valid?: BoolFilter | boolean
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    userId?: IntFilter | number
+    content?: StringFilter | string
+  }
+
+  export type TokenOrderByInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    valid?: SortOrder
+    userId?: SortOrder
+    content?: SortOrder
+  }
+
+  export type TokenWhereUniqueInput = {
+    id?: number
+  }
+
+  export type TokenScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<TokenScalarWhereWithAggregatesInput>
+    OR?: Enumerable<TokenScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<TokenScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    valid?: BoolWithAggregatesFilter | boolean
+    userId?: IntWithAggregatesFilter | number
+    content?: StringWithAggregatesFilter | string
+  }
+
+  export type NotificationWhereInput = {
+    AND?: Enumerable<NotificationWhereInput>
+    OR?: Enumerable<NotificationWhereInput>
+    NOT?: Enumerable<NotificationWhereInput>
+    id?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    receiver?: XOR<UserRelationFilter, UserWhereInput>
+    receiverId?: IntFilter | number
+    emitterId?: IntFilter | number
+    postId?: IntFilter | number
+    commentId?: IntFilter | number
+    message?: StringFilter | string
+  }
+
+  export type NotificationOrderByInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    receiverId?: SortOrder
+    emitterId?: SortOrder
+    postId?: SortOrder
+    commentId?: SortOrder
+    message?: SortOrder
+  }
+
+  export type NotificationWhereUniqueInput = {
+    id?: number
+  }
+
+  export type NotificationScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<NotificationScalarWhereWithAggregatesInput>
+    OR?: Enumerable<NotificationScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<NotificationScalarWhereWithAggregatesInput>
+    id?: IntWithAggregatesFilter | number
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    receiverId?: IntWithAggregatesFilter | number
+    emitterId?: IntWithAggregatesFilter | number
+    postId?: IntWithAggregatesFilter | number
+    commentId?: IntWithAggregatesFilter | number
+    message?: StringWithAggregatesFilter | string
   }
 
   export type PostWhereInput = {
@@ -3713,8 +5838,12 @@ export namespace Prisma {
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     title?: StringFilter | string
-    body?: StringNullableFilter | string | null
+    body?: StringFilter | string
+    excerpt?: StringFilter | string
+    url?: StringFilter | string
+    previewUrl?: StringFilter | string
     published?: BoolFilter | boolean
+    allowComments?: BoolFilter | boolean
     author?: XOR<UserRelationFilter, UserWhereInput>
     authorId?: IntFilter | number
     likedBy?: UserListRelationFilter
@@ -3729,7 +5858,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
     title?: SortOrder
     body?: SortOrder
+    excerpt?: SortOrder
+    url?: SortOrder
+    previewUrl?: SortOrder
     published?: SortOrder
+    allowComments?: SortOrder
     authorId?: SortOrder
     likeCount?: SortOrder
     commentCount?: SortOrder
@@ -3747,8 +5880,12 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
     title?: StringWithAggregatesFilter | string
-    body?: StringNullableWithAggregatesFilter | string | null
+    body?: StringWithAggregatesFilter | string
+    excerpt?: StringWithAggregatesFilter | string
+    url?: StringWithAggregatesFilter | string
+    previewUrl?: StringWithAggregatesFilter | string
     published?: BoolWithAggregatesFilter | boolean
+    allowComments?: BoolWithAggregatesFilter | boolean
     authorId?: IntWithAggregatesFilter | number
     likeCount?: IntWithAggregatesFilter | number
     commentCount?: IntWithAggregatesFilter | number
@@ -3798,8 +5935,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutReceiverInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     likes?: PostCreateNestedManyWithoutLikedByInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
@@ -3811,8 +5952,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
@@ -3822,8 +5967,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUpdateManyWithoutUserInput
+    notifications?: NotificationUpdateManyWithoutReceiverInput
     posts?: PostUpdateManyWithoutAuthorInput
     likes?: PostUpdateManyWithoutLikedByInput
     comments?: CommentUpdateManyWithoutAuthorInput
@@ -3835,8 +5984,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUncheckedUpdateManyWithoutUserInput
+    notifications?: NotificationUncheckedUpdateManyWithoutReceiverInput
     posts?: PostUncheckedUpdateManyWithoutAuthorInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorInput
   }
@@ -3847,6 +6000,8 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3856,6 +6011,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3866,16 +6023,154 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokenCreateInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    content: string
+    user: UserCreateNestedOneWithoutTokenInput
+  }
+
+  export type TokenUncheckedCreateInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    userId: number
+    content: string
+  }
+
+  export type TokenUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    content?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutTokenInput
+  }
+
+  export type TokenUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    userId?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TokenCreateManyInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    userId: number
+    content: string
+  }
+
+  export type TokenUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TokenUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    userId?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationCreateInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
+    receiver: UserCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    receiverId: number
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
+  }
+
+  export type NotificationUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    receiver?: UserUpdateOneRequiredWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receiverId?: IntFieldUpdateOperationsInput | number
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationCreateManyInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    receiverId: number
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
+  }
+
+  export type NotificationUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receiverId?: IntFieldUpdateOperationsInput | number
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
   }
 
   export type PostCreateInput = {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
     author: UserCreateNestedOneWithoutPostsInput
@@ -3888,8 +6183,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     authorId: number
     likeCount?: number
     commentCount?: number
@@ -3900,8 +6199,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
     author?: UserUpdateOneRequiredWithoutPostsInput
@@ -3914,8 +6217,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     authorId?: IntFieldUpdateOperationsInput | number
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
@@ -3927,8 +6234,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     authorId: number
     likeCount?: number
     commentCount?: number
@@ -3938,8 +6249,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
   }
@@ -3949,8 +6264,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     authorId?: IntFieldUpdateOperationsInput | number
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
@@ -4046,6 +6365,13 @@ export namespace Prisma {
     not?: NestedEnumUserRoleFilter | UserRole
   }
 
+  export type EnumCertificationFilter = {
+    equals?: Certification
+    in?: Enumerable<Certification>
+    notIn?: Enumerable<Certification>
+    not?: NestedEnumCertificationFilter | Certification
+  }
+
   export type DateTimeFilter = {
     equals?: Date | string
     in?: Enumerable<Date> | Enumerable<string>
@@ -4055,6 +6381,18 @@ export namespace Prisma {
     gt?: Date | string
     gte?: Date | string
     not?: NestedDateTimeFilter | Date | string
+  }
+
+  export type TokenListRelationFilter = {
+    every?: TokenWhereInput
+    some?: TokenWhereInput
+    none?: TokenWhereInput
+  }
+
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
   }
 
   export type PostListRelationFilter = {
@@ -4167,6 +6505,31 @@ export namespace Prisma {
     max?: NestedEnumUserRoleFilter
   }
 
+  export type EnumCertificationWithAggregatesFilter = {
+    equals?: Certification
+    in?: Enumerable<Certification>
+    notIn?: Enumerable<Certification>
+    not?: NestedEnumCertificationWithAggregatesFilter | Certification
+    _count?: NestedIntFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    count?: NestedIntFilter
+    _min?: NestedEnumCertificationFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    min?: NestedEnumCertificationFilter
+    _max?: NestedEnumCertificationFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    max?: NestedEnumCertificationFilter
+  }
+
   export type DateTimeWithAggregatesFilter = {
     equals?: Date | string
     in?: Enumerable<Date> | Enumerable<string>
@@ -4196,20 +6559,6 @@ export namespace Prisma {
     max?: NestedDateTimeFilter
   }
 
-  export type StringNullableFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringNullableFilter | string | null
-  }
-
   export type BoolFilter = {
     equals?: boolean
     not?: NestedBoolFilter | boolean
@@ -4218,44 +6567,6 @@ export namespace Prisma {
   export type UserRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
-  }
-
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
-  }
-
-  export type StringNullableWithAggregatesFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringNullableWithAggregatesFilter | string | null
-    _count?: NestedIntNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    count?: NestedIntNullableFilter
-    _min?: NestedStringNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    min?: NestedStringNullableFilter
-    _max?: NestedStringNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    max?: NestedStringNullableFilter
   }
 
   export type BoolWithAggregatesFilter = {
@@ -4281,9 +6592,29 @@ export namespace Prisma {
     max?: NestedBoolFilter
   }
 
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
   export type PostRelationFilter = {
     is?: PostWhereInput
     isNot?: PostWhereInput
+  }
+
+  export type TokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutUserInput>, Enumerable<TokenUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutUserInput>
+    createMany?: TokenCreateManyUserInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+  }
+
+  export type NotificationCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<Enumerable<NotificationCreateWithoutReceiverInput>, Enumerable<NotificationUncheckedCreateWithoutReceiverInput>>
+    connectOrCreate?: Enumerable<NotificationCreateOrConnectWithoutReceiverInput>
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: Enumerable<NotificationWhereUniqueInput>
   }
 
   export type PostCreateNestedManyWithoutAuthorInput = {
@@ -4304,6 +6635,20 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutAuthorInput>
     createMany?: CommentCreateManyAuthorInputEnvelope
     connect?: Enumerable<CommentWhereUniqueInput>
+  }
+
+  export type TokenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutUserInput>, Enumerable<TokenUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutUserInput>
+    createMany?: TokenCreateManyUserInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<Enumerable<NotificationCreateWithoutReceiverInput>, Enumerable<NotificationUncheckedCreateWithoutReceiverInput>>
+    connectOrCreate?: Enumerable<NotificationCreateOrConnectWithoutReceiverInput>
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: Enumerable<NotificationWhereUniqueInput>
   }
 
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
@@ -4328,8 +6673,40 @@ export namespace Prisma {
     set?: UserRole
   }
 
+  export type EnumCertificationFieldUpdateOperationsInput = {
+    set?: Certification
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type TokenUpdateManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutUserInput>, Enumerable<TokenUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TokenUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TokenCreateManyUserInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+    set?: Enumerable<TokenWhereUniqueInput>
+    disconnect?: Enumerable<TokenWhereUniqueInput>
+    delete?: Enumerable<TokenWhereUniqueInput>
+    update?: Enumerable<TokenUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TokenUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TokenScalarWhereInput>
+  }
+
+  export type NotificationUpdateManyWithoutReceiverInput = {
+    create?: XOR<Enumerable<NotificationCreateWithoutReceiverInput>, Enumerable<NotificationUncheckedCreateWithoutReceiverInput>>
+    connectOrCreate?: Enumerable<NotificationCreateOrConnectWithoutReceiverInput>
+    upsert?: Enumerable<NotificationUpsertWithWhereUniqueWithoutReceiverInput>
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: Enumerable<NotificationWhereUniqueInput>
+    set?: Enumerable<NotificationWhereUniqueInput>
+    disconnect?: Enumerable<NotificationWhereUniqueInput>
+    delete?: Enumerable<NotificationWhereUniqueInput>
+    update?: Enumerable<NotificationUpdateWithWhereUniqueWithoutReceiverInput>
+    updateMany?: Enumerable<NotificationUpdateManyWithWhereWithoutReceiverInput>
+    deleteMany?: Enumerable<NotificationScalarWhereInput>
   }
 
   export type PostUpdateManyWithoutAuthorInput = {
@@ -4381,6 +6758,34 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type TokenUncheckedUpdateManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokenCreateWithoutUserInput>, Enumerable<TokenUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokenCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TokenUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TokenCreateManyUserInputEnvelope
+    connect?: Enumerable<TokenWhereUniqueInput>
+    set?: Enumerable<TokenWhereUniqueInput>
+    disconnect?: Enumerable<TokenWhereUniqueInput>
+    delete?: Enumerable<TokenWhereUniqueInput>
+    update?: Enumerable<TokenUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TokenUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TokenScalarWhereInput>
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutReceiverInput = {
+    create?: XOR<Enumerable<NotificationCreateWithoutReceiverInput>, Enumerable<NotificationUncheckedCreateWithoutReceiverInput>>
+    connectOrCreate?: Enumerable<NotificationCreateOrConnectWithoutReceiverInput>
+    upsert?: Enumerable<NotificationUpsertWithWhereUniqueWithoutReceiverInput>
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: Enumerable<NotificationWhereUniqueInput>
+    set?: Enumerable<NotificationWhereUniqueInput>
+    disconnect?: Enumerable<NotificationWhereUniqueInput>
+    delete?: Enumerable<NotificationWhereUniqueInput>
+    update?: Enumerable<NotificationUpdateWithWhereUniqueWithoutReceiverInput>
+    updateMany?: Enumerable<NotificationUpdateManyWithWhereWithoutReceiverInput>
+    deleteMany?: Enumerable<NotificationScalarWhereInput>
+  }
+
   export type PostUncheckedUpdateManyWithoutAuthorInput = {
     create?: XOR<Enumerable<PostCreateWithoutAuthorInput>, Enumerable<PostUncheckedCreateWithoutAuthorInput>>
     connectOrCreate?: Enumerable<PostCreateOrConnectWithoutAuthorInput>
@@ -4409,6 +6814,38 @@ export namespace Prisma {
     deleteMany?: Enumerable<CommentScalarWhereInput>
   }
 
+  export type UserCreateNestedOneWithoutTokenInput = {
+    create?: XOR<UserCreateWithoutTokenInput, UserUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTokenInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type UserUpdateOneRequiredWithoutTokenInput = {
+    create?: XOR<UserCreateWithoutTokenInput, UserUncheckedCreateWithoutTokenInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTokenInput
+    upsert?: UserUpsertWithoutTokenInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutTokenInput, UserUncheckedUpdateWithoutTokenInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
   export type UserCreateNestedOneWithoutPostsInput = {
     create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
     connectOrCreate?: UserCreateOrConnectWithoutPostsInput
@@ -4433,14 +6870,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutPostInput>
     createMany?: CommentCreateManyPostInputEnvelope
     connect?: Enumerable<CommentWhereUniqueInput>
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type UserUpdateOneRequiredWithoutPostsInput = {
@@ -4550,6 +6979,13 @@ export namespace Prisma {
     in?: Enumerable<UserRole>
     notIn?: Enumerable<UserRole>
     not?: NestedEnumUserRoleFilter | UserRole
+  }
+
+  export type NestedEnumCertificationFilter = {
+    equals?: Certification
+    in?: Enumerable<Certification>
+    notIn?: Enumerable<Certification>
+    not?: NestedEnumCertificationFilter | Certification
   }
 
   export type NestedDateTimeFilter = {
@@ -4672,6 +7108,31 @@ export namespace Prisma {
     max?: NestedEnumUserRoleFilter
   }
 
+  export type NestedEnumCertificationWithAggregatesFilter = {
+    equals?: Certification
+    in?: Enumerable<Certification>
+    notIn?: Enumerable<Certification>
+    not?: NestedEnumCertificationWithAggregatesFilter | Certification
+    _count?: NestedIntFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    count?: NestedIntFilter
+    _min?: NestedEnumCertificationFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    min?: NestedEnumCertificationFilter
+    _max?: NestedEnumCertificationFilter
+    /**
+     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
+     * 
+    **/
+    max?: NestedEnumCertificationFilter
+  }
+
   export type NestedDateTimeWithAggregatesFilter = {
     equals?: Date | string
     in?: Enumerable<Date> | Enumerable<string>
@@ -4701,66 +7162,9 @@ export namespace Prisma {
     max?: NestedDateTimeFilter
   }
 
-  export type NestedStringNullableFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringNullableFilter | string | null
-  }
-
   export type NestedBoolFilter = {
     equals?: boolean
     not?: NestedBoolFilter | boolean
-  }
-
-  export type NestedStringNullableWithAggregatesFilter = {
-    equals?: string | null
-    in?: Enumerable<string> | null
-    notIn?: Enumerable<string> | null
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringNullableWithAggregatesFilter | string | null
-    _count?: NestedIntNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    count?: NestedIntNullableFilter
-    _min?: NestedStringNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    min?: NestedStringNullableFilter
-    _max?: NestedStringNullableFilter
-    /**
-     * @deprecated since 2.23 because Aggregation keywords got unified to use underscore as prefix to prevent field clashes.
-     * 
-    **/
-    max?: NestedStringNullableFilter
-  }
-
-  export type NestedIntNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableFilter | number | null
   }
 
   export type NestedBoolWithAggregatesFilter = {
@@ -4786,12 +7190,70 @@ export namespace Prisma {
     max?: NestedBoolFilter
   }
 
+  export type TokenCreateWithoutUserInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    content: string
+  }
+
+  export type TokenUncheckedCreateWithoutUserInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    content: string
+  }
+
+  export type TokenCreateOrConnectWithoutUserInput = {
+    where: TokenWhereUniqueInput
+    create: XOR<TokenCreateWithoutUserInput, TokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type TokenCreateManyUserInputEnvelope = {
+    data: Enumerable<TokenCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationCreateWithoutReceiverInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
+  }
+
+  export type NotificationUncheckedCreateWithoutReceiverInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
+  }
+
+  export type NotificationCreateOrConnectWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type NotificationCreateManyReceiverInputEnvelope = {
+    data: Enumerable<NotificationCreateManyReceiverInput>
+    skipDuplicates?: boolean
+  }
+
   export type PostCreateWithoutAuthorInput = {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
     likedBy?: UserCreateNestedManyWithoutLikesInput
@@ -4803,8 +7265,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
@@ -4824,8 +7290,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
     author: UserCreateNestedOneWithoutPostsInput
@@ -4837,8 +7307,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     authorId: number
     likeCount?: number
     commentCount?: number
@@ -4875,6 +7349,64 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: TokenWhereUniqueInput
+    update: XOR<TokenUpdateWithoutUserInput, TokenUncheckedUpdateWithoutUserInput>
+    create: XOR<TokenCreateWithoutUserInput, TokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type TokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: TokenWhereUniqueInput
+    data: XOR<TokenUpdateWithoutUserInput, TokenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TokenUpdateManyWithWhereWithoutUserInput = {
+    where: TokenScalarWhereInput
+    data: XOR<TokenUpdateManyMutationInput, TokenUncheckedUpdateManyWithoutTokenInput>
+  }
+
+  export type TokenScalarWhereInput = {
+    AND?: Enumerable<TokenScalarWhereInput>
+    OR?: Enumerable<TokenScalarWhereInput>
+    NOT?: Enumerable<TokenScalarWhereInput>
+    id?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    valid?: BoolFilter | boolean
+    userId?: IntFilter | number
+    content?: StringFilter | string
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
+    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutReceiverInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutNotificationsInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: Enumerable<NotificationScalarWhereInput>
+    OR?: Enumerable<NotificationScalarWhereInput>
+    NOT?: Enumerable<NotificationScalarWhereInput>
+    id?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    receiverId?: IntFilter | number
+    emitterId?: IntFilter | number
+    postId?: IntFilter | number
+    commentId?: IntFilter | number
+    message?: StringFilter | string
+  }
+
   export type PostUpsertWithWhereUniqueWithoutAuthorInput = {
     where: PostWhereUniqueInput
     update: XOR<PostUpdateWithoutAuthorInput, PostUncheckedUpdateWithoutAuthorInput>
@@ -4899,8 +7431,12 @@ export namespace Prisma {
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     title?: StringFilter | string
-    body?: StringNullableFilter | string | null
+    body?: StringFilter | string
+    excerpt?: StringFilter | string
+    url?: StringFilter | string
+    previewUrl?: StringFilter | string
     published?: BoolFilter | boolean
+    allowComments?: BoolFilter | boolean
     authorId?: IntFilter | number
     likeCount?: IntFilter | number
     commentCount?: IntFilter | number
@@ -4950,13 +7486,157 @@ export namespace Prisma {
     postId?: IntFilter | number
   }
 
+  export type UserCreateWithoutTokenInput = {
+    email: string
+    username: string
+    password: string
+    role?: UserRole
+    certification?: Certification
+    url?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    notifications?: NotificationCreateNestedManyWithoutReceiverInput
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    likes?: PostCreateNestedManyWithoutLikedByInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutTokenInput = {
+    id?: number
+    email: string
+    username: string
+    password: string
+    role?: UserRole
+    certification?: Certification
+    url?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    notifications?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutTokenInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTokenInput, UserUncheckedCreateWithoutTokenInput>
+  }
+
+  export type UserUpsertWithoutTokenInput = {
+    update: XOR<UserUpdateWithoutTokenInput, UserUncheckedUpdateWithoutTokenInput>
+    create: XOR<UserCreateWithoutTokenInput, UserUncheckedCreateWithoutTokenInput>
+  }
+
+  export type UserUpdateWithoutTokenInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notifications?: NotificationUpdateManyWithoutReceiverInput
+    posts?: PostUpdateManyWithoutAuthorInput
+    likes?: PostUpdateManyWithoutLikedByInput
+    comments?: CommentUpdateManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedUpdateWithoutTokenInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notifications?: NotificationUncheckedUpdateManyWithoutReceiverInput
+    posts?: PostUncheckedUpdateManyWithoutAuthorInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorInput
+  }
+
+  export type UserCreateWithoutNotificationsInput = {
+    email: string
+    username: string
+    password: string
+    role?: UserRole
+    certification?: Certification
+    url?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    token?: TokenCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    likes?: PostCreateNestedManyWithoutLikedByInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: number
+    email: string
+    username: string
+    password: string
+    role?: UserRole
+    certification?: Certification
+    url?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    token?: TokenUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUpdateManyWithoutUserInput
+    posts?: PostUpdateManyWithoutAuthorInput
+    likes?: PostUpdateManyWithoutLikedByInput
+    comments?: CommentUpdateManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUncheckedUpdateManyWithoutUserInput
+    posts?: PostUncheckedUpdateManyWithoutAuthorInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorInput
+  }
+
   export type UserCreateWithoutPostsInput = {
     email: string
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutReceiverInput
     likes?: PostCreateNestedManyWithoutLikedByInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
   }
@@ -4967,8 +7647,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -4982,8 +7666,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutReceiverInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
   }
@@ -4994,8 +7682,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
   }
@@ -5040,8 +7732,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUpdateManyWithoutUserInput
+    notifications?: NotificationUpdateManyWithoutReceiverInput
     likes?: PostUpdateManyWithoutLikedByInput
     comments?: CommentUpdateManyWithoutAuthorInput
   }
@@ -5052,8 +7748,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUncheckedUpdateManyWithoutUserInput
+    notifications?: NotificationUncheckedUpdateManyWithoutReceiverInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorInput
   }
 
@@ -5082,6 +7782,8 @@ export namespace Prisma {
     username?: StringFilter | string
     password?: StringFilter | string
     role?: EnumUserRoleFilter | UserRole
+    certification?: EnumCertificationFilter | Certification
+    url?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
   }
@@ -5107,8 +7809,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutReceiverInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     likes?: PostCreateNestedManyWithoutLikedByInput
   }
@@ -5119,8 +7825,12 @@ export namespace Prisma {
     username: string
     password: string
     role?: UserRole
+    certification?: Certification
+    url?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    token?: TokenUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
   }
 
@@ -5133,8 +7843,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
     author: UserCreateNestedOneWithoutPostsInput
@@ -5146,8 +7860,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     authorId: number
     likeCount?: number
     commentCount?: number
@@ -5168,8 +7886,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUpdateManyWithoutUserInput
+    notifications?: NotificationUpdateManyWithoutReceiverInput
     posts?: PostUpdateManyWithoutAuthorInput
     likes?: PostUpdateManyWithoutLikedByInput
   }
@@ -5180,8 +7902,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUncheckedUpdateManyWithoutUserInput
+    notifications?: NotificationUncheckedUpdateManyWithoutReceiverInput
     posts?: PostUncheckedUpdateManyWithoutAuthorInput
   }
 
@@ -5194,8 +7920,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
     author?: UserUpdateOneRequiredWithoutPostsInput
@@ -5207,11 +7937,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     authorId?: IntFieldUpdateOperationsInput | number
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TokenCreateManyUserInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    valid?: boolean
+    content: string
+  }
+
+  export type NotificationCreateManyReceiverInput = {
+    id?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emitterId: number
+    postId?: number
+    commentId?: number
+    message: string
   }
 
   export type PostCreateManyAuthorInput = {
@@ -5219,8 +7971,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
-    body?: string | null
+    body: string
+    excerpt: string
+    url?: string
+    previewUrl?: string
     published?: boolean
+    allowComments?: boolean
     likeCount?: number
     commentCount?: number
   }
@@ -5233,12 +7989,68 @@ export namespace Prisma {
     postId: number
   }
 
+  export type TokenUpdateWithoutUserInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TokenUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TokenUncheckedUpdateManyWithoutTokenInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid?: BoolFieldUpdateOperationsInput | boolean
+    content?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationUpdateWithoutReceiverInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationUncheckedUpdateWithoutReceiverInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutNotificationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emitterId?: IntFieldUpdateOperationsInput | number
+    postId?: IntFieldUpdateOperationsInput | number
+    commentId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+  }
+
   export type PostUpdateWithoutAuthorInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
     likedBy?: UserUpdateManyWithoutLikesInput
@@ -5250,8 +8062,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
     comments?: CommentUncheckedUpdateManyWithoutPostInput
@@ -5262,8 +8078,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
   }
@@ -5272,8 +8092,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
     author?: UserUpdateOneRequiredWithoutPostsInput
@@ -5285,8 +8109,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     authorId?: IntFieldUpdateOperationsInput | number
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
@@ -5298,8 +8126,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
-    body?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: StringFieldUpdateOperationsInput | string
+    excerpt?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    previewUrl?: StringFieldUpdateOperationsInput | string
     published?: BoolFieldUpdateOperationsInput | boolean
+    allowComments?: BoolFieldUpdateOperationsInput | boolean
     authorId?: IntFieldUpdateOperationsInput | number
     likeCount?: IntFieldUpdateOperationsInput | number
     commentCount?: IntFieldUpdateOperationsInput | number
@@ -5341,8 +8173,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUpdateManyWithoutUserInput
+    notifications?: NotificationUpdateManyWithoutReceiverInput
     posts?: PostUpdateManyWithoutAuthorInput
     comments?: CommentUpdateManyWithoutAuthorInput
   }
@@ -5353,8 +8189,12 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    token?: TokenUncheckedUpdateManyWithoutUserInput
+    notifications?: NotificationUncheckedUpdateManyWithoutReceiverInput
     posts?: PostUncheckedUpdateManyWithoutAuthorInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorInput
   }
@@ -5365,6 +8205,8 @@ export namespace Prisma {
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumUserRoleFieldUpdateOperationsInput | UserRole
+    certification?: EnumCertificationFieldUpdateOperationsInput | Certification
+    url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

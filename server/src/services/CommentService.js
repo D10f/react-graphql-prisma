@@ -59,10 +59,6 @@ module.exports = ({ CommentModel, UserModel, PostModel }) => ({
   async update(commentId, input, reqUser) {
     validators.validateUpdateCommentInput(input);
 
-    if (!AuthService.isAuthenticated(reqUser)) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
-
     const { authorId } = await CommentModel.findById(commentId);
 
     if (!AuthService.isAuthorized(reqUser, authorId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
@@ -73,9 +69,6 @@ module.exports = ({ CommentModel, UserModel, PostModel }) => ({
   },
 
   async delete(commentId, reqUser) {
-    if (!AuthService.isAuthenticated(reqUser)) {
-      throw new AuthenticationError('You must be logged in to perform this action.');
-    }
 
     const { authorId } = await CommentModel.findById(commentId);
 

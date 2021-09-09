@@ -11,12 +11,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 2.28.0
- * Query Engine version: 89facabd0366f63911d089156a7a70125bfbcd27
+ * Prisma Client JS version: 2.30.2
+ * Query Engine version: b8c35d44de987a9691890b3ddf3e2e7effb9bf20
  */
 Prisma.prismaVersion = {
-  client: "2.28.0",
-  engine: "89facabd0366f63911d089156a7a70125bfbcd27"
+  client: "2.30.2",
+  engine: "b8c35d44de987a9691890b3ddf3e2e7effb9bf20"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -76,8 +76,30 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   username: 'username',
   password: 'password',
   role: 'role',
+  certification: 'certification',
+  url: 'url',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+});
+
+exports.Prisma.TokenScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  valid: 'valid',
+  userId: 'userId',
+  content: 'content'
+});
+
+exports.Prisma.NotificationScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  receiverId: 'receiverId',
+  emitterId: 'emitterId',
+  postId: 'postId',
+  commentId: 'commentId',
+  message: 'message'
 });
 
 exports.Prisma.PostScalarFieldEnum = makeEnum({
@@ -86,7 +108,11 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   updatedAt: 'updatedAt',
   title: 'title',
   body: 'body',
+  excerpt: 'excerpt',
+  url: 'url',
+  previewUrl: 'previewUrl',
   published: 'published',
+  allowComments: 'allowComments',
   authorId: 'authorId',
   likeCount: 'likeCount',
   commentCount: 'commentCount'
@@ -110,8 +136,18 @@ exports.UserRole = makeEnum({
   ADMIN: 'ADMIN'
 });
 
+exports.Certification = makeEnum({
+  OPEN_WATER: 'OPEN_WATER',
+  ADVANCED: 'ADVANCED',
+  RESCUE: 'RESCUE',
+  DIVEMASTER: 'DIVEMASTER',
+  INSTRUCTOR: 'INSTRUCTOR'
+});
+
 exports.Prisma.ModelName = makeEnum({
   User: 'User',
+  Token: 'Token',
+  Notification: 'Notification',
   Post: 'Post',
   Comment: 'Comment'
 });

@@ -8,36 +8,69 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "./client"
 }
 
 model User {
   @@map(name: "users")
-  id        Int      @default(autoincrement()) @id
-  email     String   @unique
-  username  String   @unique
-  password  String
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]   @relation("WrittenPosts")
-  likes     Post[]   @relation("LikedPosts")
-  comments  Comment[]
+  id            Int            @default(autoincrement()) @id
+  email         String         @unique
+  username      String         @unique
+  password      String
+  role          UserRole       @default(USER)
+  certification Certification  @default(OPEN_WATER)
+  url           String         @default("") @db.VarChar(255)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  token         Token[]        @relation("AuthenticationTokens")
+  notifications Notification[] @relation("ReceivedNotifications")
+  posts         Post[]         @relation("WrittenPosts")
+  likes         Post[]         @relation("LikedPosts")
+  comments      Comment[]
+}
+
+model Token {
+  @@map(name: "tokens")
+  id         Int       @default(autoincrement()) @id
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  valid      Boolean   @default(true)
+  user       User      @relation("AuthenticationTokens", fields: [userId], references: [id])
+  userId     Int
+  content    String    @db.VarChar(255)
+}
+
+model Notification {
+  @@map(name: "notifications")
+  id            Int       @default(autoincrement()) @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  receiver      User      @relation("ReceivedNotifications", fields: [receiverId], references: [id])
+  receiverId    Int
+  emitterId     Int
+  postId        Int       @default(0)
+  commentId     Int       @default(0)
+  message       String    @db.VarChar(255)
 }
 
 model Post {
   @@map(name: "posts")
-  id           Int       @default(autoincrement()) @id
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  title        String    @db.VarChar(255)
-  body         String    @db.Text
-  published    Boolean   @default(false)
-  author       User      @relation("WrittenPosts", fields: [authorId], references: [id])
-  authorId     Int
-  likedBy      User[]    @relation("LikedPosts", references: [id])
-  likeCount    Int       @default(0)
-  comments     Comment[]
-  commentCount Int       @default(0)
+  id            Int       @default(autoincrement()) @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  title         String    @db.VarChar(255)
+  body          String    @db.Text
+  excerpt       String    @db.VarChar(255)
+  url           String    @default("") @db.VarChar(255)
+  previewUrl    String    @default("") @db.VarChar(255)
+  published     Boolean   @default(true)
+  allowComments Boolean   @default(true)
+  author        User      @relation("WrittenPosts", fields: [authorId], references: [id])
+  authorId      Int
+  likedBy       User[]    @relation("LikedPosts", references: [id])
+  likeCount     Int       @default(0)
+  comments      Comment[]
+  commentCount  Int       @default(0)
 }
 
 model Comment {
@@ -55,4 +88,12 @@ model Comment {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum Certification {
+  OPEN_WATER
+  ADVANCED
+  RESCUE
+  DIVEMASTER
+  INSTRUCTOR
 }

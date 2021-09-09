@@ -142,6 +142,7 @@ module.exports = ({ UserModel }) => ({
       return new UserInputError('Cannot find user with that id.');
     }
 
+    // TODO: setup private profiles
     if (user.isPrivate && !AuthService.isAuthorized(reqUser, id, [ isSameUser, isAdmin ])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
@@ -153,7 +154,7 @@ module.exports = ({ UserModel }) => ({
     return await UserModel.findMany(query);
   },
 
-  async getLikedPosts(limit = 10, skip = 0, reqUser) {
+  async getLikedPosts(reqUser, limit = 10, skip = 0) {
 
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
@@ -162,7 +163,7 @@ module.exports = ({ UserModel }) => ({
     return await UserModel.getLikedPosts(reqUser.id, limit, skip);
   },
 
-  async getUserPosts(limit = 10, skip = 0, reqUser) {
+  async getUserPosts(reqUser, limit = 10, skip = 0) {
 
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');

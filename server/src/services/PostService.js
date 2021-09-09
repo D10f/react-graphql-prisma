@@ -67,14 +67,14 @@ module.exports = ({ PostModel, UserModel }) => ({
 
     // Create a short excerpt if there isn't one
     if (!input.excerpt) {
-      newExcerpt = input.body.slice(0, MAX_EXCERPT_LENGTH);
-      input.excerpt = newExcerpt.length <= input.body.length
+      newExcerpt = post.body.slice(0, MAX_EXCERPT_LENGTH);
+      input.excerpt = newExcerpt.length <= post.body.length
         ? newExcerpt.padEnd(newExcerpt.length + 3, '.')
-        : input.body;
+        : post.body;
     }
 
     input.title = sanitizeHtml(input.title.trim());
-    input.body = sanitizeHtml(input.body.trim());
+    input.body = sanitizeHtml(post.body.trim());
     input.excerpt = sanitizeHtml(input.excerpt.trim());
 
     return await PostModel.update(postId, input);
@@ -95,6 +95,7 @@ module.exports = ({ PostModel, UserModel }) => ({
   },
 
   async toggleLikeStatus(postId, reqUser) {
+
     if (!AuthService.isAuthenticated(reqUser)) {
       throw new AuthenticationError('You must be logged in to perform this action.');
     }
