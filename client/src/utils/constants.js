@@ -7,7 +7,7 @@ import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 
 export const DRAWER_WIDTH  = 250;
-export const WEBAPP_NAME   = 'Dive Mapper';
+export const WEBAPP_NAME   = 'Prismic Adventures';
 export const NOTIFICATIONS_POLL_INTERVAL = 10_000; // every 10 seconds
 
 export const PER_PAGE = 10;

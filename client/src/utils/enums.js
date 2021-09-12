@@ -4,6 +4,8 @@ import green from '@material-ui/core/colors/green';
 import blue from '@material-ui/core/colors/blue';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 
+import { WEBAPP_NAME } from '@constants';
+
 export const PADI_CERTS = {
   OPEN_WATER: 'Open Water Diver',
   ADVANCED: 'Advanced Diver',
@@ -26,7 +28,7 @@ export const ROUTE_TITLES = {
   '/'          : 'What People Have Been Up To',
   '/favorites' : 'Your All Time Favorites',
   '/dashboard' : 'See How Far You\'ve come',
-  '/register'  : 'Sign Up For A New Account',
+  '/register'  : `Welcome to ${WEBAPP_NAME}!`,
   '/login'     : 'Welcome Back!',
   '/trek'      : 'Viewing Publication',
   '/new-trek'  : 'Add A New Adventure Log',
