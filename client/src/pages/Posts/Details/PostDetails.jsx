@@ -21,7 +21,7 @@ import Toast from '@components/Toast';
 
 import { postPublishedDate, fullDate } from '@utils/parseTime';
 import { selectCertificationColor } from '@utils/selectors';
-import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP, DRAWER_WIDTH } from '@constants';
+import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP } from '@constants';
 import { PADI_CERTS, PADI_COLORS } from '@enums';
 import { GET_POST_DETAILS } from '@services/apollo/posts/queries';
 import { DELETE_POST } from '@services/apollo/posts/mutations';
@@ -87,7 +87,7 @@ const modalStyles = {
   overlay: {
     position: 'fixed',
     top: 50,
-    left: DRAWER_WIDTH,
+    left: 0,
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)'

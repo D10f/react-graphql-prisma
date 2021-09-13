@@ -125,9 +125,9 @@ const ProfilePage = ({ match }) => {
             </Typography>
           </Tooltip>
 
-          <Typography variant="subtitle2" component="p" color="secondaryText">
+          {/*<Typography variant="subtitle2" component="p" color="secondaryText">
             Level {data?.getUserProfile.certification}
-          </Typography>
+          </Typography>*/}
         </Container>
       </Container>
 

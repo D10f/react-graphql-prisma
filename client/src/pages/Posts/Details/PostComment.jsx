@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { authenticationVar } from '@services/apollo/cache';
@@ -69,6 +70,14 @@ const useStyles = makeStyles(theme => {
       padding: '1rem',
       width: '100%'
     },
+    authorLink: {
+      color: theme.palette.text.primary,
+      textDecoration: 'none',
+      fontSize: theme.typography.body1.fontSize,
+      '&:hover': {
+        color: theme.palette.primary.main,
+      }
+    },
     paddingless: {
       padding: 0
     },
@@ -124,7 +133,10 @@ const PostComment = ({ id, author, text, createdAt, handleError }) => {
 
           <Container className={classes.paddingless}>
             <Typography variant="subtitle2" component="p">
-              {username}
+              {/*username*/}
+              <Link className={classes.authorLink} to={`/user/${author.id}`}>
+                {username}
+              </Link>
             </Typography>
 
             <Tooltip title={fullDate(createdAt)}>
