@@ -6,6 +6,7 @@ import { selectCertificationColor } from '@utils/selectors';
 import { PADI_COLORS, PADI_CERTS } from '@enums';
 import { EDIT_COMMENT_TOOLTIP, STOP_EDIT_COMMENT_TOOLTIP, DELETE_COMMENT_TOOLTIP } from '@constants';
 import { UPDATE_COMMENT, DELETE_COMMENT } from '@services/apollo/comments/mutations';
+import { fullDate, commentPublishedDate } from '@utils/parseTime';
 
 import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
@@ -126,9 +127,11 @@ const PostComment = ({ id, author, text, createdAt, handleError }) => {
               {username}
             </Typography>
 
-            <Typography variant="subtitle2" component="p">
-              {createdAt}
-            </Typography>
+            <Tooltip title={fullDate(createdAt)}>
+              <Typography variant="subtitle2" component="p">
+                {commentPublishedDate(createdAt)}
+              </Typography>
+            </Tooltip>
           </Container>
 
           {(loggedInAs?.id === author?.id || loggedInAs.role === 'ADMIN') && (

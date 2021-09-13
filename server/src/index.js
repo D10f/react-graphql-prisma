@@ -17,7 +17,7 @@ const port = process.env.PORT || 5000;
 
 async function main(services){
   const apolloServer = await createApolloServer(services);
-  await app.listen({ port });
+  await app.listen(port);
   console.log(`Server running on http://localhost:${port}${apolloServer.graphqlPath}`);
 }
 

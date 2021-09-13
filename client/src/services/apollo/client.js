@@ -3,7 +3,8 @@ import { createUploadLink } from 'apollo-upload-client';
 import cache from './cache';
 import localStorageService from '@services/localStorage';
 
-const uploadLink = createUploadLink({ uri: 'http://localhost:5000/graphql' });
+// const uploadLink = createUploadLink({ uri: 'http://localhost:5000/graphql' });
+const uploadLink = createUploadLink({ uri: 'https://prismicadventures.xyz/graphql' });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers = {} }) => ({

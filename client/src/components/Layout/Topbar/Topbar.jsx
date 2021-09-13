@@ -49,7 +49,7 @@ const Topbar = ({ setIsOpen }) => {
     fetchPolicy: "network-only",
     pollInterval: NOTIFICATIONS_POLL_INTERVAL,
     notifyOnNetworkStatusChange: true,
-    onCompleted: data => console.log(data),
+    // onCompleted: data => console.log(data),
     onError: err => setError(err.message)
   });
 

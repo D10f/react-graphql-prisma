@@ -19,6 +19,7 @@ import PostCommentList from './PostCommentList';
 import CommentForm from './CommentForm';
 import Toast from '@components/Toast';
 
+import { postPublishedDate, fullDate } from '@utils/parseTime';
 import { selectCertificationColor } from '@utils/selectors';
 import { EDIT_POST_TOOLTIP, DELETE_POST_TOOLTIP, DRAWER_WIDTH } from '@constants';
 import { PADI_CERTS, PADI_COLORS } from '@enums';
@@ -163,9 +164,11 @@ const PostDetails = ({ match, history }) => {
               </Link>
             </Typography>
 
-            <Typography variant="subtitle2" component="p">
-              {data?.getPostDetails.createdAt}
-            </Typography>
+            <Tooltip title={data && fullDate(data.getPostDetails.createdAt)}>
+              <Typography variant="subtitle2" component="p">
+                {data && postPublishedDate(data.getPostDetails.createdAt)}
+              </Typography>
+            </Tooltip>
           </Container>
 
           {(loggedInAs?.id === data?.getPostDetails.author.id || loggedInAs.role === 'ADMIN') && (

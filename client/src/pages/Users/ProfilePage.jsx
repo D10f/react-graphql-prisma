@@ -7,6 +7,7 @@ import FileUpload from '@components/FileUpload';
 import Toast from '@components/Toast';
 
 import { makeStyles } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,6 +15,7 @@ import Divider from '@material-ui/core/Divider';
 
 import ProfilePosts from './ProfilePosts';
 
+import { userSignUpDate, fullDate } from '@utils/parseTime';
 import { authenticationVar } from '@services/apollo/cache';
 import { selectCertificationColor } from '@utils/selectors';
 import { PADI_CERTS } from '@enums';
@@ -117,9 +119,11 @@ const ProfilePage = ({ match }) => {
             {data?.getUserProfile.username}
           </Typography>
 
-          <Typography variant="subtitle2" component="p" color="secondaryText">
-            Joined {data?.getUserProfile.createdAt}
-          </Typography>
+          <Tooltip title={data && fullDate(data.getUserProfile.createdAt) } >
+            <Typography variant="subtitle2" component="p" color="secondaryText">
+              Joined {data && userSignUpDate(data.getUserProfile.createdAt)}
+            </Typography>
+          </Tooltip>
 
           <Typography variant="subtitle2" component="p" color="secondaryText">
             Level {data?.getUserProfile.certification}

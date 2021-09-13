@@ -6,11 +6,6 @@ const { graphqlUploadExpress } = require('graphql-upload');
 const { typeDefs, resolvers } = require('./schema');
 const app = express();
 
-/* !!!!! REMOVE AFTER TESTING !!!!!*/
-const delay = (timeInMs) => new Promise(resolve => {
-  setTimeout(resolve, timeInMs);
-});
-
 async function createApolloServer(services){
   const apolloServer = new ApolloServer({
     typeDefs,
@@ -19,9 +14,6 @@ async function createApolloServer(services){
       const userToken = req.get('authorization') && req.get('authorization').replace('Bearer ', '');
       const token = userToken && services.auth.verifyToken(userToken);
       const user = token && await services.user.findById(token.id);
-
-      /* !!!!! REMOVE AFTER TESTING !!!!!*/
-      // await delay(1500);
 
       return { user, services };
     },
@@ -42,8 +34,7 @@ async function createApolloServer(services){
 
   await apolloServer.start();
 
-  // app.use(express.static(path.resolve(__dirname, 'public')));
-  app.use(express.static('public'));
+  app.use(express.static('public/images'));
   app.use(graphqlUploadExpress({ maxFileSize: 1024 * 1024, maxFiles: 1 }));
   apolloServer.applyMiddleware({ app });
 

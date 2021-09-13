@@ -7,7 +7,7 @@ const AuthService = require('./AuthService');
 
 const validMimeTypes = new RegExp(/^image\/(png|jpeg|webp|gif)$/i);
 
-const IMG_PUBLIC_PATH = path.resolve('public');
+const IMG_PUBLIC_PATH = path.resolve('public/images');
 
 // Full and preview post picture
 const POST_FULL_IMG_SIZE = 900;
