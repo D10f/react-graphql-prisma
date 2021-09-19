@@ -1,5 +1,7 @@
 # Prismic Adventures
 
+![Screenshot of the site](assets/nomads.webp)
+
 A mini-social network intended to share your adventures online!
 
 ## Features
