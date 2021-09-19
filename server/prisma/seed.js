@@ -8,7 +8,7 @@ const TOTAL_SEED_USERS = 6;
 
 /**
  * Generate:
- * 6 users ( +1 admin without posts nor comments )
+ * 6 users ( + 1 test user and admin, without posts nor comments)
  * 4 posts each ( using predefined images )
  * random amount of comments on a random amount of posts
  * random amount of likes on a random amount of posts
@@ -23,7 +23,7 @@ async function main() {
     prisma.user.deleteMany()
   ]);
 
-  // Creat two admin users that I can easily login as to test on multiple sessions
+  // Creat two users that I can easily login as to test on multiple sessions
   await prisma.user.createMany({
     data: [
       {
@@ -39,8 +39,8 @@ async function main() {
         id: faker.unique(faker.datatype.number),
         username: 'Luigi',
         email: 'luigi@example.com',
-        password: await argon2.hash('adminpassword'),
-        role: 'ADMIN',
+        password: await argon2.hash('iamluigi'),
+        role: 'USER',
         url: 'http://localhost:5000/luigi-350.webp',
         certification: 'INSTRUCTOR'
       }
