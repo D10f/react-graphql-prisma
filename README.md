@@ -2,7 +2,7 @@
 
 ![Screenshot of the site](assets/nomads.webp)
 
-A mini-social network intended to share your adventures online!
+A mini-social network intended to share your adventures online. [Check it out!](https://prismicadventures.xyz)
 
 ## Features
 
@@ -25,6 +25,6 @@ If you don't want to signup you can use these credentials below to see how thing
 ```json
 {
   "username": "luigi",
-  "password": "iamluigi",
+  "password": "iamnotmario",
 }
 ```

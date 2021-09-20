@@ -139,8 +139,8 @@ const PostComment = ({ id, author, text, createdAt, handleError }) => {
               </Link>
             </Typography>
 
-            <Tooltip title={fullDate(createdAt)}>
-              <Typography variant="subtitle2" component="p">
+            <Tooltip title={fullDate(createdAt)} placement="bottom-left">
+              <Typography variant="caption" component="p">
                 {commentPublishedDate(createdAt)}
               </Typography>
             </Tooltip>
