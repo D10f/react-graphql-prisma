@@ -36,6 +36,10 @@ async function createApolloServer(services){
 
   app.use(express.static('public/images'));
   app.use(graphqlUploadExpress({ maxFileSize: 1024 * 1024, maxFiles: 1 }));
+  app.use((req, res, next) => {
+    res.removeHeader('X-Powered-By');
+    next();
+  });
   apolloServer.applyMiddleware({ app });
 
   return apolloServer;
