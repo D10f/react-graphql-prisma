@@ -45,6 +45,7 @@ const LoginForm = ({ onSubmit, loading }) => {
               variant="outlined"
               className={classes.field}
               error={!!errors?.username}
+              placeholder="try: luigi"
               fullWidth
               autoFocus
               required
@@ -65,6 +66,7 @@ const LoginForm = ({ onSubmit, loading }) => {
               type="password"
               className={classes.field}
               error={!!errors?.password}
+              placeholder="try: iamnotmario"
               fullWidth
               required
             />
