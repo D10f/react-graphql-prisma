@@ -16,6 +16,14 @@ A mini-social network intended to share your adventures online. [Check it out!](
 - [ ] Earth 3D visualization with all provided coordinates.
 - [ ] Level up and gain badges as you accomplish goals by participating with the community.
 
+- [X] Add Docker support
+
+## How To Run In Development
+
+To run both frontend and backend at the same time use the docker-compose.yml file at the root of the project. It contains the necessary configuration to spin up separate containers for each component: frontend (nginx), backend (node + prisma) and database (mariadb)
+
+Each of the client and server directories also contain their respective docker files to run containers.
+
 ## Test Credentials
 
 If you don't want to signup you can use these credentials below to see how things work!
