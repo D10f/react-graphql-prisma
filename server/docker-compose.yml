@@ -1,0 +1,39 @@
+version: '2.4'
+
+services:
+ 
+  server:
+    build:
+      context: .
+      target: development
+    ports:
+      - 5000:5000
+    environment:
+      PORT: 5000
+      DATABASE_URL: mysql://prisma:prisma@db/prisma
+      JWT_SECRET: myverysecretsecret
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.8
+    environment:
+      MARIADB_ROOT_PASSWORD: prisma
+      MARIADB_DATABASE: prisma
+      MARIADB_PASSWORD: prisma
+      MARIADB_USER: prisma
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: '/usr/bin/mysql -uprisma -pprisma -e "SHOW DATABASES;"'
+      timeout: 5s
+      interval: 5s
+      retries: 5
+
+volumes:
+  db_data: {}
+

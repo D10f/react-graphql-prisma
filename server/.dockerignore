@@ -1,0 +1,5 @@
+docker-compose.*
+.dockerignore
+.gitignore
+.git
+node_modules
