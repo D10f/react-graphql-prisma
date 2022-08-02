@@ -58,7 +58,7 @@ module.exports = ({ UserModel }) => ({
       throw new AuthenticationError('Cannot find user with that id.');
     }
 
-    if (!AuthService.isAuthorized(reqUser, id, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, id, [AuthService.isSameUser, AuthService.isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -77,7 +77,7 @@ module.exports = ({ UserModel }) => ({
     }
 
     // Must be same user or an admin in order to perform this action
-    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, userId, [AuthService.isAuthor, AuthService.isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -99,7 +99,7 @@ module.exports = ({ UserModel }) => ({
   async delete(userId, reqUser) {
 
     // Must be same user or an admin in order to perform this action
-    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isAuthor, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, userId, [AuthService.isAuthor, AuthService.isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -110,7 +110,7 @@ module.exports = ({ UserModel }) => ({
 
   async getUserNotifications(userId, reqUser) {
 
-    if (!AuthService.isAuthorized(reqUser, userId, [ AuthService.isSameUser, AuthService.isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, userId, [AuthService.isSameUser, AuthService.isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -123,7 +123,7 @@ module.exports = ({ UserModel }) => ({
     return notifications;
   },
 
-  async deleteNotification(notificationId, reqUser){
+  async deleteNotification(notificationId, reqUser) {
 
     const { isAuthor, isAdmin } = AuthService;
 
@@ -143,7 +143,7 @@ module.exports = ({ UserModel }) => ({
     }
 
     // TODO: setup private profiles
-    if (user.isPrivate && !AuthService.isAuthorized(reqUser, id, [ isSameUser, isAdmin ])) {
+    if (user.isPrivate && !AuthService.isAuthorized(reqUser, id, [isSameUser, isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 

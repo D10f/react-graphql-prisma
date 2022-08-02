@@ -6,7 +6,7 @@ const { graphqlUploadExpress } = require('graphql-upload');
 const { typeDefs, resolvers } = require('./schema');
 const app = express();
 
-async function createApolloServer(services){
+async function createApolloServer(services) {
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
@@ -14,7 +14,6 @@ async function createApolloServer(services){
       const userToken = req.get('authorization') && req.get('authorization').replace('Bearer ', '');
       const token = userToken && services.auth.verifyToken(userToken);
       const user = token && await services.user.findById(token.id);
-
       return { user, services };
     },
     formatError: (err) => {

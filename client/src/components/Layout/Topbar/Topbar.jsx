@@ -41,11 +41,11 @@ const Topbar = ({ setIsOpen }) => {
   const loggedInAs = useReactiveVar(authenticationVar);
   const classes = useStyles({ certification: PADI_CERTS[loggedInAs?.certification] });
 
-  const [ error, setError ] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [ routePath ] = selectPathnameComponents(location);
+  const [routePath] = selectPathnameComponents(location);
 
-  const [ loadNotifications, { data } ] = useLazyQuery(GET_NOTIFICATIONS, {
+  const [loadNotifications, { data }] = useLazyQuery(GET_NOTIFICATIONS, {
     fetchPolicy: "network-only",
     pollInterval: NOTIFICATIONS_POLL_INTERVAL,
     notifyOnNetworkStatusChange: true,
@@ -55,9 +55,9 @@ const Topbar = ({ setIsOpen }) => {
 
   useEffect(() => {
     if (loggedInAs) {
-      loadNotifications({ variables: { id: loggedInAs.id }});
+      loadNotifications({ variables: { id: loggedInAs.id } });
     }
-  }, [ loggedInAs ]);
+  }, [loggedInAs]);
 
   return (
     <AppBar elevation={0} className={classes.appbar}>

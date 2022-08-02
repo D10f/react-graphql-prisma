@@ -8,7 +8,7 @@ module.exports = {
       return await services.user.findById(Number(id), user);
     },
     // Retrieves all notifications for a given user
-    async getUserNotifications(parent, { id }, { user, services}) {
+    async getUserNotifications(parent, { id }, { user, services }) {
       return await services.user.getUserNotifications(Number(id), user);
     },
   },
