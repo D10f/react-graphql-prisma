@@ -39,7 +39,7 @@ async function main() {
         id: faker.unique(faker.datatype.number),
         username: 'Luigi',
         email: 'luigi@example.com',
-        password: await argon2.hash('iamluigi'),
+        password: await argon2.hash('iamnotmario'),
         role: 'USER',
         url: 'http://localhost:5000/luigi-350.webp',
         certification: 'INSTRUCTOR'
@@ -55,7 +55,7 @@ async function main() {
   const createPosts = postGenerator();
 
   for (let i = 0; i < TOTAL_SEED_USERS; i++) {
-    const userId  = faker.unique(faker.datatype.number);
+    const userId = faker.unique(faker.datatype.number);
     const postId1 = faker.unique(faker.datatype.number);
     const postId2 = faker.unique(faker.datatype.number);
     const postId3 = faker.unique(faker.datatype.number);
@@ -72,23 +72,23 @@ async function main() {
         email: faker.internet.exampleEmail(),
         password: await argon2.hash(faker.internet.password()),
         role: 'USER',
-        certification: faker.random.arrayElement([ 'OPEN_WATER', 'ADVANCED', 'RESCUE', 'DIVEMASTER', 'INSTRUCTOR' ]),
+        certification: faker.random.arrayElement(['OPEN_WATER', 'ADVANCED', 'RESCUE', 'DIVEMASTER', 'INSTRUCTOR']),
         url: faker.datatype.boolean() ? faker.image.avatar() : '',
         posts: {
-          create: createPosts([ postId1, postId2, postId3, postId4 ])
+          create: createPosts([postId1, postId2, postId3, postId4])
         }
       }
     });
   }
 
   // Randomly pick any number of posts, increase their commentCount, and comment in each of them
-  for (let i = 0 ; i < TOTAL_SEED_USERS; i++) {
+  for (let i = 0; i < TOTAL_SEED_USERS; i++) {
 
     // The posts where the new comments will be added, increase their commentCount
     const postsIdsToCommentOn = faker.random.arrayElements(postIds);
 
     await prisma.post.updateMany({
-      where: { id: { in: postsIdsToCommentOn }},
+      where: { id: { in: postsIdsToCommentOn } },
       data: {
         commentCount: { increment: 1 }
       }
