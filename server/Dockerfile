@@ -26,14 +26,18 @@ CMD prisma generate && \
 
 FROM base AS production
 ENV NODE_ENV=production
+
 RUN apt-get update && \
-  apt-get install tini --no-recommends && \
+  apt-get install tini && \
   rm -rf /var/lib/apt/lists*
 
-USER node
-ENTRYPOINT prisma generate && \
-  prisma db push && \
-  usr/bin/tini --
-CMD node src/index.js
+COPY . .
 
+# ENTRYPOINT ["docker-entrypoint.sh"] 
+
+# CMD ["/usr/bin/tini", "/usr/local/bin/node", "/app/src/index.js"]
+
+CMD prisma generate && \
+  prisma db push && \
+  /usr/bin/tini /usr/local/bin/node /app/src/index.js
 
