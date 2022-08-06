@@ -120,8 +120,8 @@ module.exports = ({ UserModel, PostModel }) => ({
     const basename = filename.replace(path.extname(filename), '');
     // TODO: set environment variable for prefix url
     return {
-      url: options.url && `/${basename}-${options.url}.webp`,
-      previewUrl: options.previewUrl && `/${basename}-${options.previewUrl}.webp`,
+      url: options.url && `/public/images/${basename}-${options.url}.webp`,
+      previewUrl: options.previewUrl && `/public/images/${basename}-${options.previewUrl}.webp`,
     };
   },
 });

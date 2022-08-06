@@ -32,7 +32,7 @@ async function main() {
         email: 'mario@example.com',
         password: await argon2.hash('adminpassword'),
         role: 'ADMIN',
-        url: 'http://localhost:5000/mario-av-350.webp',
+        url: '/public/images/mario-av-350.webp',
         certification: 'INSTRUCTOR'
       },
       {
@@ -41,7 +41,7 @@ async function main() {
         email: 'luigi@example.com',
         password: await argon2.hash('iamnotmario'),
         role: 'USER',
-        url: 'http://localhost:5000/luigi-350.webp',
+        url: '/public/images/luigi-350.webp',
         certification: 'INSTRUCTOR'
       }
     ]
@@ -141,8 +141,8 @@ function postGenerator() {
         body: faker.lorem.paragraph(),
         excerpt: faker.lorem.sentences(2),
         published: faker.datatype.boolean(),
-        url: `http://localhost:5000/nature${currentIdx}-${full}.webp`,
-        previewUrl: `http://localhost:5000/nature${currentIdx}-${preview}.webp`,
+        url: `/public/images/nature${currentIdx}-${full}.webp`,
+        previewUrl: `/public/images/nature${currentIdx}-${preview}.webp`,
       };
     })
   }
