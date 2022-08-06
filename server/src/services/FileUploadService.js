@@ -31,7 +31,7 @@ module.exports = ({ UserModel, PostModel }) => ({
     }
 
     // Check if the post or user profile being updated exists; this determines the following options
-    const [ post, user ] = await Promise.all([
+    const [post, user] = await Promise.all([
       PostModel.findById(id),
       UserModel.findById(id)
     ]);
@@ -43,7 +43,7 @@ module.exports = ({ UserModel, PostModel }) => ({
     // If the resource being updated is a post, extract it's authorId in order to check for permissions
     const resourceId = post ? post.authorId : id;
 
-    if (!AuthService.isAuthorized(reqUser, resourceId, [ isAuthor, isAdmin ])) {
+    if (!AuthService.isAuthorized(reqUser, resourceId, [isAuthor, isAdmin])) {
       throw new ForbiddenError('You are not authorized to perform this action.');
     }
 
@@ -105,7 +105,7 @@ module.exports = ({ UserModel, PostModel }) => ({
     return transformerStream;
   },
 
-  validateType(mimetype){
+  validateType(mimetype) {
     return validMimeTypes.test(mimetype);
   },
 
@@ -120,8 +120,8 @@ module.exports = ({ UserModel, PostModel }) => ({
     const basename = filename.replace(path.extname(filename), '');
     // TODO: set environment variable for prefix url
     return {
-      url: options.url && `http://localhost:5000/${basename}-${options.url}.webp`,
-      previewUrl: options.previewUrl && `http://localhost:5000/${basename}-${options.previewUrl}.webp`,
+      url: options.url && `/${basename}-${options.url}.webp`,
+      previewUrl: options.previewUrl && `/${basename}-${options.previewUrl}.webp`,
     };
   },
 });

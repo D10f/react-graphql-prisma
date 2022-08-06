@@ -62,8 +62,8 @@ async function main() {
     const basename = filename.replace(path.extname(filename), '');
     // TODO: set environment variable for prefix url
     return {
-      url: `http://localhost:5000/${basename}-${POST_FULL_IMG_SIZE}.webp`,
-      previewUrl: `http://localhost:5000/${basename}-${POST_PREV_IMG_SIZE}.webp`,
+      url: `/${basename}-${POST_FULL_IMG_SIZE}.webp`,
+      previewUrl: `/${basename}-${POST_PREV_IMG_SIZE}.webp`,
     };
   }
 }
