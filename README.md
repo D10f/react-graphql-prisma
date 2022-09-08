@@ -2,7 +2,7 @@
 
 ![Screenshot of the site](assets/nomads.webp)
 
-A mini-social network intended to share your adventures online. [Check it out!](https://prismicadventures.xyz)
+A mini-social network intended to share your adventures online. [Check it out!](https://prismicadventures.top)
 
 ## Features
 
